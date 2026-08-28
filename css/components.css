@@ -1,0 +1,1135 @@
+/**
+ * KisanSetu - UI Components Stylesheet
+ * Cards, calculators, map pins, price breakdown badges, charts and audio buttons.
+ */
+
+/* ================= 1. CROP CATALOG GRID ================= */
+.crop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.crop-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--card-shadow);
+}
+
+.crop-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-light);
+  box-shadow: 0 14px 28px -6px rgba(46, 125, 50, 0.15);
+}
+
+.crop-card.selected {
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.25), 0 14px 28px -6px rgba(46, 125, 50, 0.2);
+}
+
+.crop-img-wrap {
+  width: 100%;
+  height: 125px;
+  position: relative;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+.crop-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.crop-card:hover .crop-img {
+  transform: scale(1.06);
+}
+
+.crop-icon-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  background: #e2e8f0;
+}
+
+.crop-trend-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+.crop-trend-badge.up {
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.4);
+}
+
+.crop-trend-badge.down {
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+}
+
+.crop-info {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.crop-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.crop-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.crop-price-row .price-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.crop-price-row .crop-price {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--primary-green);
+}
+
+[data-theme="dark"] .crop-price-row .crop-price {
+  color: #4ade80;
+}
+
+.crop-price-row .crop-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.crop-grade-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="dark"] .crop-grade-tag {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.btn-check-mandi {
+  margin-top: auto;
+  background: rgba(46, 125, 50, 0.08);
+  color: var(--primary-green);
+  border: 1px solid rgba(46, 125, 50, 0.25);
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-align: center;
+}
+
+.crop-card.selected .btn-check-mandi {
+  background: var(--primary-green);
+  color: #ffffff;
+  border-color: var(--primary-green);
+}
+
+/* ================= 2. BEST MANDI RECOMMENDATION CARD ================= */
+.best-mandi-card {
+  background: linear-gradient(135deg, #052e16 0%, #14532d 100%);
+  border: 2px solid #22c55e;
+  border-radius: var(--radius-lg);
+  color: #ffffff;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 16px 36px -10px rgba(5, 46, 22, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.best-mandi-card::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.best-mandi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.best-badge-glow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.verified-tag {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.best-mandi-body {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.mandi-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.mandi-sub {
+  font-size: 14px;
+  color: #dcfce7;
+  margin-bottom: 12px;
+}
+
+.mandi-facilities-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fac-pill {
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #f0fdf4;
+}
+
+.best-col-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.metric-box {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.metric-box .m-lbl {
+  display: block;
+  font-size: 11px;
+  color: #dcfce7;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.metric-box .m-val {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.metric-box .m-unit {
+  display: block;
+  font-size: 10px;
+  color: #86efac;
+}
+
+.metric-box.gold .profit-highlight {
+  color: #fef08a;
+  font-size: 22px;
+}
+
+.extra-profit-banner {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px dashed #f59e0b;
+  color: #fef08a;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.best-mandi-footer {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-action-primary {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.btn-action-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-action-secondary {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-action-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.btn-action-audio {
+  background: #f59e0b;
+  color: #1e293b;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-action-audio:hover {
+  background: #fbbf24;
+}
+
+/* ================= 3. SIDE-BY-SIDE MANDI COMPARISON CARDS ================= */
+.mandi-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  margin-bottom: 36px;
+}
+
+.mandi-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition-smooth);
+}
+
+.mandi-card:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-3px);
+}
+
+.mandi-card.selected {
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.mandi-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.mandi-header-info .m-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.mandi-header-info .m-district {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.m-distance-badge {
+  background: rgba(2, 132, 199, 0.1);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  text-align: right;
+}
+
+.m-distance-badge .dist-km {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0284c7;
+}
+
+.m-distance-badge .dist-time {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Price Breakdown Pills (Min, Modal, Max) */
+.price-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.price-pill {
+  padding: 8px 6px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.price-pill .p-lbl {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.price-pill .p-amt {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.min-pill {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+[data-theme="dark"] .min-pill {
+  background: rgba(194, 65, 12, 0.15);
+  border-color: rgba(194, 65, 12, 0.3);
+  color: #fdba74;
+}
+
+.modal-pill {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #15803d;
+}
+
+[data-theme="dark"] .modal-pill {
+  background: rgba(21, 128, 61, 0.2);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+}
+
+.max-pill {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+
+[data-theme="dark"] .max-pill {
+  background: rgba(3, 105, 161, 0.15);
+  border-color: rgba(3, 105, 161, 0.3);
+  color: #7dd3fc;
+}
+
+.mandi-calc-summary {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+[data-theme="dark"] .mandi-calc-summary {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.summary-row.highlight {
+  margin-bottom: 0;
+  font-size: 13px;
+}
+
+.summary-row .s-val.green {
+  color: var(--primary-green);
+  font-weight: 800;
+}
+
+[data-theme="dark"] .summary-row .s-val.green {
+  color: #4ade80;
+}
+
+.mandi-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  margin-top: auto;
+}
+
+.mandi-btn {
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: var(--transition-fast);
+}
+
+.mandi-btn.primary {
+  background: var(--primary-emerald);
+  color: #ffffff;
+  flex: 1;
+}
+
+.mandi-btn.primary:hover {
+  background: var(--primary-green);
+}
+
+.mandi-btn.secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .mandi-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mandi-btn.audio {
+  background: #fef3c7;
+  color: #b45309;
+  font-size: 14px;
+  padding: 8px 10px;
+}
+
+[data-theme="dark"] .mandi-btn.audio {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fef08a;
+}
+
+.mandi-card-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--card-border);
+  padding-top: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ================= 4. PROFIT & TRANSPORT CALCULATOR ================= */
+.calculator-container {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+}
+
+.calc-input-section h4 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: var(--primary-green);
+}
+
+[data-theme="dark"] .calc-input-section h4 {
+  color: #4ade80;
+}
+
+.calc-field-group {
+  margin-bottom: 18px;
+}
+
+.calc-field-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.quantity-input-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.quantity-input-wrap input {
+  flex: 1;
+  border: 2px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-main);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  outline: none;
+}
+
+.quantity-input-wrap input:focus {
+  border-color: var(--primary-emerald);
+}
+
+.quantity-input-wrap select {
+  border: 2px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vehicle-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.vehicle-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+
+.vehicle-card:hover {
+  border-color: var(--primary-light);
+}
+
+.vehicle-card.active {
+  border-color: var(--primary-green);
+  background: rgba(46, 125, 50, 0.05);
+}
+
+.v-icon {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+.v-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.v-rate {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.v-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+  align-self: flex-start;
+}
+
+/* Calculator Receipt / Profit Summary Box */
+.calc-receipt-card {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme="dark"] .calc-receipt-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.receipt-header {
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.receipt-header h4 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.receipt-line-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.receipt-line-item.deduction span:last-child {
+  color: #dc2626;
+}
+
+.receipt-divider {
+  border-top: 2px dashed #cbd5e1;
+  margin: 14px 0;
+}
+
+[data-theme="dark"] .receipt-divider {
+  border-color: #334155;
+}
+
+.receipt-net-highlight {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  margin-top: auto;
+}
+
+[data-theme="dark"] .receipt-net-highlight {
+  background: rgba(22, 101, 52, 0.3);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.receipt-net-highlight .net-lbl {
+  font-size: 12px;
+  font-weight: 800;
+  color: #166534;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .receipt-net-highlight .net-lbl {
+  color: #86efac;
+}
+
+.receipt-net-highlight .net-num {
+  font-size: 32px;
+  font-weight: 900;
+  color: #14532d;
+  display: block;
+  line-height: 1.1;
+  margin: 4px 0;
+}
+
+[data-theme="dark"] .receipt-net-highlight .net-num {
+  color: #4ade80;
+}
+
+.receipt-net-highlight .net-sub {
+  font-size: 12px;
+  color: #15803d;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .receipt-net-highlight .net-sub {
+  color: #86efac;
+}
+
+/* ================= 5. INTERACTIVE MAP & PINS ================= */
+.map-container-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 36px;
+}
+
+.map-header-bar {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#mandiMap {
+  width: 100%;
+  height: 380px;
+  z-index: 1;
+}
+
+/* Custom Farmer Marker Pin */
+.custom-farmer-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.farmer-pulse-ring {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  background: rgba(34, 197, 94, 0.4);
+  border-radius: 50%;
+  animation: pulse-ring 1.6s infinite;
+}
+
+.farmer-marker-badge {
+  width: 36px;
+  height: 36px;
+  background: #15803d;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+/* Custom Mandi Marker Pin */
+.custom-mandi-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mandi-pin-card {
+  background: #1e293b;
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 2px solid #ffffff;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mandi-pin-card.highlight {
+  background: #15803d;
+  border-color: #facc15;
+}
+
+.mandi-pin-card .pin-price {
+  color: #4ade80;
+  font-weight: 800;
+}
+
+/* ================= 6. CHART.JS WRAPPER ================= */
+.chart-container-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 36px;
+}
+
+.chart-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.period-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 3px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+}
+
+[data-theme="dark"] .period-tabs {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.period-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.period-tab-btn.active {
+  background: var(--card-bg);
+  color: var(--primary-green);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.chart-canvas-box {
+  width: 100%;
+  height: 280px;
+  position: relative;
+}
+
+/* ================= 7. WEATHER & ADVISORY ================= */
+.weather-advisory-container {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 36px;
+}
+
+.weather-current-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.weather-metric-pills {
+  display: flex;
+  gap: 12px;
+}
+
+.w-pill {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .w-pill {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.weather-forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.forecast-day-card {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  text-align: center;
+}
+
+[data-theme="dark"] .forecast-day-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.forecast-day-card .f-day {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.forecast-day-card .f-icon {
+  font-size: 24px;
+  margin: 4px 0;
+  display: block;
+}
+
+.forecast-day-card .f-temp {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: block;
+}
+
+.forecast-day-card .f-desc {
+  font-size: 10px;
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .forecast-day-card .f-desc {
+  color: #4ade80;
+}
+
+.weather-advisory-box {
+  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
+  padding: 12px 16px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #14532d;
+}
+
+[data-theme="dark"] .weather-advisory-box {
+  background: rgba(22, 101, 52, 0.2);
+  color: #86efac;
+}
+
+/* ================= 8. PRICE ALERTS MODAL & LIST ================= */
+.alert-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.alert-item-card {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-theme="dark"] .alert-item-card {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.alert-info strong {
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.alert-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.alert-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+.alert-status-badge.active {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.alert-status-badge.triggered {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.form-group-alert {
+  margin-bottom: 14px;
+}
+
+.form-group-alert label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.form-group-alert input,
+.form-group-alert select {
+  width: 100%;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-main);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  outline: none;
+}

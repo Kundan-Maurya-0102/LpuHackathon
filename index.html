@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KisanSetu (किसान सेतु) - Smart Mandi Price & Farmer Profit Discovery</title>
+  <meta name="description" content="Empowering Indian farmers with live APMC mandi prices, best mandi profit recommendation, transport cost estimation, interactive maps and price history.">
+
+  <!-- Google Fonts: Outfit & Noto Sans Devanagari for pristine multi-language rendering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS for Interactive OpenStreetMap (Zero API key required) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- 1. TOP LIVE TICKER MARQUEE -->
+  <div class="top-ticker-bar">
+    <div class="ticker-left">
+      <div class="pulse-dot"></div>
+      <div class="ticker-marquee">
+        <span>🌾 <strong>Wheat (गेहूं):</strong> Khanna Mandi ₹2,510/qtl (+₹80)</span>
+        <span>🌾 <strong>Basmati Paddy (धान):</strong> Amritsar Mandi ₹4,080/qtl (+₹160)</span>
+        <span>🌼 <strong>Mustard (सरसों):</strong> Jalandhar Mandi ₹5,490/qtl (+₹75)</span>
+        <span>🥔 <strong>Potato (आलू):</strong> Phagwara Mandi ₹1,450/qtl (-₹10)</span>
+        <span>🧅 <strong>Red Onion (प्याज):</strong> Ludhiana Mandi ₹2,790/qtl (+₹140)</span>
+        <span>☁️ <strong>Cotton (कपास):</strong> Khanna Mandi ₹7,350/qtl (+₹60)</span>
+      </div>
+    </div>
+    <div class="ticker-right">
+      <span id="liveSyncTimestamp" class="sync-text">Live e-NAM Synced Today</span>
+      <select id="headerLangSelect" class="header-lang-select" aria-label="Change Language">
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+        <option value="en">🌐 English</option>
+        <option value="mr">🇮🇳 मराठी</option>
+        <option value="gu">🇮🇳 ગુજરાતી</option>
+        <option value="te">🇮🇳 తెలుగు</option>
+        <option value="ta">🇮🇳 தமிழ்</option>
+        <option value="bn">🇮🇳 বাংলা</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 2. MAIN NAVBAR -->
+  <header class="navbar">
+    <div class="nav-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+      <div class="brand-icon-wrap">
+        <span>🚜</span>
+      </div>
+      <div class="brand-text">
+        <h1>KisanSetu <span style="font-size:16px; font-weight:700; color:#15803d;">(किसान सेतु)</span></h1>
+        <span class="brand-tagline" data-i18n="tagline">Smart Mandi Price & Farmer Profit Discovery</span>
+      </div>
+    </div>
+
+    <div class="nav-center-location" id="navLocationButton" onclick="handleLocationAutoDetect()" title="Click to update GPS location">
+      <span class="loc-icon">📍</span>
+      <span class="loc-text" id="currentLocationDisplay">Phagwara / Jalandhar, Punjab</span>
+      <span style="font-size:11px; color:#15803d; font-weight:700;">[Change]</span>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-btn" id="notificationBellBtn" title="Price Alerts">
+        <span>🔔</span>
+        <span class="bell-badge">2</span>
+      </button>
+      <button class="nav-btn" id="themeToggleBtn" title="Toggle Day/Night Mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <button class="nav-btn nav-btn-user" id="userProfileBtn" onclick="showAuthModal()">
+        <span>👨‍🌾</span>
+        <span id="userNameDisplay">Farmer Login</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 3. MAIN APPLICATION CONTAINER -->
+  <main class="app-container">
+
+    <!-- HERO SEARCH & GPS LOCATION DISCOVERY -->
+    <section class="hero-search-section">
+      <div class="hero-header">
+        <h2 data-i18n="selectCropPrompt">Select Your Harvested Crop & Discover Maximum Mandi Profit</h2>
+        <p data-i18n="voiceAssistantPrompt">Search or speak crop name to compare APMC mandi rates and vehicle transport costs.</p>
+      </div>
+
+      <div class="search-bar-wrap">
+        <span style="font-size: 20px; color: #64748b; margin-right: 8px;">🔍</span>
+        <input type="text" id="cropSearchInput" class="search-input-field" placeholder="Search crop (e.g. Wheat, Basmati, Potato, Mustard, Cotton)..." data-i18n-placeholder="searchPlaceholder" autocomplete="off">
+        <button class="voice-mic-btn" id="voiceSearchBtn" title="Tap to Speak Crop Name">
+          <span>🎤</span>
+        </button>
+      </div>
+
+      <div class="hero-quick-tools">
+        <button class="btn-gps-detect" id="detectLocationBtn">
+          <span data-i18n="detectLocation">📍 Auto-Detect GPS Location</span>
+        </button>
+        <div class="radius-control-pill">
+          <span data-i18n="radiusLabel">Radius:</span>
+          <input type="range" id="radiusSlider" min="10" max="150" value="100" step="5">
+          <span id="radiusValue" style="color: #fef08a; font-weight: 800;">100 km</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CROP CATEGORY FILTER TABS -->
+    <div class="category-filter-bar">
+      <button class="category-pill active" data-category="all" data-i18n="catAll">🌾 All Crops</button>
+      <button class="category-pill" data-category="cereals" data-i18n="catCereals">🌾 Cereals (अनाज)</button>
+      <button class="category-pill" data-category="pulses" data-i18n="catPulses">🧆 Pulses (दालें)</button>
+      <button class="category-pill" data-category="vegetables" data-i18n="catVegetables">🥔 Vegetables (सब्जियां)</button>
+      <button class="category-pill" data-category="oilseeds" data-i18n="catOilseeds">🌼 Oilseeds (तिलहन)</button>
+      <button class="category-pill" data-category="cash_crops" data-i18n="catCashCrops">☁️ Cash Crops (नकदी)</button>
+    </div>
+
+    <!-- CROP SELECTION GRID WITH REAL IMAGES -->
+    <section class="crop-catalog-section">
+      <div id="cropCatalogGrid" class="crop-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- AI BEST MANDI RECOMMENDATION BANNER -->
+    <section class="best-mandi-recommendation-section" id="bestMandiSection">
+      <div id="bestMandiBanner">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- MANDI PRICE COMPARISON CARDS -->
+    <section class="mandi-comparison-section" id="mandiComparisonSection">
+      <div class="section-header">
+        <div class="section-header-title">
+          <h3 id="selectedCropComparisonTitle">Today's Mandi Rate Comparison</h3>
+          <p>Verified daily APMC market rates with minimum, modal (average) and maximum rates.</p>
+        </div>
+        <div class="header-badges">
+          <span class="fac-pill" style="background:#e0f2fe; color:#0369a1; font-size:12px; font-weight:700;">🟢 Live Agmarknet & e-NAM Feed</span>
+        </div>
+      </div>
+
+      <div id="mandiComparisonCards" class="mandi-cards-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- SMART FARM PROFIT & TRANSPORTATION CALCULATOR -->
+    <section class="calculator-section" id="calculatorSection">
+      <div class="section-header">
+        <div class="section-header-title">
+          <h3 data-i18n="calculatorTitle">🧮 Smart Farm Profit & Transport Cost Calculator</h3>
+          <p>Calculates gross crop earnings, loading fees, fuel expenses, and real in-hand savings.</p>
+        </div>
+      </div>
+
+      <div class="calculator-container">
+        <!-- Calculator Inputs -->
+        <div class="calc-input-section">
+          <h4>Farm Produce & Transport Inputs</h4>
+          
+          <div class="calc-field-group">
+            <label data-i18n="calcQuantityLabel">Your Total Harvest Quantity:</label>
+            <div class="quantity-input-wrap">
+              <input type="number" id="quantityInput" value="30" min="1" max="500" step="1">
+              <select id="quantityUnitSelect">
+                <option value="quintals" data-i18n="quintals">Quintals (100 kg each)</option>
+                <option value="bags" data-i18n="bags">Bags (50 kg each)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="calc-field-group">
+            <label data-i18n="selectedMandiLabel">Destination Mandi:</label>
+            <select id="calcMandiSelect" class="form-select-mandi" style="width:100%; padding:10px 14px; border-radius:var(--radius-md); border:2px solid var(--card-border); background:var(--card-bg); color:var(--text-main); font-size:14px; font-weight:700;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div class="calc-field-group">
+            <label data-i18n="selectVehicleLabel">Select Transport Vehicle:</label>
+            <div class="vehicle-selector-grid">
+              <div class="vehicle-card active" data-vehicle="tractor">
+                <div class="v-icon">🚜</div>
+                <div class="v-title">Tractor Trolley</div>
+                <div class="v-rate">₹28/km • Cap: 40 Qtl</div>
+                <div class="v-badge">Farmer Choice</div>
+              </div>
+              <div class="vehicle-card" data-vehicle="pickup">
+                <div class="v-icon">🛻</div>
+                <div class="v-title">Bolero Pickup</div>
+                <div class="v-rate">₹18/km • Cap: 20 Qtl</div>
+                <div class="v-badge">Fast & Safe</div>
+              </div>
+              <div class="vehicle-card" data-vehicle="auto">
+                <div class="v-icon">🛺</div>
+                <div class="v-title">3-Wheeler Cargo</div>
+                <div class="v-rate">₹12/km • Cap: 8 Qtl</div>
+                <div class="v-badge">Budget Mini</div>
+              </div>
+              <div class="vehicle-card" data-vehicle="truck">
+                <div class="v-icon">🚛</div>
+                <div class="v-title">10-Wheeler Truck</div>
+                <div class="v-rate">₹52/km • Cap: 160 Qtl</div>
+                <div class="v-badge">Bulk Freight</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculator Receipt / Summary Breakdown -->
+        <div class="calc-receipt-card">
+          <div class="receipt-header">
+            <h4>🧾 In-Hand Earnings Summary</h4>
+            <span style="font-size:12px; color:var(--text-muted);">Transparent APMC & Transport Audit</span>
+          </div>
+
+          <div class="receipt-line-item">
+            <span data-i18n="grossRevenue">Gross Crop Sale Value:</span>
+            <span id="calcGrossRevenue" style="color:var(--text-main); font-weight:800;">₹75,300</span>
+          </div>
+
+          <div class="receipt-line-item deduction">
+            <span data-i18n="transportDeduction">Transport & Fuel Cost:</span>
+            <span id="calcTransportCost">- ₹1,576</span>
+          </div>
+
+          <div class="receipt-line-item deduction">
+            <span data-i18n="mandiCess">Mandi Cess & Weighbridge Fee:</span>
+            <span id="calcMandiCess">- ₹450</span>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-net-highlight">
+            <span class="net-lbl" data-i18n="finalNetProfit">Your Final In-Hand Profit</span>
+            <span class="net-num" id="calcNetProfit">₹73,274</span>
+            <span class="net-sub" id="calcNetPerQtl">(₹2,442 per Quintal)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE MANDI MAP SECTION -->
+    <section class="map-section" id="mapSection">
+      <div class="section-header">
+        <div class="section-header-title">
+          <h3 data-i18n="mapTitle">🗺️ Live Mandi Map & Navigation Route</h3>
+          <p>Find your nearest grain market, view road distances and get direct navigation.</p>
+        </div>
+      </div>
+
+      <div class="map-container-wrap">
+        <div class="map-header-bar">
+          <div style="display:flex; gap:16px; font-size:13px; font-weight:600;">
+            <span>👨‍🌾 <strong data-i18n="mapLegendFarmer">Your Farm (Punjab)</strong></span>
+            <span>🏛️ <strong data-i18n="mapLegendMandi">Mandi Pins & Rates</strong></span>
+          </div>
+          <button class="btn-action-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.mandiMap.renderMandiMarkers(APP_STATE.selectedCropId)">
+            🔄 Refresh Pins
+          </button>
+        </div>
+        <div id="mandiMap"></div>
+      </div>
+    </section>
+
+    <!-- PRICE HISTORY CHART & MARKET PREDICTION -->
+    <section class="chart-section" id="chartSection">
+      <div class="section-header">
+        <div class="section-header-title">
+          <h3 data-i18n="priceHistoryTitle">📈 Price History & Market Prediction</h3>
+          <p>Analyze 7-day to 90-day price trends to choose the best date for selling.</p>
+        </div>
+      </div>
+
+      <div class="chart-container-wrap">
+        <div class="chart-header-bar">
+          <div class="ai-prediction-tag" style="background:#e8f5e9; border:1px solid #86efac; color:#166534; padding:6px 14px; border-radius:var(--radius-full); font-size:13px; font-weight:700;">
+            <span>📈 <strong>Market Trend:</strong> Prices rising (+3.2% this week). Advisory: Good time to sell produce.</span>
+          </div>
+          <div class="period-tabs">
+            <button class="period-tab-btn active" data-period="7d" data-i18n="days7">7 Days</button>
+            <button class="period-tab-btn" data-period="30d" data-i18n="days30">30 Days</button>
+            <button class="period-tab-btn" data-period="90d" data-i18n="days90">90 Days</button>
+          </div>
+        </div>
+
+        <div class="chart-canvas-box">
+          <canvas id="priceHistoryChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE WEATHER & MANDI TRANSPORT ADVISORY -->
+    <section class="weather-section" id="weatherSection">
+      <div class="section-header">
+        <div class="section-header-title">
+          <h3 data-i18n="weatherTitle">⛅ Live Weather & Mandi Transport Advisory</h3>
+          <p>Weather intelligence for harvesting and safe grain transportation.</p>
+        </div>
+      </div>
+
+      <div class="weather-advisory-container">
+        <div class="weather-current-row">
+          <div>
+            <h3 style="font-size:26px; font-weight:800; color:var(--text-main);" id="weatherTemp">29°C</h3>
+            <span style="font-size:14px; font-weight:700; color:var(--primary-green);" id="weatherCondition">⛅ Partly Sunny & Clear Sky</span>
+          </div>
+          <div class="weather-metric-pills">
+            <div class="w-pill">💧 <span data-i18n="humidityLabel">Humidity:</span> <strong id="weatherHumidity">58%</strong></div>
+            <div class="w-pill">💨 <span data-i18n="windLabel">Wind:</span> <strong id="weatherWind">12 km/h</strong></div>
+          </div>
+        </div>
+
+        <div class="weather-forecast-grid" id="weatherForecastGrid">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="weather-advisory-box">
+          <span style="margin-right:6px;">🚜</span>
+          <span id="weatherAdvisoryText">Weather is clear today. Low humidity of 58% ensures high grain quality testing at the weighbridge. Recommended to transport produce before afternoon heat.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. ONBOARDING LANGUAGE SELECTION MODAL -->
+  <div class="modal-overlay" id="langModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-icon">🌐</div>
+        <h3 data-i18n="langModalTitle">Choose Your Preferred Language</h3>
+        <p data-i18n="langModalSub">अपनी भाषा चुनें / ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ</p>
+      </div>
+
+      <div class="lang-cards-grid">
+        <div class="lang-card selected" data-lang="hi">
+          <div class="lang-native">हिन्दी</div>
+          <div class="lang-eng">Hindi</div>
+        </div>
+        <div class="lang-card" data-lang="pa">
+          <div class="lang-native">ਪੰਜਾਬੀ</div>
+          <div class="lang-eng">Punjabi</div>
+        </div>
+        <div class="lang-card" data-lang="en">
+          <div class="lang-native">English</div>
+          <div class="lang-eng">English</div>
+        </div>
+        <div class="lang-card" data-lang="mr">
+          <div class="lang-native">मराठी</div>
+          <div class="lang-eng">Marathi</div>
+        </div>
+        <div class="lang-card" data-lang="gu">
+          <div class="lang-native">ગુજરાતી</div>
+          <div class="lang-eng">Gujarati</div>
+        </div>
+        <div class="lang-card" data-lang="te">
+          <div class="lang-native">తెలుగు</div>
+          <div class="lang-eng">Telugu</div>
+        </div>
+        <div class="lang-card" data-lang="ta">
+          <div class="lang-native">தமிழ்</div>
+          <div class="lang-eng">Tamil</div>
+        </div>
+        <div class="lang-card" data-lang="bn">
+          <div class="lang-native">বাংলা</div>
+          <div class="lang-eng">Bengali</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; margin-bottom:20px;">
+        <button id="langSpeakerBtn" class="btn-action-audio" style="background:#fef3c7; color:#b45309;">
+          <span>🔊</span>
+          <span data-i18n="listenPrompt">Listen in your language</span>
+        </button>
+      </div>
+
+      <button class="modal-footer-btn" id="confirmLangBtn" data-i18n="continueBtn">
+        Continue & Start / आगे बढ़ें
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. FARMER AUTHENTICATION MODAL -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="hideModal('authModal')">✕</button>
+      
+      <div class="modal-header">
+        <div class="modal-icon">👨‍🌾</div>
+        <h3 data-i18n="loginTitle">Farmer Login / किसान प्रवेश</h3>
+        <p data-i18n="loginSub">Access verified APMC mandi rates & maximize your farm profits</p>
+      </div>
+
+      <!-- Quick 1-Click Demo Login for Judges & Farmers -->
+      <button class="modal-footer-btn" id="demoLoginBtn" style="background: linear-gradient(135deg, #15803d, #16a34a); margin-bottom: 20px;">
+        <span data-i18n="demoLogin">⚡ 1-Click Demo Farmer Login (Ramesh Kumar, Punjab)</span>
+      </button>
+
+      <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-bottom:16px; position:relative;">
+        <span>── OR LOGIN WITH MOBILE OTP ──</span>
+      </div>
+
+      <!-- Mobile + OTP Form -->
+      <div class="form-group-alert">
+        <label data-i18n="phoneLabel">Mobile Number:</label>
+        <input type="tel" id="phoneInput" placeholder="Enter 10-digit mobile number" data-i18n-placeholder="phonePlaceholder" maxlength="10">
+      </div>
+
+      <button class="modal-footer-btn" id="sendOtpBtn" style="margin-bottom:12px;" data-i18n="getOtpBtn">
+        Send OTP / कोड भेजें
+      </button>
+
+      <div id="otpSection" style="display:none; margin-bottom:14px;">
+        <div class="form-group-alert">
+          <label data-i18n="otpLabel">Enter 4-Digit OTP:</label>
+          <input type="text" id="otpInput" placeholder="1234" maxlength="4" style="text-align:center; letter-spacing:8px; font-size:20px; font-weight:800;">
+        </div>
+        <button class="modal-footer-btn" id="verifyOtpBtn" data-i18n="verifyLoginBtn">
+          Verify & Enter KisanSetu
+        </button>
+      </div>
+
+      <button class="btn-action-secondary" id="guestLoginBtn" style="width:100%; margin-top:8px; text-align:center; color:var(--text-main);" data-i18n="guestLoginBtn">
+        Continue as Guest (No Login Required)
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. PRICE ALERTS MODAL -->
+  <div class="modal-overlay" id="alertModal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="hideModal('alertModal')">✕</button>
+
+      <div class="modal-header">
+        <div class="modal-icon">🔔</div>
+        <h3 data-i18n="priceAlertTitle">Set WhatsApp / SMS Price Alert</h3>
+        <p>Get instant price notifications when your crop rate crosses your target threshold.</p>
+      </div>
+
+      <h4 style="font-size:14px; margin-bottom:8px;" data-i18n="activeAlerts">Your Active Price Alerts:</h4>
+      <div class="alert-items-list" id="activeAlertsContainer">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="border-top:1px solid var(--card-border); padding-top:16px; margin-top:16px;">
+        <div class="form-group-alert">
+          <label>Select Crop:</label>
+          <select id="alertCropSelect">
+            <option value="Wheat">Wheat (गेहूं)</option>
+            <option value="Basmati Paddy">Basmati Paddy (बासमती धान)</option>
+            <option value="Mustard">Mustard (सरसों)</option>
+            <option value="Potato">Potato (आलू)</option>
+            <option value="Onion">Red Onion (प्याज)</option>
+            <option value="Cotton">Cotton (कपास)</option>
+          </select>
+        </div>
+
+        <div class="form-group-alert">
+          <label>Target Mandi:</label>
+          <select id="alertMandiSelect">
+            <option value="Khanna APMC">Khanna APMC Grain Market</option>
+            <option value="Phagwara Mandi">Phagwara Mandi</option>
+            <option value="Jalandhar Mandi">Jalandhar Mandi</option>
+            <option value="Ludhiana Mandi">Ludhiana Mandi</option>
+          </select>
+        </div>
+
+        <div class="form-group-alert">
+          <label data-i18n="targetPriceLabel">Alert me when price crosses (₹/Quintal):</label>
+          <input type="number" id="alertPriceInput" value="2550">
+        </div>
+
+        <div class="form-group-alert">
+          <label>WhatsApp / Mobile Number:</label>
+          <input type="tel" id="alertPhoneInput" value="+91 98765 43210">
+        </div>
+
+        <button class="modal-footer-btn" id="saveAlertBtn" data-i18n="saveAlertBtn">
+          Set Free Price Alert
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer style="background:var(--card-bg); border-top:1px solid var(--card-border); padding:32px 16px; text-align:center; color:var(--text-muted); font-size:13px;">
+    <p style="margin-bottom:8px; font-weight:700; color:var(--text-main);">
+      🚜 KisanSetu (किसान सेतु) - Built for LPU Hackathon by Kundan, Rishi, Akshith
+    </p>
+    <p style="margin-bottom:4px;">
+      Data Source: National Agriculture Market (e-NAM) & Directorate of Marketing & Inspection (AGMARKNET).
+    </p>
+    <p style="font-size:11px; opacity:0.75;">
+      © 2026 KisanSetu. Dedicated to the hardworking farmers of India (जय जवान, जय किसान).
+    </p>
+  </footer>
+
+  <!-- Core Scripts -->
+  <!-- Leaflet JS for Maps -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Chart.js for Price History -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Application Logic Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
