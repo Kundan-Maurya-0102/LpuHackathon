@@ -123,6 +123,17 @@
         <input type="number" id="compQuantityInput" class="filter-select-input" value="30" min="1" max="5000">
       </div>
 
+      <div class="filter-control-item">
+        <label for="compSortSelect" style="font-weight: 700; font-size: 13px; color: var(--text-main); margin-bottom: 4px; display: block;">
+          🔄 <span data-i18n="sortMandisLabel">Sort Mandis</span>:
+        </label>
+        <select id="compSortSelect" class="filter-select-input">
+          <option value="nearest" selected>📍 Nearest First (समीप मंडी पहले)</option>
+          <option value="highest_price">💰 Highest Price (सर्वाधिक भाव)</option>
+          <option value="max_profit">⭐ Max Take-Home Profit (सर्वाधिक मुनाफा)</option>
+        </select>
+      </div>
+
       <div class="filter-control-item" style="flex-grow: 1;">
         <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; color: var(--text-main); margin-bottom: 4px;">
           <span>📍 <span data-i18n="radiusLabel">Mandi Search Radius</span>:</span>

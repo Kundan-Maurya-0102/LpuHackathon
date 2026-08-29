@@ -8,6 +8,7 @@ const COMP_STATE = {
   selectedVehicleId: "tractor",
   harvestQuantityQtl: 30,
   maxSearchRadiusKm: 100,
+  sortBy: "nearest",
   chartPeriod: "7d"
 };
 
@@ -117,6 +118,15 @@ function setupComparisonEventListeners() {
       COMP_STATE.harvestQuantityQtl = val;
       renderBestMandiRecommendation();
       updateCalculatorView();
+    });
+  }
+
+  const sortSelect = document.getElementById("compSortSelect");
+  if (sortSelect) {
+    sortSelect.value = COMP_STATE.sortBy;
+    sortSelect.addEventListener("change", (e) => {
+      COMP_STATE.sortBy = e.target.value;
+      renderMandiComparison();
     });
   }
 
@@ -282,7 +292,25 @@ function renderMandiComparison() {
     ? window.AGRI_DATA.mandis
     : window.profitCalculator.getMandisList();
 
-  const mandisWithinRadius = mandis.filter(m => (m.distanceKm || 15) <= COMP_STATE.maxSearchRadiusKm);
+  let mandisWithinRadius = mandis.filter(m => (m.distanceKm || 15) <= COMP_STATE.maxSearchRadiusKm);
+
+  // Sort according to selection (Default: Nearest First)
+  if (COMP_STATE.sortBy === "highest_price") {
+    mandisWithinRadius.sort((a, b) => {
+      const priceA = a.prices?.[COMP_STATE.selectedCropId]?.modal || 0;
+      const priceB = b.prices?.[COMP_STATE.selectedCropId]?.modal || 0;
+      return priceB - priceA;
+    });
+  } else if (COMP_STATE.sortBy === "max_profit") {
+    mandisWithinRadius.sort((a, b) => {
+      const pA = window.profitCalculator.calculateMandiProfit(COMP_STATE.selectedCropId, a.id, COMP_STATE.selectedVehicleId, COMP_STATE.harvestQuantityQtl);
+      const pB = window.profitCalculator.calculateMandiProfit(COMP_STATE.selectedCropId, b.id, COMP_STATE.selectedVehicleId, COMP_STATE.harvestQuantityQtl);
+      return (pB.netProfit || 0) - (pA.netProfit || 0);
+    });
+  } else {
+    // Nearest First (Ascending distance)
+    mandisWithinRadius.sort((a, b) => (a.distanceKm || 0) - (b.distanceKm || 0));
+  }
 
   if (mandisWithinRadius.length === 0) {
     container.innerHTML = `
