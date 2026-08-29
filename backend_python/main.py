@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,18 +8,18 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .config import config
+from .database import init_database
 from .routers import auth, market, sales, guide
 from .services.agmarknet_service import agmarknet_service
 
+logger = logging.getLogger("kisansetu")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+
 
 async def _background_price_sync():
-    """
-    Runs once after startup: fetches fresh APMC prices from data.gov.in
-    and stores them into the local SQLite DB.
-    Runs in a thread pool so it doesn't block the event loop.
-    """
-    await asyncio.sleep(2)   # Let the server fully start first
-    print("🌐 [Startup] Triggering real-time APMC price sync from data.gov.in...")
+    """Fetches daily APMC market prices in the background on startup."""
+    await asyncio.sleep(2)  # Give server a moment to finish binding
+    logger.info("Starting background APMC market rate sync...")
     try:
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
@@ -26,37 +27,35 @@ async def _background_price_sync():
             lambda: agmarknet_service.fetch_and_store_prices(state="Punjab", limit=1500)
         )
         if result.get("success"):
-            print(f"✅ [Startup] Synced {result.get('count', 0)} live market price records.")
+            logger.info("Market price sync complete. Records synced: %s", result.get("count", 0))
         else:
-            print(f"⚠️ [Startup] Price sync returned: {result.get('message', 'Unknown error')}")
-    except Exception as e:
-        print(f"❌ [Startup] Price sync failed (will use seeded DB data): {e}")
+            logger.warning("Price sync warning: %s", result.get("message", "Unknown error"))
+    except Exception as exc:
+        logger.error("Price sync failed, using fallback data: %s", exc)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # ── Startup ──
-    print("🌾 Initializing KisanSetu SQLite Database...")
+    logger.info("Initializing database...")
     init_database()
-    print("🚀 KisanSetu Backend ready on port 3000!")
+    logger.info("Server started on http://localhost:3000")
 
-    # Non-blocking background price sync
+    # Trigger non-blocking price sync
     asyncio.create_task(_background_price_sync())
 
-    yield  # Application runs here
+    yield
 
-    # ── Shutdown ──
-    print("🛑 KisanSetu Backend shutting down.")
+    logger.info("Shutting down KisanSetu API server.")
 
 
 app = FastAPI(
-    title="KisanSetu Smart Mandi API",
-    description="High-Performance Python Backend for KisanSetu Agricultural Intelligence Platform",
-    version="2.0.0",
+    title="KisanSetu API",
+    description="Backend API for KisanSetu agricultural market price discovery and digital services.",
+    version="1.0.0",
     lifespan=lifespan
 )
 
-# ── CORS Setup ──
+# CORS configuration for local development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

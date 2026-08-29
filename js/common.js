@@ -444,9 +444,7 @@ function updateLiveTimestamp() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   WELCOME FEATURE GUIDE MODAL & MULTILINGUAL INSTRUCTION ENGINE
-   ═══════════════════════════════════════════════════════════════════ */
+// --- Welcome Feature Guide Modal & Audio Narration ---
 
 let guideAudioPlaying = false;
 

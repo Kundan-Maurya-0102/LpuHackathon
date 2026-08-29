@@ -6,20 +6,20 @@ Built for the 28 August Hackathon at LPU by Kundan, Rishi, and Akshith.
 ## Overview
 KisanSetu is a comprehensive, full-stack platform designed specifically for Indian farmers. It bridges the information gap by providing real-time APMC Mandi prices, historical crop trends, digital sales receipts (J-Forms), and distance-based market recommendations, all wrapped in a localized, farmer-friendly interface.
 
-## ✨ Key Features
-- **Live Mandi Prices**: Real-time agricultural commodity prices fetched from `data.gov.in`.
-- **Price History & Trends**: Interactive charts showing historical price movements to help farmers decide when to sell.
-- **Smart Recommendations**: Suggests the most profitable nearby Mandi by calculating distance, transport costs, and current market rates.
-- **Digital J-Forms (Receipts)**: Allows farmers to record their sales and generate digital, printable receipts.
-- **Voice Search & Localization**: Supports Hindi and Punjabi with built-in voice search for accessibility.
-- **SMS Alerts**: Farmers receive OTPs and crucial price alerts directly to their mobile phones.
-- **Mobile-First Design**: Optimized for mobile devices with an intuitive bottom navigation bar.
+## Key Features
+- **Live Mandi Rates**: Real-time daily prices and market arrivals synced with official e-NAM / Agmarknet datasets.
+- **AI Max Profit Discovery**: Evaluates price differentials vs. actual road distance and fuel costs to recommend the most profitable mandi.
+- **Smart Transport & Profit Calculator**: Estimates net take-home earnings by factoring in crop volume, vehicle mileage (tractor, pickup, truck), and 1.5% APMC market cess.
+- **Digital J-Form Receipts**: Instant generation of certified e-NAM sales receipts with verifiable QR codes for bank loans and crop insurance.
+- **GPS Navigation & Radar Map**: Interactive mandi map showing distance, driving duration, and 1-click Google Maps turn-by-turn directions.
+- **8 Indian Languages & Voice AI**: Instant localization across Hindi, Punjabi, English, Marathi, Gujarati, Telugu, Tamil, and Bengali with Web Speech voice search and audio read-aloud.
+- **Free Price Alerts**: Custom WhatsApp and SMS notifications when market rates reach the farmer's target price.
+- **Onboarding Feature Guide**: Step-by-step interactive walkthrough with audio read-aloud for new farmers.
 
-## 🏗️ Architecture
-- **Frontend**: Vanilla HTML/CSS/JavaScript (Fast, lightweight, no build step needed). Uses Leaflet.js for maps and Chart.js for data visualization.
-- **Backend**: Python 3 & FastAPI REST API (`backend_python/`).
-- **Database**: SQLite with dynamic initialization and caching.
-- **Authentication**: Stateless JWT-based authentication with secure Bcrypt password hashing.
+## Tech Stack
+- **Frontend**: Semantic HTML5, Vanilla CSS3 (Custom design system, Glassmorphism, Dark/Light modes), and Vanilla JavaScript (ES6+). Zero build tools or heavy framework overhead for maximum performance on low-end mobile devices.
+- **Backend**: Python 3.10+, FastAPI, SQLite with SQLAlchemy ORM, and Pydantic validation.
+- **APIs & Tools**: Web Speech API (SpeechRecognition & SpeechSynthesis), HTML5 Geolocation, Leaflet.js, and Chart.js.
 
 ## 🚀 Quick Start
 
