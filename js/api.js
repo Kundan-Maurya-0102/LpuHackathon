@@ -22,6 +22,16 @@ function distanceBetween(lat1, lon1, lat2, lon2) {
   return Math.round(earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
+function knownCoordinates(state, district) {
+  const key = `${String(state || '').toLowerCase()}|${String(district || '').toLowerCase()}`;
+  const coordinates = {
+    "punjab|kapurthala": [31.3800, 75.3800],
+    "punjab|jalandhar": [31.3260, 75.5762],
+    "haryana|hisar": [29.1492, 75.7217]
+  };
+  return coordinates[key] || [31.2550, 75.7050];
+}
+
 function normalizeDailyPrices(payload, farmerLocation) {
   const records = Array.isArray(payload) ? payload : (payload.data || payload.records || payload.prices || []);
   const crops = new Map();
@@ -61,8 +71,9 @@ function normalizeDailyPrices(payload, farmerLocation) {
       });
     }
 
-    const latitude = numberValue(record.lat, record.latitude, record.mandiLat, record.marketLat);
-    const longitude = numberValue(record.lng, record.lon, record.longitude, record.mandiLng, record.marketLng);
+    const fallbackCoordinates = knownCoordinates(record.state || record.stateName, record.district || record.districtName);
+    const latitude = numberValue(record.lat, record.latitude, record.mandiLat, record.marketLat, fallbackCoordinates[0]);
+    const longitude = numberValue(record.lng, record.lon, record.longitude, record.mandiLng, record.marketLng, fallbackCoordinates[1]);
     if (!mandis.has(mandiId)) {
       const distanceKm = latitude && longitude ? distanceBetween(farmerLocation.lat, farmerLocation.lng, latitude, longitude) : 0;
       mandis.set(mandiId, {

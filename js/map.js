@@ -10,7 +10,7 @@ class MandiMapManager {
 
   initMap(elementId = "mandiMap") {
     const mapContainer = document.getElementById(elementId);
-    if (!mapContainer || this.map) return;
+    if (!mapContainer || this.map || typeof L === "undefined") return;
 
     this.map = L.map(elementId, {
       center: this.currentFarmerCoords,
@@ -75,6 +75,8 @@ class MandiMapManager {
     const bounds = [this.currentFarmerCoords];
 
     AGRI_DATA.mandis.forEach(mandi => {
+      if (!Number.isFinite(Number(mandi.lat)) || !Number.isFinite(Number(mandi.lng)) ||
+        (Number(mandi.lat) === 0 && Number(mandi.lng) === 0)) return;
       const priceInfo = mandi.prices[selectedCropId];
       if (!priceInfo) return;
       const price = priceInfo.modal;

@@ -55,6 +55,18 @@ TEST_USERS.forEach(user => {
 const MOCK_PRICES = [
   {
     state: 'Punjab',
+    district: 'Kapurthala',
+    market: 'Kapurthala Mandi',
+    commodity: 'Wheat',
+    variety: 'PBW 343',
+    min_price: 2390,
+    max_price: 2540,
+    modal_price: 2465,
+    arrival_date: new Date().toISOString().split('T')[0],
+    unit: 'Quintal'
+  },
+  {
+    state: 'Punjab',
     district: 'Jalandhar',
     market: 'Jalandhar Mandi',
     commodity: 'Wheat',
@@ -287,6 +299,7 @@ app.get('/api/market-prices', async (req, res) => {
       (!commodity || p.commodity.toLowerCase() === commodity.toLowerCase())
     );
   }
+  if (!filtered.length) filtered = prices;
 
   res.json({
     success: true,

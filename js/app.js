@@ -42,9 +42,6 @@ async function initApp() {
   }
 
   setupEventListeners();
-  AGRI_DATA.crops.splice(0);
-  AGRI_DATA.mandis.splice(0);
-  AGRI_DATA.priceHistory = {};
 
   if (!storedLang) {
     showLanguageModal();
@@ -61,9 +58,7 @@ async function initApp() {
   // Fetch dynamic market data before rendering views
   await loadMarketData();
   
-  if (APP_STATE.user) {
-     renderAllViews();
-  }
+  renderAllViews();
 }
 
 async function loadMarketData() {
@@ -75,7 +70,15 @@ async function loadMarketData() {
             const rawPrices = res.data;
             
             rawPrices.forEach(item => {
-                const mandiId = item.market.toLowerCase().replace(/ /g, "_");
+              if (!item || !item.market || !item.commodity) return;
+              const mandiId = String(item.market).toLowerCase().replace(/[^a-z0-9]+/g, "_");
+              const coordinates = {
+                "telangana": [17.3850, 78.4867],
+                "karnataka": [14.4644, 75.9218],
+                "punjab": [31.3260, 75.5762],
+                "keralam": [11.2588, 75.7804]
+              };
+              const locationCoordinates = coordinates[String(item.state || "").toLowerCase()] || [20.5937, 78.9629];
                 if (!marketMap[mandiId]) {
                     marketMap[mandiId] = {
                         id: mandiId,
@@ -86,9 +89,9 @@ async function loadMarketData() {
                         state: item.state,
                         district: item.district,
                         // Fallback coordinates since our DB doesn't have them yet
-                        lat: 31.0 + Math.random() * 0.5,
-                        lng: 75.0 + Math.random() * 0.5,
-                        distanceKm: Math.floor(Math.random() * 50) + 5,
+                        lat: locationCoordinates[0],
+                        lng: locationCoordinates[1],
+                        distanceKm: 0,
                         travelTime: "45 min",
                         rating: 4.5,
                         eNamEnabled: true,
@@ -100,20 +103,32 @@ async function loadMarketData() {
                     };
                 }
                 
-                const cropId = item.commodity.toLowerCase();
+                const cropId = String(item.commodity).toLowerCase().replace(/[^a-z0-9]+/g, "-");
                 marketMap[mandiId].prices[cropId] = {
-                    min: parseFloat(item.min_price),
-                    max: parseFloat(item.max_price),
-                    modal: parseFloat(item.modal_price),
+                  min: Number(item.min_price) || 0,
+                  max: Number(item.max_price) || 0,
+                  modal: Number(item.modal_price) || 0,
                     arrivals: "Available",
                     trend: "+0" // Can be calculated based on history
                 };
             });
             
-            AGRI_DATA.mandis = Object.values(marketMap);
+            const liveMandis = Object.values(marketMap);
+              const liveCrops = [...new Map(rawPrices.filter(item => item?.commodity && Number(item.modal_price) > 0).map(item => {
+                const id = String(item.commodity).toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                return [id, { id, name: item.commodity, nameHi: item.commodity, namePa: item.commodity, category: "all", fallbackIcon: "🌾", unit: "Quintal (100 kg)", allIndiaAvg: Number(item.modal_price), priceTrend: "Live", trendDirection: "flat", msp: 0, description: "Live price from data.gov.in." }];
+              })).values()];
+                if (!liveCrops.length || !liveMandis.length) throw new Error("No usable mandi records returned by the market API.");
+                AGRI_DATA.mandis.splice(0, AGRI_DATA.mandis.length, ...liveMandis);
+                AGRI_DATA.crops.splice(0, AGRI_DATA.crops.length, ...liveCrops);
+                AGRI_DATA.priceHistory = {};
+                APP_STATE.selectedCropId = AGRI_DATA.crops[0].id;
+                APP_STATE.selectedMandiId = AGRI_DATA.mandis[0].id;
+              APP_STATE.marketDataStatus = "ready";
         }
     } catch (err) {
         console.error("Failed to load market data:", err);
+            APP_STATE.marketDataStatus = AGRI_DATA.crops.length && AGRI_DATA.mandis.length ? "ready" : "error";
     }
 }
 
@@ -407,7 +422,7 @@ function loginFarmer(userData) {
   showToast(`🌾 राम राम ${APP_STATE.user.name}! Welcome to KisanSetu`, "success");
 }
 
-async function loadMarketData() {
+async function loadMarketDataLegacy() {
   APP_STATE.marketDataStatus = "loading";
   renderMarketDataState();
   try {
@@ -890,6 +905,10 @@ function renderBestMandiRecommendation() {
     APP_STATE.selectedVehicleId,
     APP_STATE.harvestQuantityQtl
   );
+  if (!result || !result.bestMandi) {
+    container.innerHTML = `<div class="empty-state"><p>Live price is not available for this crop yet. Select another live crop.</p></div>`;
+    return;
+  }
 
   const best = result.bestMandi;
   const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
@@ -972,7 +991,9 @@ function renderMandiComparison() {
     cropTitleEl.textContent = `${window.i18n.t("todayMandiRates")} ${name}`;
   }
 
-  const mandisWithinRadius = AGRI_DATA.mandis.filter(m => m.distanceKm <= APP_STATE.maxSearchRadiusKm);
+  const mandisWithinRadius = AGRI_DATA.mandis.filter(m =>
+    m.distanceKm <= APP_STATE.maxSearchRadiusKm && m.prices?.[APP_STATE.selectedCropId]
+  );
 
   if (mandisWithinRadius.length === 0) {
     container.innerHTML = `
@@ -1154,7 +1175,15 @@ function updateCalculatorView() {
 }
 
 function renderWeatherWidget() {
-  const weather = AGRI_DATA.weather;
+  const weather = AGRI_DATA.weather || {
+    temp: 29,
+    icon: "⛅",
+    condition: "Partly Sunny & Clear Sky",
+    humidity: 58,
+    windSpeed: 12,
+    advisoryText: "Weather is clear today. Recommended to transport produce before afternoon heat.",
+    forecast5Day: []
+  };
   const tempEl = document.getElementById("weatherTemp");
   const condEl = document.getElementById("weatherCondition");
   const humidityEl = document.getElementById("weatherHumidity");
@@ -1174,7 +1203,7 @@ function renderWeatherWidget() {
   if (advisoryEl) advisoryEl.textContent = weather.advisoryText;
 
   if (forecastGrid) {
-    forecastGrid.innerHTML = weather.forecast5Day.map(day => `
+    forecastGrid.innerHTML = (weather.forecast5Day || []).map(day => `
       <div class="forecast-day-card">
         <span class="f-day">${day.day}</span>
         <span class="f-icon">${day.icon}</span>

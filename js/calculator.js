@@ -46,9 +46,10 @@ class ProfitCalculator {
   }
 
   getBestMandiRecommendation(cropId, vehicleId, quantityQtl = 30) {
-    const allEvaluations = AGRI_DATA.mandis.map(m => {
-      return this.calculateMandiProfit(cropId, m.id, vehicleId, quantityQtl);
-    });
+    const allEvaluations = AGRI_DATA.mandis
+      .map(m => this.calculateMandiProfit(cropId, m.id, vehicleId, quantityQtl))
+      .filter(Boolean);
+    if (!allEvaluations.length) return null;
 
     allEvaluations.sort((a, b) => b.netProfit - a.netProfit);
     const bestMandi = allEvaluations[0];
