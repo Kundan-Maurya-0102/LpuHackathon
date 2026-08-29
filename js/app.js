@@ -108,19 +108,7 @@ function setupEventListeners() {
     });
   }
 
-  const demoLoginBtn = document.getElementById("demoLoginBtn");
-  if (demoLoginBtn) {
-    demoLoginBtn.addEventListener("click", () => {
-      loginFarmer({
-        name: "Ramesh Kumar (ਰਮੇਸ਼ ਕੁਮਾਰ)",
-        phone: "+91 98765 43210",
-        state: "Punjab",
-        district: "Kapurthala",
-        village: "Near Phagwara, LPU Region",
-        crops: ["Wheat", "Basmati Paddy", "Potato"]
-      });
-    });
-  }
+
 
   const guestLoginBtn = document.getElementById("guestLoginBtn");
   if (guestLoginBtn) {
@@ -150,8 +138,7 @@ function setupEventListeners() {
       }
       otpSection.style.display = "block";
       sendOtpBtn.style.display = "none";
-      showToast("✅ OTP भेजा गया: 1234 (Demo OTP: 1234)", "success");
-      document.getElementById("otpInput").value = "1234";
+      showToast("✅ OTP भेजा गया! अपना OTP दर्ज करें (OTP sent! Please enter your OTP)", "success");
     });
   }
 
