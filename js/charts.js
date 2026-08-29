@@ -11,7 +11,7 @@ class PriceChartManager {
     this.renderChart();
   }
 
-  renderChart(cropId = this.currentCropId, period = this.currentPeriod) {
+  async renderChart(cropId = this.currentCropId, period = this.currentPeriod) {
     const canvas = document.getElementById("priceHistoryChart");
     if (!canvas || typeof Chart === "undefined") return;
 
@@ -19,9 +19,27 @@ class PriceChartManager {
     this.currentPeriod = period;
 
     const crop = AGRI_DATA.crops.find(c => c.id === cropId) || AGRI_DATA.crops[0];
-    const historyData = (AGRI_DATA.priceHistory[cropId] && AGRI_DATA.priceHistory[cropId][period])
-      ? AGRI_DATA.priceHistory[cropId][period]
-      : this.generateDynamicHistory(crop.allIndiaAvg, period);
+    let historyData;
+    
+    try {
+        const days = parseInt(period) || 7;
+        const mandi = AGRI_DATA.mandis.find(m => m.id === APP_STATE.selectedMandiId);
+        const state = mandi ? mandi.state : "Punjab";
+        const marketName = mandi ? mandi.name : "Khanna APMC Grain Market";
+        
+        const res = await apiMarket.getHistory(state, marketName, cropId, days);
+        if (res.success && res.data && res.data.labels) {
+            historyData = res.data;
+        }
+    } catch (e) {
+        console.error("Failed to fetch history, using fallback", e);
+    }
+    
+    if (!historyData) {
+        historyData = (AGRI_DATA.priceHistory[cropId] && AGRI_DATA.priceHistory[cropId][period])
+          ? AGRI_DATA.priceHistory[cropId][period]
+          : this.generateDynamicHistory(crop.allIndiaAvg, period);
+    }
 
     if (this.chartInstance) {
       this.chartInstance.destroy();

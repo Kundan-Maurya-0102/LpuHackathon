@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="hi" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KisanSetu Smart Mandi Price & Farmer Profit Discovery</title>
-  <meta name="description" content="Empowering Indian farmers with live APMC mandi prices, best mandi profit recommendation, transport cost estimation, interactive maps and price history.">
+  <meta name="description"
+    content="Empowering Indian farmers with live APMC mandi prices, best mandi profit recommendation, transport cost estimation, interactive maps and price history.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/mobile.css">
 </head>
+
 <body>
 
   <div class="top-ticker-bar">
@@ -55,7 +62,8 @@
       </div>
     </div>
 
-    <div class="nav-center-location" id="navLocationButton" onclick="handleLocationAutoDetect()" title="Click to update GPS location">
+    <div class="nav-center-location" id="navLocationButton" onclick="handleLocationAutoDetect()"
+      title="Click to update GPS location">
       <span class="loc-icon">📍</span>
       <span class="loc-text" id="currentLocationDisplay">Phagwara / Jalandhar, Punjab</span>
       <span style="font-size:11px; color:#15803d; font-weight:700;">[Change]</span>
@@ -81,12 +89,15 @@
     <section class="hero-search-section">
       <div class="hero-header">
         <h2 data-i18n="selectCropPrompt">Select Your Harvested Crop & Discover Maximum Mandi Profit</h2>
-        <p data-i18n="voiceAssistantPrompt">Search or speak crop name to compare APMC mandi rates and vehicle transport costs.</p>
+        <p data-i18n="voiceAssistantPrompt">Search or speak crop name to compare APMC mandi rates and vehicle transport
+          costs.</p>
       </div>
 
       <div class="search-bar-wrap">
         <span style="font-size: 20px; color: #64748b; margin-right: 8px;">🔍</span>
-        <input type="text" id="cropSearchInput" class="search-input-field" placeholder="Search crop (e.g. Wheat, Basmati, Potato, Mustard, Cotton)..." data-i18n-placeholder="searchPlaceholder" autocomplete="off">
+        <input type="text" id="cropSearchInput" class="search-input-field"
+          placeholder="Search crop (e.g. Wheat, Basmati, Potato, Mustard, Cotton)..."
+          data-i18n-placeholder="searchPlaceholder" autocomplete="off">
         <button class="voice-mic-btn" id="voiceSearchBtn" title="Tap to Speak Crop Name">
           <span>🎤</span>
         </button>
@@ -108,7 +119,8 @@
       <button class="category-pill active" data-category="all" data-i18n="catAll">🌾 All Crops</button>
       <button class="category-pill" data-category="cereals" data-i18n="catCereals">🌾 Cereals (अनाज)</button>
       <button class="category-pill" data-category="pulses" data-i18n="catPulses">🧆 Pulses (दालें)</button>
-      <button class="category-pill" data-category="vegetables" data-i18n="catVegetables">🥔 Vegetables (सब्जियां)</button>
+      <button class="category-pill" data-category="vegetables" data-i18n="catVegetables">🥔 Vegetables
+        (सब्जियां)</button>
       <button class="category-pill" data-category="oilseeds" data-i18n="catOilseeds">🌼 Oilseeds (तिलहन)</button>
       <button class="category-pill" data-category="cash_crops" data-i18n="catCashCrops">☁️ Cash Crops (नकदी)</button>
     </div>
@@ -130,7 +142,8 @@
           <p>Verified daily APMC market rates with minimum, modal (average) and maximum rates.</p>
         </div>
         <div class="header-badges">
-          <span class="fac-pill" style="background:#e0f2fe; color:#0369a1; font-size:12px; font-weight:700;">🟢 Live Agmarknet & e-NAM Feed</span>
+          <span class="fac-pill" style="background:#e0f2fe; color:#0369a1; font-size:12px; font-weight:700;">🟢 Live
+            Agmarknet & e-NAM Feed</span>
         </div>
       </div>
 
@@ -149,7 +162,7 @@
       <div class="calculator-container">
         <div class="calc-input-section">
           <h4>Farm Produce & Transport Inputs</h4>
-          
+
           <div class="calc-field-group">
             <label data-i18n="calcQuantityLabel">Your Total Harvest Quantity:</label>
             <div class="quantity-input-wrap">
@@ -163,7 +176,8 @@
 
           <div class="calc-field-group">
             <label data-i18n="selectedMandiLabel">Destination Mandi:</label>
-            <select id="calcMandiSelect" class="form-select-mandi" style="width:100%; padding:10px 14px; border-radius:var(--radius-md); border:2px solid var(--card-border); background:var(--card-bg); color:var(--text-main); font-size:14px; font-weight:700;">
+            <select id="calcMandiSelect" class="form-select-mandi"
+              style="width:100%; padding:10px 14px; border-radius:var(--radius-md); border:2px solid var(--card-border); background:var(--card-bg); color:var(--text-main); font-size:14px; font-weight:700;">
             </select>
           </div>
 
@@ -244,7 +258,8 @@
             <span>👨‍🌾 <strong data-i18n="mapLegendFarmer">Your Farm (Punjab)</strong></span>
             <span>🏛️ <strong data-i18n="mapLegendMandi">Mandi Pins & Rates</strong></span>
           </div>
-          <button class="btn-action-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.mandiMap.renderMandiMarkers(APP_STATE.selectedCropId)">
+          <button class="btn-action-secondary" style="padding:6px 12px; font-size:12px;"
+            onclick="window.mandiMap.renderMandiMarkers(APP_STATE.selectedCropId)">
             🔄 Refresh Pins
           </button>
         </div>
@@ -262,8 +277,10 @@
 
       <div class="chart-container-wrap">
         <div class="chart-header-bar">
-          <div class="ai-prediction-tag" style="background:#e8f5e9; border:1px solid #86efac; color:#166534; padding:6px 14px; border-radius:var(--radius-full); font-size:13px; font-weight:700;">
-            <span>📈 <strong>Market Trend:</strong> Prices rising (+3.2% this week). Advisory: Good time to sell produce.</span>
+          <div class="ai-prediction-tag"
+            style="background:#e8f5e9; border:1px solid #86efac; color:#166534; padding:6px 14px; border-radius:var(--radius-full); font-size:13px; font-weight:700;">
+            <span>📈 <strong>Market Trend:</strong> Prices rising (+3.2% this week). Advisory: Good time to sell
+              produce.</span>
           </div>
           <div class="period-tabs">
             <button class="period-tab-btn active" data-period="7d" data-i18n="days7">7 Days</button>
@@ -290,11 +307,14 @@
         <div class="weather-current-row">
           <div>
             <h3 style="font-size:26px; font-weight:800; color:var(--text-main);" id="weatherTemp">29°C</h3>
-            <span style="font-size:14px; font-weight:700; color:var(--primary-green);" id="weatherCondition">⛅ Partly Sunny & Clear Sky</span>
+            <span style="font-size:14px; font-weight:700; color:var(--primary-green);" id="weatherCondition">⛅ Partly
+              Sunny & Clear Sky</span>
           </div>
           <div class="weather-metric-pills">
-            <div class="w-pill">💧 <span data-i18n="humidityLabel">Humidity:</span> <strong id="weatherHumidity">58%</strong></div>
-            <div class="w-pill">💨 <span data-i18n="windLabel">Wind:</span> <strong id="weatherWind">12 km/h</strong></div>
+            <div class="w-pill">💧 <span data-i18n="humidityLabel">Humidity:</span> <strong
+                id="weatherHumidity">58%</strong></div>
+            <div class="w-pill">💨 <span data-i18n="windLabel">Wind:</span> <strong id="weatherWind">12 km/h</strong>
+            </div>
           </div>
         </div>
 
@@ -303,7 +323,8 @@
 
         <div class="weather-advisory-box">
           <span style="margin-right:6px;">🚜</span>
-          <span id="weatherAdvisoryText">Weather is clear today. Low humidity of 58% ensures high grain quality testing at the weighbridge. Recommended to transport produce before afternoon heat.</span>
+          <span id="weatherAdvisoryText">Weather is clear today. Low humidity of 58% ensures high grain quality testing
+            at the weighbridge. Recommended to transport produce before afternoon heat.</span>
         </div>
       </div>
     </section>
@@ -344,10 +365,6 @@
           <div class="lang-eng">Telugu</div>
         </div>
         <div class="lang-card" data-lang="ta">
-          <div class="lang-native">தமிழ்</div>
-          <div class="lang-eng">Tamil</div>
-        </div>
-        <div class="lang-card" data-lang="bn">
           <div class="lang-native">বাংলা</div>
           <div class="lang-eng">Bengali</div>
         </div>
@@ -369,35 +386,92 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="hideModal('authModal')">✕</button>
-      
+
       <div class="modal-header">
         <div class="modal-icon">👨‍🌾</div>
-        <h3 data-i18n="loginTitle">Farmer Login / किसान प्रवेश</h3>
-        <p data-i18n="loginSub">Access verified APMC mandi rates & maximize your farm profits</p>
+        <h3 id="authModalTitle" data-i18n="loginTitle">Farmer Login / किसान प्रवेश</h3>
+        <p id="authModalSub" data-i18n="loginSub">Access verified APMC mandi rates &amp; maximize your farm profits</p>
       </div>
 
-
-
-      <div class="form-group-alert">
-        <label data-i18n="phoneLabel">Mobile Number:</label>
-        <input type="tel" id="phoneInput" placeholder="Enter 10-digit mobile number" data-i18n-placeholder="phonePlaceholder" maxlength="10">
-      </div>
-
-      <button class="modal-footer-btn" id="sendOtpBtn" style="margin-bottom:12px;" data-i18n="getOtpBtn">
-        Send OTP / कोड भेजें
-      </button>
-
-      <div id="otpSection" style="display:none; margin-bottom:14px;">
+      <!-- ═══ LOGIN FORM ═══ -->
+      <div id="loginFormSection">
         <div class="form-group-alert">
-          <label data-i18n="otpLabel">Enter 4-Digit OTP:</label>
-          <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="4" style="text-align:center; letter-spacing:8px; font-size:20px; font-weight:800;">
+          <label data-i18n="phoneLabel">📱 Mobile Number:</label>
+          <input type="tel" id="loginPhoneInput" placeholder="Enter 10-digit mobile number"
+            data-i18n-placeholder="phonePlaceholder" maxlength="10">
         </div>
-        <button class="modal-footer-btn" id="verifyOtpBtn" data-i18n="verifyLoginBtn">
-          Verify & Enter KisanSetu
+        <div class="form-group-alert">
+          <label>🔒 Password:</label>
+          <input type="password" id="loginPasswordInput" placeholder="Enter your password">
+        </div>
+
+        <!-- Demo credentials hint -->
+        <div id="demoCredentialsHint" style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #92400e;">
+          <strong>🔑 Demo Login:</strong> Phone: <code style="background:#fff;padding:2px 6px;border-radius:4px;font-weight:700;">1234567895</code> &nbsp; Password: <code style="background:#fff;padding:2px 6px;border-radius:4px;font-weight:700;">kisan123</code>
+        </div>
+
+        <button class="modal-footer-btn" id="loginBtn" style="margin-bottom:12px;">
+          Login / प्रवेश करें
         </button>
+        <p style="text-align:center; font-size:13px; color:var(--text-muted); cursor:pointer;"
+          onclick="toggleAuthMode('signup')">
+          New Farmer? <strong style="color:var(--primary-green);">Create Account / नया खाता बनाएँ</strong>
+        </p>
       </div>
 
-      <button class="btn-action-secondary" id="guestLoginBtn" style="width:100%; margin-top:8px; text-align:center; color:var(--text-main);" data-i18n="guestLoginBtn">
+      <!-- ═══ SIGNUP FORM ═══ -->
+      <div id="signupFormSection" style="display:none; max-height: 55vh; overflow-y: auto; padding-right: 5px;">
+
+        <!-- Step 1: Mobile + OTP Send -->
+        <div class="form-group-alert">
+          <label>📱 Mobile Number (मोबाइल नंबर):</label>
+          <div style="display:flex; gap:10px; align-items:stretch;">
+            <input type="tel" id="signupPhoneInput" placeholder="Enter 10-digit mobile number" maxlength="10" style="flex:1;">
+            <button id="sendOtpBtn" type="button" style="
+              padding: 10px 16px;
+              background: linear-gradient(135deg, #22c55e, #16a34a);
+              color: #fff;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 700;
+              font-size: 13px;
+              white-space: nowrap;
+              box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+              transition: all 0.2s ease;
+            ">📩 Send OTP</button>
+          </div>
+        </div>
+
+        <!-- OTP Status Indicator -->
+        <div id="otpStatusBox" style="display:none; background: #ecfdf5; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #166534;">
+          <span id="otpStatusText">✅ OTP sent! Check your SMS or see the code below (Dev Mode)</span>
+          <div id="otpDebugDisplay" style="margin-top:6px; background:#fff; border:1px dashed #22c55e; border-radius:6px; padding:8px 12px; text-align:center; font-size:18px; font-weight:800; letter-spacing:4px; color:#15803d; display:none;"></div>
+        </div>
+
+        <!-- Step 2: Farmer ID -->
+        <div class="form-group-alert">
+          <label>🪪 Farmer ID (किसान पहचान):</label>
+          <input type="text" id="signupFarmerIdInput" placeholder="ABCD-1234-5678 (any format)" maxlength="20">
+          <span style="font-size:11px; color:var(--text-muted); margin-top:2px; display:block;">Enter your Kisan ID or any unique identifier</span>
+        </div>
+
+        <!-- Step 3: OTP Verification -->
+        <div class="form-group-alert">
+          <label>🔐 OTP (वन टाइम पासवर्ड):</label>
+          <input type="text" id="signupOtpInput" placeholder="Enter 6-digit OTP" maxlength="6" style="letter-spacing: 6px; font-weight: 700; font-size: 18px; text-align: center;">
+        </div>
+
+        <button class="modal-footer-btn" id="signupBtn" style="margin-bottom:12px; margin-top: 10px;">
+          ✅ Verify OTP & Register / रजिस्टर करें
+        </button>
+        <p style="text-align:center; font-size:13px; color:var(--text-muted); cursor:pointer;"
+          onclick="toggleAuthMode('login')">
+        </p>
+      </div>
+
+      <button class="btn-action-secondary" id="guestLoginBtn"
+        style="width:100%; margin-top:8px; text-align:center; color:var(--text-main);" data-i18n="guestLoginBtn">
         Continue as Guest (No Login Required)
       </button>
     </div>
@@ -512,7 +586,8 @@
       </div>
 
       <div class="profile-crops-section">
-        <h4 style="font-size:14px; font-weight:800; margin-bottom:8px;" data-i18n="primaryCropsLabel">Major Sown Crops:</h4>
+        <h4 style="font-size:14px; font-weight:800; margin-bottom:8px;" data-i18n="primaryCropsLabel">Major Sown Crops:
+        </h4>
         <div class="profile-crops-tags" id="profCropsList">
         </div>
       </div>
@@ -563,13 +638,42 @@
           <div class="form-group-alert">
             <label>State (राज्य):</label>
             <select id="editStateSelect">
-              <option value="Punjab">Punjab (ਪੰਜਾਬ)</option>
-              <option value="Haryana">Haryana (हरियाणा)</option>
-              <option value="Uttar Pradesh">Uttar Pradesh (उत्तर प्रदेश)</option>
-              <option value="Maharashtra">Maharashtra (महाराष्ट्र)</option>
-              <option value="Gujarat">Gujarat (ગુજરાત)</option>
-              <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश)</option>
-              <option value="Rajasthan">Rajasthan (राजस्थान)</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+              <option value="Assam">Assam</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Chhattisgarh">Chhattisgarh</option>
+              <option value="Goa">Goa</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Himachal Pradesh">Himachal Pradesh</option>
+              <option value="Jharkhand">Jharkhand</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Manipur">Manipur</option>
+              <option value="Meghalaya">Meghalaya</option>
+              <option value="Mizoram">Mizoram</option>
+              <option value="Nagaland">Nagaland</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Sikkim">Sikkim</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Tripura">Tripura</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Uttarakhand">Uttarakhand</option>
+              <option value="West Bengal">West Bengal</option>
+              <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+              <option value="Chandigarh">Chandigarh</option>
+              <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+              <option value="Ladakh">Ladakh</option>
+              <option value="Lakshadweep">Lakshadweep</option>
+              <option value="Puducherry">Puducherry</option>
             </select>
           </div>
           <div class="form-group-alert">
@@ -593,29 +697,145 @@
         </button>
       </form>
     </div>
-  </div>
+    <!-- Sell Produce Modal -->
+    <div id="sellModal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h3 id="sellModalTitle">Sell Produce / उपज बेचें</h3>
+          <button class="close-modal-btn" onclick="hideModal('sellModal')">×</button>
+        </div>
+        <form id="sellForm" class="auth-form" style="margin-top:20px;" onsubmit="handleSellSubmit(event)">
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:15px;">Generate a digital receipt for your
+            sold produce.</p>
 
-  <footer style="background:var(--card-bg); border-top:1px solid var(--card-border); padding:32px 16px; text-align:center; color:var(--text-muted); font-size:13px;">
-    <p style="margin-bottom:8px; font-weight:700; color:var(--text-main);">
-      🚜 KisanSetu (किसान सेतु) - Built for LPU Hackathon by Kundan, Rishi, Akshith
-    </p>
-    <p style="margin-bottom:4px;">
-      Data Source: National Agriculture Market (e-NAM) & Directorate of Marketing & Inspection (AGMARKNET).
-    </p>
-    <p style="font-size:11px; opacity:0.75;">
-      © 2026 KisanSetu. Dedicated to the hardworking farmers of India (जय जवान, जय किसान).
-    </p>
-  </footer>
+          <div class="form-group-alert">
+            <label>Crop / Commodity (फसल):</label>
+            <select id="sellCommodityInput" required>
+              <option value="wheat">Wheat (गेहूं)</option>
+              <option value="paddy">Paddy (धान)</option>
+              <option value="mustard">Mustard (सरसों)</option>
+              <option value="potato">Potato (आलू)</option>
+              <option value="cotton">Cotton (कपास)</option>
+            </select>
+          </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="form-group-alert">
+              <label>Quantity (मात्रा):</label>
+              <input type="number" id="sellQuantityInput" step="0.1" required placeholder="e.g. 50">
+            </div>
+            <div class="form-group-alert">
+              <label>Unit (इकाई):</label>
+              <select id="sellUnitInput">
+                <option value="Quintal">Quintal</option>
+                <option value="Ton">Ton</option>
+                <option value="Kg">Kg</option>
+              </select>
+            </div>
+          </div>
 
-  <script src="js/data.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/speech.js"></script>
-  <script src="js/calculator.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/app.js"></script>
+          <div class="form-group-alert">
+            <label>Price Per Unit (प्रति इकाई मूल्य ₹):</label>
+            <input type="number" id="sellPriceInput" step="1" required placeholder="e.g. 2400">
+          </div>
+
+          <div class="form-group-alert">
+            <label>Mandi / Market Name (मंडी):</label>
+            <input type="text" id="sellMandiInput" placeholder="Where did you sell?" required>
+          </div>
+
+          <div class="form-group-alert">
+            <label>Buyer Name (खरीदार का नाम) - Optional:</label>
+            <input type="text" id="sellBuyerInput" placeholder="Trader / Agent name">
+          </div>
+
+          <button type="submit" class="modal-footer-btn" style="margin-top:10px;" id="sellSubmitBtn">
+            📝 Generate Digital Receipt
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 450px; text-align:center;">
+        <div class="modal-header" style="border-bottom:none;">
+          <h3>Digital J-Form / ई-रसीद</h3>
+          <button class="close-modal-btn" onclick="hideModal('receiptModal')">×</button>
+        </div>
+        <div id="receiptContent"
+          style="background:#f8fdf8; border:2px dashed #2e7d32; border-radius:12px; padding:20px; margin-top:10px;">
+          <!-- Receipt details will be injected here -->
+        </div>
+        <button class="modal-footer-btn" style="margin-top:20px; background:#0288d1;" onclick="window.print()">
+          🖨️ Print Receipt
+        </button>
+      </div>
+    </div>
+
+    <button id="fabSellBtn" onclick="openSellModal()"
+      style="position:fixed; bottom:80px; right:20px; background:var(--brand-green); color:white; border:none; border-radius:50px; padding:12px 24px; font-size:15px; font-weight:700; box-shadow:0 4px 12px rgba(46,125,50,0.4); cursor:pointer; z-index:100; display:flex; align-items:center; gap:8px;">
+      <span>💰</span> Sell Produce
+    </button>
+
+    <footer style="background:var(--card-bg); border-top:1px solid var(--card-border); padding:32px 16px 80px 16px; text-align:center; color:var(--text-muted); font-size:13px;">
+      <p style="margin-bottom:8px; font-weight:700; color:var(--text-main);">
+        🚜 KisanSetu (किसान सेतु) - Built for LPU Hackathon by Kundan, Rishi, Akshith
+      </p>
+      <p style="margin-bottom:4px;">
+        Data Source: National Agriculture Market (e-NAM) & Directorate of Marketing & Inspection (AGMARKNET).
+      </p>
+      <p style="font-size:11px; opacity:0.75;">
+        © 2026 KisanSetu. Dedicated to the hardworking farmers of India (जय जवान, जय किसान).
+      </p>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="#" class="nav-item active" onclick="switchTab('home', event)">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="#" class="nav-item" onclick="switchTab('market', event)">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Market</span>
+      </a>
+      <a href="#" class="nav-item" onclick="openSellModal()">
+        <span class="nav-icon">💰</span>
+        <span class="nav-text">Sell</span>
+      </a>
+      <a href="#" class="nav-item" onclick="handleProfileButtonClick()">
+        <span class="nav-icon">👨‍🌾</span>
+        <span class="nav-text">Profile</span>
+      </a>
+    </nav>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/api/client.js"></script>
+    <script src="js/api/auth.js"></script>
+    <script src="js/api/market.js"></script>
+    <script src="js/api/sales.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      function switchTab(tabId, event) {
+        if(event) event.preventDefault();
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(event) event.currentTarget.classList.add('active');
+        
+        if (tabId === 'home') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (tabId === 'market') {
+          const section = document.getElementById("mandiComparisonSection");
+          if (section) section.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    </script>
 </body>
 </html>

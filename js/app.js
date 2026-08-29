@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initApp();
 });
 
-function initApp() {
+async function initApp() {
   const storedUser = localStorage.getItem("kisansetu_user");
   const storedLang = localStorage.getItem("kisansetu_lang");
   const storedTheme = localStorage.getItem("kisansetu_theme");
@@ -50,10 +50,67 @@ function initApp() {
     APP_STATE.user = JSON.parse(storedUser);
     renderUserUI();
     hideAllModals();
-    renderAllViews();
   }
 
   updateLiveTimestamp();
+  
+  // Fetch dynamic market data before rendering views
+  await loadMarketData();
+  
+  if (APP_STATE.user) {
+     renderAllViews();
+  }
+}
+
+async function loadMarketData() {
+    try {
+        const res = await apiMarket.getPrices();
+        if (res.success) {
+            // Group raw prices by market
+            const marketMap = {};
+            const rawPrices = res.data;
+            
+            rawPrices.forEach(item => {
+                const mandiId = item.market.toLowerCase().replace(/ /g, "_");
+                if (!marketMap[mandiId]) {
+                    marketMap[mandiId] = {
+                        id: mandiId,
+                        name: item.market,
+                        nameHi: item.market + " मंडी",
+                        namePa: item.market + " ਮੰਡੀ",
+                        subText: "Verified Market",
+                        state: item.state,
+                        district: item.district,
+                        // Fallback coordinates since our DB doesn't have them yet
+                        lat: 31.0 + Math.random() * 0.5,
+                        lng: 75.0 + Math.random() * 0.5,
+                        distanceKm: Math.floor(Math.random() * 50) + 5,
+                        travelTime: "45 min",
+                        rating: 4.5,
+                        eNamEnabled: true,
+                        facilities: ["Weighbridge", "Covered Shed", "Canteen"],
+                        contact: "+91 99999 99999",
+                        secretary: "Mandi Secretary",
+                        timing: "06:00 AM - 06:00 PM",
+                        prices: {}
+                    };
+                }
+                
+                const cropId = item.commodity.toLowerCase();
+                marketMap[mandiId].prices[cropId] = {
+                    min: parseFloat(item.min_price),
+                    max: parseFloat(item.max_price),
+                    modal: parseFloat(item.modal_price),
+                    arrivals: "Available",
+                    trend: "+0" // Can be calculated based on history
+                };
+            });
+            
+            AGRI_DATA.mandis = Object.values(marketMap);
+        }
+    } catch (err) {
+        console.error("Failed to load market data:", err);
+    }
 }
 
 function setupEventListeners() {
@@ -124,37 +181,111 @@ function setupEventListeners() {
     });
   }
 
-  const sendOtpBtn = document.getElementById("sendOtpBtn");
-  const phoneInput = document.getElementById("phoneInput");
-  const otpSection = document.getElementById("otpSection");
-  const verifyOtpBtn = document.getElementById("verifyOtpBtn");
-
-  if (sendOtpBtn) {
-    sendOtpBtn.addEventListener("click", () => {
-      const phone = phoneInput ? phoneInput.value.trim() : "";
-      if (phone.length < 10) {
-        showToast("कृपया 10 अंकों का मान्य मोबाइल नंबर दर्ज करें (Enter 10-digit mobile number)", "error");
+  const loginBtn = document.getElementById("loginBtn");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      const mobile = document.getElementById("loginPhoneInput").value.trim();
+      const password = document.getElementById("loginPasswordInput").value.trim();
+      
+      if (mobile.length < 10 || !password) {
+        showToast("Please enter valid mobile and password", "error");
         return;
       }
-      otpSection.style.display = "block";
-      sendOtpBtn.style.display = "none";
-      showToast("✅ OTP भेजा गया! अपना OTP दर्ज करें (OTP sent! Please enter your OTP)", "success");
+      
+      const originalText = loginBtn.innerText;
+      loginBtn.innerText = "Logging in...";
+      
+      try {
+        const res = await apiAuth.login(mobile, password);
+        if (res.success) {
+          APP_STATE.user = res.data.user;
+          renderUserUI();
+          hideAllModals();
+          renderAllViews();
+          showToast("✅ Login successful!", "success");
+        }
+      } catch (err) {
+        showToast("❌ " + err.message, "error");
+      } finally {
+        loginBtn.innerText = originalText;
+      }
     });
   }
 
-  if (verifyOtpBtn) {
-    verifyOtpBtn.addEventListener("click", () => {
-      const phone = phoneInput.value.trim() || "+91 98765 12345";
-      loginFarmer({
-        name: "Kisan Brother",
-        phone: phone,
-        state: "Punjab",
-        district: "Ludhiana",
-        village: "Agro Farm",
-        crops: ["Wheat", "Paddy"]
-      });
+  const sendOtpBtn = document.getElementById("sendOtpBtn");
+  if (sendOtpBtn) {
+    sendOtpBtn.addEventListener("click", async () => {
+      const mobile = document.getElementById("signupPhoneInput").value.trim();
+      if (mobile.length < 10) {
+        showToast("Please enter a valid 10-digit mobile number", "error");
+        return;
+      }
+      
+      const originalText = sendOtpBtn.innerText;
+      sendOtpBtn.innerText = "Sending...";
+      sendOtpBtn.disabled = true;
+      
+      try {
+        const res = await apiAuth.sendOtp(mobile);
+        if (res.success) {
+          showToast("✅ OTP Sent to your mobile number!", "success");
+        } else {
+          showToast("❌ " + res.message, "error");
+        }
+      } catch (err) {
+        showToast("❌ " + err.message, "error");
+      } finally {
+        sendOtpBtn.innerText = originalText;
+        sendOtpBtn.disabled = false;
+      }
     });
   }
+
+  const signupBtn = document.getElementById("signupBtn");
+  if (signupBtn) {
+    signupBtn.addEventListener("click", async () => {
+      const mobile = document.getElementById("signupPhoneInput").value.trim();
+      const farmer_id = document.getElementById("signupFarmerIdInput").value.trim();
+      const otp = document.getElementById("signupOtpInput").value.trim();
+      
+      if (mobile.length < 10 || !farmer_id || !otp) {
+        showToast("Please fill all fields (Mobile, Farmer ID, OTP)", "error");
+        return;
+      }
+      
+      const originalText = signupBtn.innerText;
+      signupBtn.innerText = "Registering...";
+      
+      try {
+        const res = await apiAuth.signup({ mobile, farmer_id, otp });
+        if (res.success) {
+          APP_STATE.user = res.data.user;
+          renderUserUI();
+          hideAllModals();
+          renderAllViews();
+          showToast("✅ Registration successful!", "success");
+        }
+      } catch (err) {
+        showToast("❌ " + err.message, "error");
+      } finally {
+        signupBtn.innerText = originalText;
+      }
+    });
+  }
+  
+  window.toggleAuthMode = function(mode) {
+    if (mode === 'signup') {
+        document.getElementById('loginFormSection').style.display = 'none';
+        document.getElementById('signupFormSection').style.display = 'block';
+        document.getElementById('authModalTitle').innerText = 'Create Account / नया खाता';
+        document.getElementById('authModalSub').innerText = 'Register in 10 seconds to access live mandi rates';
+    } else {
+        document.getElementById('signupFormSection').style.display = 'none';
+        document.getElementById('loginFormSection').style.display = 'block';
+        document.getElementById('authModalTitle').innerText = 'Farmer Login / किसान प्रवेश';
+        document.getElementById('authModalSub').innerText = 'Access verified APMC mandi rates & maximize your farm profits';
+    }
+  };
 
   const cropSearchInput = document.getElementById("cropSearchInput");
   if (cropSearchInput) {
@@ -1065,3 +1196,122 @@ function showToast(message, type = "info") {
   }, 4000);
 }
 window.showToast = showToast;
+
+function openSellModal() {
+  if (!APP_STATE.user) {
+    showToast("Please login first to generate a digital receipt.", "info");
+    showAuthModal();
+    return;
+  }
+  
+  // Pre-fill some data if available
+  const cropSelect = document.getElementById("sellCommodityInput");
+  if (cropSelect && APP_STATE.selectedCropId) {
+    cropSelect.value = APP_STATE.selectedCropId;
+  }
+  
+  const qtyInput = document.getElementById("sellQuantityInput");
+  if (qtyInput && APP_STATE.harvestQuantityQtl) {
+    qtyInput.value = APP_STATE.harvestQuantityQtl;
+  }
+
+  showModal("sellModal");
+}
+window.openSellModal = openSellModal;
+
+async function handleSellSubmit(event) {
+  event.preventDefault();
+  if (!APP_STATE.user) {
+    showToast("Session expired. Please login again.", "error");
+    return;
+  }
+
+  const btn = document.getElementById("sellSubmitBtn");
+  const originalText = btn.innerText;
+  btn.innerText = "Processing...";
+  btn.disabled = true;
+
+  try {
+    const commodity = document.getElementById("sellCommodityInput").value;
+    const quantity = document.getElementById("sellQuantityInput").value;
+    const unit = document.getElementById("sellUnitInput").value;
+    const price_per_unit = document.getElementById("sellPriceInput").value;
+    const mandi_name = document.getElementById("sellMandiInput").value;
+    const buyer_name = document.getElementById("sellBuyerInput").value;
+
+    const saleData = {
+      commodity,
+      quantity,
+      unit,
+      price_per_unit,
+      mandi_name,
+      buyer_name
+    };
+
+    const res = await apiSales.createSale(saleData);
+    
+    if (res.success) {
+      hideModal("sellModal");
+      showToast("✅ Produce sold successfully!", "success");
+      
+      // Fetch the full receipt to show
+      const receiptRes = await apiSales.getReceipt(res.data.receipt_id);
+      if (receiptRes.success) {
+        showReceipt(receiptRes.data);
+      }
+    } else {
+      showToast("❌ Failed: " + res.message, "error");
+    }
+  } catch (err) {
+    showToast("❌ " + err.message, "error");
+  } finally {
+    btn.innerText = originalText;
+    btn.disabled = false;
+  }
+}
+window.handleSellSubmit = handleSellSubmit;
+
+function showReceipt(sale) {
+  const content = document.getElementById("receiptContent");
+  
+  const date = new Date(sale.transaction_date).toLocaleString('en-IN');
+  
+  content.innerHTML = `
+    <h2 style="color:#2e7d32; margin:0 0 10px 0;">KisanSetu J-Form</h2>
+    <p style="font-size:12px; color:#666; margin:0 0 20px 0;">Receipt ID: <strong>${sale.receipt_id}</strong><br>Date: ${date}</p>
+    
+    <table style="width:100%; text-align:left; border-collapse:collapse; margin-bottom:20px;">
+      <tr style="border-bottom:1px solid #ddd;">
+        <th style="padding:8px 0; color:#555;">Farmer Name</th>
+        <td style="padding:8px 0; text-align:right; font-weight:bold;">${APP_STATE.user.name}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #ddd;">
+        <th style="padding:8px 0; color:#555;">Commodity</th>
+        <td style="padding:8px 0; text-align:right;">${sale.commodity.toUpperCase()}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #ddd;">
+        <th style="padding:8px 0; color:#555;">Quantity</th>
+        <td style="padding:8px 0; text-align:right;">${sale.quantity} ${sale.unit}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #ddd;">
+        <th style="padding:8px 0; color:#555;">Rate</th>
+        <td style="padding:8px 0; text-align:right;">₹${sale.price_per_unit} / ${sale.unit}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #ddd;">
+        <th style="padding:8px 0; color:#555;">Market</th>
+        <td style="padding:8px 0; text-align:right;">${sale.mandi_name || 'N/A'}</td>
+      </tr>
+    </table>
+    
+    <div style="background:#e8f5e9; padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-weight:600; color:#1b5e20;">Total Amount:</span>
+      <span style="font-size:24px; font-weight:700; color:#2e7d32;">₹${parseFloat(sale.total_amount).toLocaleString('en-IN')}</span>
+    </div>
+    
+    <p style="margin-top:20px; font-size:11px; color:#888;">This is a digitally generated e-receipt by KisanSetu.</p>
+  `;
+  
+  showModal("receiptModal");
+}
+window.showReceipt = showReceipt;
+
