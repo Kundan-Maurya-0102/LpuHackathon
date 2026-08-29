@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Mandi Map & GPS Navigation - KisanSetu</title>
+  <meta name="description"
+    content="Interactive GPS map displaying your farm location, nearby APMC mandis, live modal crop prices and shortest transit navigation routes.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+
+<body>
+
+  <div class="top-ticker-bar">
+    <div class="ticker-left">
+      <div class="pulse-dot"></div>
+      <div class="ticker-marquee">
+        <span>🗺️ <strong>GPS Mandi Navigation:</strong> Real-time APMC mandi pins, live modal prices and shortest driving routes</span>
+      </div>
+    </div>
+    <div class="ticker-right">
+      <span id="liveSyncTimestamp" class="sync-text">Live e-NAM Synced Today</span>
+      <select id="headerLangSelect" class="header-lang-select" aria-label="Change Language">
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+        <option value="en">🌐 English</option>
+        <option value="mr">🇮🇳 मराठी</option>
+        <option value="gu">🇮🇳 ગુજરાતી</option>
+        <option value="te">🇮🇳 తెలుగు</option>
+        <option value="ta">🇮🇳 தமிழ்</option>
+        <option value="bn">🇮🇳 বাংলা</option>
+      </select>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
+      <div class="brand-icon-wrap">
+        <span>🚜</span>
+      </div>
+      <div class="brand-text">
+        <h1>KisanSetu</h1>
+        <span class="brand-tagline" data-i18n="tagline">Smart Mandi Price & Farmer Profit Discovery</span>
+      </div>
+    </div>
+
+    <nav class="nav-links-wrap">
+      <a href="index.html" class="nav-link" data-page="home" data-i18n="navHome">🏠 Home</a>
+      <a href="comparison.html" class="nav-link" data-page="comparison" data-i18n="navComparison">📊 Mandi Rates</a>
+      <a href="sell.html" class="nav-link" data-page="sell" data-i18n="navSell">💰 Sell & J-Form</a>
+      <a href="map.html" class="nav-link" data-page="map" data-i18n="navMap">🗺️ Live Map</a>
+    </nav>
+
+    <div class="nav-actions">
+      <div class="nav-center-location" id="navLocationButton" title="Click to update GPS location">
+        <span class="loc-icon">📍</span>
+        <span class="loc-text" id="currentLocationDisplay">Phagwara / Jalandhar, Punjab</span>
+      </div>
+
+      <button class="nav-btn" id="notificationBellBtn" title="Price Alerts">
+        <span>🔔</span>
+      </button>
+      <button class="nav-btn" id="themeToggleBtn" title="Toggle Day/Night Mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <button class="nav-btn nav-btn-user" id="userProfileBtn">
+        <span>👨‍🌾</span>
+        <span id="userNameDisplay" data-i18n="navLogin">Farmer Login</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-container">
+
+    <div class="page-title-banner" style="margin: 20px 0 24px 0;">
+      <h2 data-i18n="mapPageTitle">🗺️ Live Mandi Map & GPS Navigation Route</h2>
+      <p data-i18n="mapPageSub">Real-time interactive map showing your farm location and all regional APMC mandi rates</p>
+    </div>
+
+    <!-- Map Filter Bar -->
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label for="mapCropSelect" style="font-weight: 700; font-size: 14px; color: var(--text-main);">
+          🌾 <span data-i18n="cropSold">Display Rates For Crop</span>:
+        </label>
+        <select id="mapCropSelect" class="filter-select-input" style="padding: 8px 14px; font-weight: 700;">
+          <option value="wheat">🌾 Wheat (गेहूं)</option>
+          <option value="paddy">🌾 Basmati Paddy (धान)</option>
+          <option value="mustard">🌼 Mustard (सरसों)</option>
+          <option value="potato">🥔 Potato (आलू)</option>
+          <option value="onion">🧅 Red Onion (प्याज)</option>
+          <option value="cotton">☁️ Cotton (कपास)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-muted);">
+        <span>🟢 <strong>Green Pin:</strong> Your Farm</span>
+        <span>🏛️ <strong>Red/Gold Pin:</strong> APMC Mandi Hub</span>
+      </div>
+    </div>
+
+    <!-- Map Split Layout -->
+    <div class="map-page-layout">
+      <!-- LEFT: Leaflet Map Container -->
+      <div class="map-container-full" id="mandiMapFull"></div>
+
+      <!-- RIGHT: Nearby Mandis List -->
+      <div>
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">🏛️ Nearby Verified Mandis</h3>
+        <div class="map-mandis-sidebar" id="mapMandisSidebar"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Farmer Profile Modal -->
+  <div id="profileModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 data-i18n="profileTitle">Farmer Profile (किसान प्रोफाइल)</h3>
+        <button class="modal-close-btn" data-close="profileModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-header-banner">
+          <div class="prof-avatar">👨‍🌾</div>
+          <div class="prof-info">
+            <h4 id="profNameDisplay">Gurpreet Singh</h4>
+            <span class="prof-badge" id="profKisanId">Kisan ID: PB-2026-8941</span>
+          </div>
+        </div>
+
+        <div class="profile-details-grid">
+          <div class="prof-item"><span class="lbl">Location:</span><strong id="profAddressDisplay">📍 Khanna Kalan, Ludhiana, Punjab</strong></div>
+          <div class="prof-item"><span class="lbl">Mobile:</span><strong id="profPhoneDisplay">📞 +91 98765 43210</strong></div>
+          <div class="prof-item"><span class="lbl">Farm Land:</span><strong id="profLandDisplay">12 Acres (एकड़)</strong></div>
+          <div class="prof-item"><span class="lbl">Primary Mandi:</span><strong id="profMandiDisplay">Khanna APMC Grain Market</strong></div>
+          <div class="prof-item"><span class="lbl">Transport:</span><strong id="profVehicleDisplay">Tractor Trolley (40 Qtl)</strong></div>
+        </div>
+
+        <div class="modal-actions-row" style="margin-top:20px; display:flex; gap:10px;">
+          <button class="btn-action-primary" onclick="openEditProfileModal()" style="flex:1;">✏️ Edit Profile</button>
+          <button class="btn-action-secondary" onclick="logoutFarmer()" style="flex:1;">🚪 Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-bottom">
+      <p>© 2026 KisanSetu Platform • Built for Indian Farmers with e-NAM Integration</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api/client.js"></script>
+  <script src="js/api/auth.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/map-page.js"></script>
+</body>
+
+</html>

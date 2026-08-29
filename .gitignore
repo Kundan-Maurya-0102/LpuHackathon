@@ -1,3 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+
 # Node.js
 node_modules/
 npm-debug.log
@@ -7,9 +34,10 @@ yarn-error.log
 .env
 .env.test
 .env.production
+backend_python/.env
 
 # Logs
-logs
+logs/
 *.log
 
 # OS generated files
@@ -22,3 +50,4 @@ Thumbs.db
 
 # Coverage
 coverage/
+.coverage

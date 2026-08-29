@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Login & OTP Verification - KisanSetu</title>
+  <meta name="description"
+    content="Secure 10-second OTP login for Indian farmers to access verified APMC mandi prices and maximize farm earnings.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+
+<body>
+
+  <div class="top-ticker-bar">
+    <div class="ticker-left">
+      <div class="pulse-dot"></div>
+      <div class="ticker-marquee">
+        <span>🌾 <strong>KisanSetu Login:</strong> Secure Instant SMS & OTP Verification for all Indian Farmers</span>
+      </div>
+    </div>
+    <div class="ticker-right">
+      <span id="liveSyncTimestamp" class="sync-text">Live e-NAM Synced</span>
+      <select id="headerLangSelect" class="header-lang-select" aria-label="Change Language">
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+        <option value="en">🌐 English</option>
+        <option value="mr">🇮🇳 मराठी</option>
+        <option value="gu">🇮🇳 ગુજરાતી</option>
+        <option value="te">🇮🇳 తెలుగు</option>
+        <option value="ta">🇮🇳 தமிழ்</option>
+        <option value="bn">🇮🇳 বাংলা</option>
+      </select>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
+      <div class="brand-icon-wrap">
+        <span>🚜</span>
+      </div>
+      <div class="brand-text">
+        <h1>KisanSetu</h1>
+        <span class="brand-tagline" data-i18n="tagline">Smart Mandi Price & Farmer Profit Discovery</span>
+      </div>
+    </div>
+
+    <nav class="nav-links-wrap">
+      <a href="index.html" class="nav-link" data-page="home" data-i18n="navHome">🏠 Home</a>
+      <a href="comparison.html" class="nav-link" data-page="comparison" data-i18n="navComparison">📊 Mandi Rates</a>
+      <a href="sell.html" class="nav-link" data-page="sell" data-i18n="navSell">💰 Sell & J-Form</a>
+      <a href="map.html" class="nav-link" data-page="map" data-i18n="navMap">🗺️ Live Map</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="nav-btn" id="themeToggleBtn" title="Toggle Day/Night Mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <a href="index.html" class="nav-btn" title="Back to Home">
+        <span>🏠 Home</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="login-page-container">
+    <div class="login-split-card">
+      <!-- Left Hero Banner -->
+      <div class="login-hero-pane">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span style="font-size: 28px;">🌾</span>
+            <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px;">e-NAM Partner</span>
+          </div>
+          <h2 data-i18n="loginPageTitle">Farmer OTP Login Portal</h2>
+          <p data-i18n="loginPageSub">Enter your 10-digit mobile number to receive a secure 6-digit verification code and unlock customized farm profit calculations.</p>
+          
+          <div class="login-features-list">
+            <div class="login-feat-item">
+              <span>📈</span>
+              <div>Live APMC mandi rates updated daily at 06:30 AM</div>
+            </div>
+            <div class="login-feat-item">
+              <span>🚚</span>
+              <div>Smart vehicle transport cost & net in-hand earnings</div>
+            </div>
+            <div class="login-feat-item">
+              <span>📄</span>
+              <div>Instant e-NAM certified Digital J-Form sales receipts</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; opacity: 0.85; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 14px;">
+          🇮🇳 Supporting Farmers across Punjab, Haryana, UP, MP, Rajasthan & all Indian States.
+        </div>
+      </div>
+
+      <!-- Right Form Pane -->
+      <div class="login-form-pane">
+        <h3 data-i18n="loginTitle">Farmer Login / किसान प्रवेश</h3>
+        <p class="form-subtitle" data-i18n="loginSub">Access today's verified APMC rates & maximize your farm profits</p>
+
+        <!-- STEP 1: Phone Input -->
+        <div id="loginStepPhone" class="auth-step-pane active">
+          <form id="sendOtpForm">
+            <div class="auth-form-group">
+              <label for="loginPhoneInput">
+                <span>📱</span>
+                <span data-i18n="phoneLabel">Mobile Number</span>
+              </label>
+              <div class="phone-input-group">
+                <span class="phone-prefix-badge">🇮🇳 +91</span>
+                <input type="tel" id="loginPhoneInput" class="auth-input-control" placeholder="Enter 10-digit mobile number"
+                  data-i18n-placeholder="phonePlaceholder" maxlength="10" pattern="[0-9]{10}" required autocomplete="tel">
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="loginFarmerNameInput">
+                <span>👤</span>
+                <span data-i18n="nameLabel">Farmer Full Name (Optional)</span>
+              </label>
+              <input type="text" id="loginFarmerNameInput" class="auth-input-control" placeholder="e.g. Gurpreet Singh / Ramesh Kumar"
+                data-i18n-placeholder="namePlaceholder">
+            </div>
+
+            <button type="submit" class="auth-btn-primary" id="sendLoginOtpBtn" style="margin-top: 10px;">
+              <span id="sendOtpBtnText">📩 Get OTP / ओटीपी प्राप्त करें</span>
+            </button>
+          </form>
+
+          <div style="text-align: center; margin-top: 22px;">
+            <a href="index.html" class="auth-btn-guest" data-i18n="guestLoginBtn">
+              🚶 Continue as Guest (No Login Required)
+            </a>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--text-muted);">
+            <span>🔒</span>
+            <span>256-Bit Encrypted • Official e-NAM APMC Partner</span>
+          </div>
+        </div>
+
+        <!-- STEP 2: OTP Verification -->
+        <div id="loginStepOtp" class="auth-step-pane" style="display: none;">
+          <div class="otp-phone-header">
+            <div>
+              <div style="font-size: 11px; color: var(--text-muted);">OTP sent to:</div>
+              <div id="otpTargetPhoneDisplay" class="otp-phone-text">+91 98765 43210</div>
+            </div>
+            <button type="button" class="btn-change-phone" id="changePhoneBtn">✏️ Change</button>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Enter the 6-digit verification code sent to your phone:</p>
+
+          <form id="verifyOtpForm">
+            <div class="otp-boxes-grid">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box-digit" id="otp_1" autofocus>
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box-digit" id="otp_2">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box-digit" id="otp_3">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box-digit" id="otp_4">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box-digit" id="otp_5">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box-digit" id="otp_6">
+            </div>
+
+            <div class="otp-resend-row">
+              <span id="otpCountdownText">Resend OTP in <strong id="otpTimerSeconds">30</strong>s</span>
+              <button type="button" class="btn-resend-otp" id="resendOtpBtn" disabled>
+                <span>🔁 Resend Code</span>
+              </button>
+            </div>
+
+            <div id="otpLiveBadge" class="otp-live-badge" style="display: none;">
+              <span>📲</span>
+              <div>
+                <strong>SMS Dispatch Code:</strong> <span id="otpLiveCode" style="font-weight:900; letter-spacing:2px; color:#064e3b;">------</span>
+              </div>
+            </div>
+
+            <button type="submit" class="auth-btn-primary" id="verifyOtpBtn" style="margin-top: 18px;">
+              <span id="verifyBtnText">✅ Verify & Enter KisanSetu / प्रवेश करें</span>
+            </button>
+          </form>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--text-muted);">
+            <span>🛡️</span>
+            <span>Verified Kisan Identity Protection</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-bottom">
+      <p>© 2026 KisanSetu Platform • Built for Indian Farmers with e-NAM Integration</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api/client.js"></script>
+  <script src="js/api/auth.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/login.js"></script>
+</body>
+
+</html>

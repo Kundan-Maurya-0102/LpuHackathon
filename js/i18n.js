@@ -678,9 +678,221 @@ const TRANSLATIONS = {
     mapLegendFarmer: "আপনার খামার",
     mapLegendMandi: "মান্ডি অবস্থান",
     getDirections: "🚗 গুগল ম্যাপে পথ দেখুন",
-    voiceAssistantPrompt: "নমস্কার কৃষক ভাই! দর শুনতে স্পিকার বোতাম টিপুন।"
+    voiceAssistantPrompt: "নমস্কার কৃষক ভাই! দর শুনতে স্পিকার বোতাম টিপুন।",
+    navHome: "🏠 হোম",
+    navComparison: "📊 মান্ডি তুলনা",
+    navSell: "💰 বিক্রি ও জে-ফর্ম",
+    navMap: "🗺️ লাইভ মানচিত্র",
+    navLogin: "👨‍🌾 কৃষক প্রবেশ",
+    navLogout: "লগআউট",
+    sellPageTitle: "🌾 ফসল বিক্রি ও ডিজিটাল জে-ফর্ম",
+    sellPageSub: "সরাসরি মান্ডিতে ফসল নথিভুক্ত করুন এবং ই-নাম ডিজিটাল জে-ফর্ম তৈরি করুন",
+    comparisonPageTitle: "📊 মান্ডি দর তুলনা ও গাড়িভাড়া ক্যালকুলেটর",
+    comparisonPageSub: "আশেপাশের সমস্ত APMC মান্ডির দর তুলনা করুন এবং সেরা মুনাফা খুঁজুন",
+    mapPageTitle: "🗺️ লাইভ মান্ডি মানচিত্র ও জিপিএস পথ",
+    mapPageSub: "আপনার খামার থেকে সমস্ত মান্ডির দূরত্ব ও তাজা দর দেখুন",
+    loginPageTitle: "🔐 কৃষক মোবাইল OTP লগইন",
+    loginPageSub: "আপনার মোবাইল নম্বরে ৬ সংখ্যার ওটিপি পেয়ে নিরাপদে প্রবেশ করুন"
   }
 };
+
+// Add multi-page navigation keys to other languages
+const extraTranslations = {
+  en: {
+    navHome: "🏠 Home",
+    navComparison: "📊 Mandi Rates",
+    navSell: "💰 Sell & J-Form",
+    navMap: "🗺️ Live Map",
+    navLogin: "👨‍🌾 Farmer Login",
+    navLogout: "Logout",
+    sellPageTitle: "🌾 Sell Produce & Digital J-Form Receipts",
+    sellPageSub: "Directly register crop lots and generate official e-NAM Digital J-Forms with QR verification",
+    comparisonPageTitle: "📊 Mandi Rate Comparison & Smart Transport Calculator",
+    comparisonPageSub: "Compare APMC mandi prices and maximize your take-home farm earnings",
+    mapPageTitle: "🗺️ Live Mandi Map & GPS Navigation Route",
+    mapPageSub: "Real-time interactive map showing your farm location and all regional APMC mandi rates",
+    loginPageTitle: "🔐 Farmer OTP Login Portal",
+    loginPageSub: "Enter your mobile number to receive a secure 6-digit OTP verification code",
+    quickNavTitle: "🚀 Quick Navigation & Farmer Services",
+    featureCompTitle: "APMC Rate Comparison",
+    featureCompDesc: "Compare modal rates across all regional mandis within 200 km.",
+    featureSellTitle: "Sell Crop & J-Form",
+    featureSellDesc: "Generate verified digital J-Form receipts with transparent deductions.",
+    featureMapTitle: "GPS Mandi Navigation",
+    featureMapDesc: "Interactive map with live distance, travel time & Google Maps routes.",
+    lotDetails: "📦 Crop Lot Details",
+    cropSold: "Selected Crop",
+    quantityLabel: "Harvest Quantity",
+    qualityGrade: "Crop Grade / Quality",
+    destMandi: "Destination APMC Mandi",
+    grossAmount: "Gross Sale Amount",
+    cessDeduction: "APMC Mandi Cess (1.5%)",
+    loadingDeduction: "Weighing & Loading Charges",
+    netToBank: "Net In-Hand Payable to Farmer",
+    generateJFormBtn: "📄 Generate Verified Digital J-Form",
+    officialJFormHeading: "🌾 Digital J-Form (e-NAM Certified Sales Receipt)",
+    jFormSub: "Government of India • Ministry of Agriculture & Farmers Welfare",
+    jFormNumber: "J-Form Certificate No.",
+    enamVerified: "🟢 e-NAM & APMC Verified",
+    printBtn: "🖨️ Print J-Form",
+    downloadBtn: "📥 Download Receipt",
+    recentSalesTitle: "📋 Recent Sales & J-Forms History",
+    filterRadius: "Mandi Search Radius"
+  },
+  hi: {
+    navHome: "🏠 मुख्य पृष्ठ",
+    navComparison: "📊 मंडी भाव तुलना",
+    navSell: "💰 फसल बिक्री व जे-फॉर्म",
+    navMap: "🗺️ लाइव नक्शा",
+    navLogin: "👨‍🌾 किसान प्रवेश",
+    navLogout: "लॉगआउट",
+    sellPageTitle: "🌾 फसल बिक्री व डिजिटल जे-फॉर्म रसीद",
+    sellPageSub: "अपनी फसल सीधे दर्ज करें और आधिकारिक ई-नाम प्रमाणित जे-फॉर्म रसीद प्राप्त करें",
+    comparisonPageTitle: "📊 मंडी भाव तुलना व वाहन भाड़ा कैलकुलेटर",
+    comparisonPageSub: "सभी नजदीकी मंडियों के भाव की तुलना करें और सबसे अधिक मुनाफा पाएं",
+    mapPageTitle: "🗺️ लाइव मंडी नक्शा व जीपीएस रास्ता",
+    mapPageSub: "अपने खेत से सभी APMC मंडियों की दूरी और ताज़ा भाव देखें",
+    loginPageTitle: "🔐 किसान मोबाइल ओटीपी लॉगिन",
+    loginPageSub: "अपना मोबाइल नंबर दर्ज करें और 6 अंकों के ओटीपी से सुरक्षित प्रवेश करें",
+    quickNavTitle: "🚀 त्वरित सेवाएं एवं सुविधाएं",
+    featureCompTitle: "मंडी भाव तुलना",
+    featureCompDesc: "200 किमी के दायरे में सभी मंडियों के भाव और मुनाफे की तुलना करें।",
+    featureSellTitle: "फसल बेचें व जे-फॉर्म",
+    featureSellDesc: "सत्यापित डिजिटल जे-फॉर्म रसीद बनाएं और तुरंत डाउनलोड करें।",
+    featureMapTitle: "जीपीएस मंडी नक्शा",
+    featureMapDesc: "लाइव दूरी, समय और गूगल मैप्स सीधे रास्ते के साथ नेविगेशन।",
+    lotDetails: "📦 फसल लॉट विवरण",
+    cropSold: "बेची जाने वाली फसल",
+    quantityLabel: "कुल मात्रा",
+    qualityGrade: "फसल की गुणवत्ता / ग्रेड",
+    destMandi: "लक्षित APMC मंडी",
+    grossAmount: "कुल बिक्री राशि",
+    cessDeduction: "मंडी टैक्स / सेस (1.5%)",
+    loadingDeduction: "तुलाई व लोडिंग खर्च",
+    netToBank: "किसान की शुद्ध खाते में राशि",
+    generateJFormBtn: "📄 प्रमाणित डिजिटल जे-फॉर्म बनाएं",
+    officialJFormHeading: "🌾 डिजिटल जे-फॉर्म (ई-नाम प्रमाणित बिक्री रसीद)",
+    jFormSub: "भारत सरकार • कृषि एवं किसान कल्याण मंत्रालय",
+    jFormNumber: "जे-फॉर्म प्रमाण पत्र सं.",
+    enamVerified: "🟢 ई-नाम व APMC द्वारा प्रमाणित",
+    printBtn: "🖨️ जे-फॉर्म प्रिंट करें",
+    downloadBtn: "📥 रसीद डाउनलोड करें",
+    recentSalesTitle: "📋 हालिया फसल बिक्री व जे-फॉर्म इतिहास",
+    filterRadius: "मंडी खोज का दायरा"
+  },
+  pa: {
+    navHome: "🏠 ਮੁੱਖ ਪੰਨਾ",
+    navComparison: "📊 ਮੰਡੀ ਭਾਅ ਤੁਲਨਾ",
+    navSell: "💰 ਫ਼ਸਲ ਵੇਚੋ ਤੇ ਜੇ-ਫਾਰਮ",
+    navMap: "🗺️ ਲਾਈਵ ਨਕਸ਼ਾ",
+    navLogin: "👨‍🌾 ਕਿਸਾਨ ਲੌਗਇਨ",
+    navLogout: "ਲੌਗਆਉਟ",
+    sellPageTitle: "🌾 ਫ਼ਸਲ ਵੇਚੋ ਅਤੇ ਡਿਜੀਟਲ ਜੇ-ਫਾਰਮ ਰਸੀਦ",
+    sellPageSub: "ਫ਼ਸਲ ਦਰਜ ਕਰੋ ਅਤੇ ਸਰਕਾਰੀ e-NAM ਪ੍ਰਮਾਣਿਤ ਜੇ-ਫਾਰਮ ਪ੍ਰਾਪਤ ਕਰੋ",
+    comparisonPageTitle: "📊 ਮੰਡੀ ਭਾਅ ਤੁਲਨਾ ਅਤੇ ਕਿਰਾਇਆ ਕੈਲਕੁਲੇਟਰ",
+    comparisonPageSub: "ਨੇੜਲੀਆਂ ਮੰਡੀਆਂ ਦੇ ਭਾਅ ਮਿਲਾਓ ਅਤੇ ਸਭ ਤੋਂ ਵੱਧ ਮੁਨਾਫ਼ਾ ਕਮਾਓ",
+    mapPageTitle: "🗺️ ਲਾਈਵ ਮੰਡੀ ਨਕਸ਼ਾ ਅਤੇ ਰਸਤਾ",
+    mapPageSub: "ਆਪਣੇ ਖੇਤ ਤੋਂ ਸਾਰੀਆਂ ਮੰਡੀਆਂ ਦੀ ਦੂਰੀ ਅਤੇ ਤਾਜ਼ਾ ਰੇਟ ਦੇਖੋ",
+    loginPageTitle: "🔐 ਕਿਸਾਨ OTP ਲੌਗਇਨ",
+    loginPageSub: "ਆਪਣਾ ਮੋਬਾਈਲ ਨੰਬਰ ਭਰ ਕੇ 6 ਅੰਕਾਂ ਦੇ OTP ਨਾਲ ਸੁਰੱਖਿਅਤ ਲੌਗਇਨ ਕਰੋ",
+    quickNavTitle: "🚀 ਕਿਸਾਨ ਸੇਵਾਵਾਂ",
+    featureCompTitle: "ਮੰਡੀ ਭਾਅ ਤੁਲਨਾ",
+    featureCompDesc: "ਨੇੜਲੀਆਂ ਮੰਡੀਆਂ ਦੇ ਭਾਅ ਅਤੇ ਖਰਚਿਆਂ ਦੀ ਤੁਲਨਾ ਕਰੋ।",
+    featureSellTitle: "ਫ਼ਸਲ ਵੇਚੋ ਤੇ ਜੇ-ਫਾਰਮ",
+    featureSellDesc: "ਡਿਜੀਟਲ ਜੇ-ਫਾਰਮ ਰਸੀਦ ਤਿਆਰ ਕਰੋ ਅਤੇ ਡਾਊਨਲੋਡ ਕਰੋ।",
+    featureMapTitle: "GPS ਮੰਡੀ ਰਸਤਾ",
+    featureMapDesc: "ਲਾਈਵ ਦੂਰੀ, ਸਮਾਂ ਅਤੇ ਗੂਗਲ ਮੈਪਸ ਰਸਤਾ।",
+    lotDetails: "📦 ਫ਼ਸਲ ਦਾ ਵੇਰਵਾ",
+    cropSold: "ਫ਼ਸਲ ਦੀ ਚੋਣ",
+    quantityLabel: "ਕੁੱਲ ਮਾਤਰਾ",
+    qualityGrade: "ਗੁਣਵੱਤਾ / ਗ੍ਰੇਡ",
+    destMandi: "ਮੰਡੀ ਦੀ ਚੋਣ",
+    grossAmount: "ਕੁੱਲ ਵਿਕਰੀ ਰਕਮ",
+    cessDeduction: "ਮੰਡੀ ਫੀਸ / ਸੈੱਸ (1.5%)",
+    loadingDeduction: "ਤੁਲਾਈ ਅਤੇ ਲੋਡਿੰਗ ਖਰਚਾ",
+    netToBank: "ਕਿਸਾਨ ਦੇ ਖਾਤੇ ਵਿੱਚ ਸ਼ੁੱਧ ਰਕਮ",
+    generateJFormBtn: "📄 ਡਿਜੀਟਲ ਜੇ-ਫਾਰਮ ਬਣਾਓ",
+    officialJFormHeading: "🌾 ਡਿਜੀਟਲ ਜੇ-ਫਾਰਮ (ਪ੍ਰਮਾਣਿਤ ਰਸੀਦ)",
+    jFormSub: "ਭਾਰਤ ਸਰਕਾਰ • ਖੇਤੀਬਾੜੀ ਅਤੇ ਕਿਸਾਨ ਭਲਾਈ ਮੰਤਰਾਲਾ",
+    jFormNumber: "ਜੇ-ਫਾਰਮ ਨੰਬਰ",
+    enamVerified: "🟢 e-NAM ਪ੍ਰਮਾਣਿਤ",
+    printBtn: "🖨️ ਪ੍ਰਿੰਟ ਕਰੋ",
+    downloadBtn: "📥 ਡਾਊਨਲੋਡ ਕਰੋ",
+    recentSalesTitle: "📋 ਪਿਛਲੀ ਫ਼ਸਲ ਵਿਕਰੀ ਰਿਕਾਰਡ",
+    filterRadius: "ਮੰਡੀ ਖੋਜ ਦਾ ਘੇਰਾ"
+  },
+  mr: {
+    navHome: "🏠 मुख्य पृष्ठ",
+    navComparison: "📊 बाजार भाव तुलना",
+    navSell: "💰 पीक विक्री व जे-फॉर्म",
+    navMap: "🗺️ थेट नकाशा",
+    navLogin: "👨‍🌾 शेतकरी लॉगिन",
+    navLogout: "लॉगआउट",
+    sellPageTitle: "🌾 पीक विक्री व डिजिटल जे-फॉर्म",
+    sellPageSub: "थेट बाजारात पीक नोंदवा आणि ई-नाम प्रमाणित डिजिटल जे-फॉर्म मिळवा",
+    comparisonPageTitle: "📊 बाजार भाव तुलना व वाहतूक खर्च",
+    comparisonPageSub: "सर्व बाजार समित्यांचे भाव तपासा आणि जास्तीत जास्त नफा मिळवा",
+    mapPageTitle: "🗺️ थेट बाजार समिती नकाशा व मार्ग",
+    mapPageSub: "आपल्या शेतापासून सर्व बाजारपेठांचे अंतर व दर तपासा",
+    loginPageTitle: "🔐 शेतकरी ओटीपी लॉगिन",
+    loginPageSub: "आपला मोबाईल क्रमांक टाका आणि ६ अंकी ओटीपीने सुरक्षित लॉगिन करा"
+  },
+  gu: {
+    navHome: "🏠 હોમ પેજ",
+    navComparison: "📊 યાર્ડ ભાવ સરખામણી",
+    navSell: "💰 પાક વેચાણ અને જે-ફોર્મ",
+    navMap: "🗺️ લાઇવ નકશો",
+    navLogin: "👨‍🌾 ખેડૂત લોગિન",
+    navLogout: "લૉગઆઉટ",
+    sellPageTitle: "🌾 પાક વેચાણ અને ડિજિટલ જે-ફોર્મ",
+    sellPageSub: "માર્કેટ યાર્ડમાં પાક નોંધણી કરો અને ડિજિટલ જે-ફોર્મ મેળવો",
+    comparisonPageTitle: "📊 માર્કેટ યાર્ડ ભાવ સરખામણી",
+    comparisonPageSub: "નજીકના તમામ યાર્ડના ભાવ સરખાવો અને મહત્તમ નફો મેળવો",
+    mapPageTitle: "🗺️ લાઇવ યાર્ડ નકશો અને માર્ગ",
+    mapPageSub: "તમારા ખેતરથી તમામ યાર્ડનું અંતર અને તાજા ભાવ જુઓ",
+    loginPageTitle: "🔐 ખેડૂત ઓટીપી પ્રવેશ",
+    loginPageSub: "મોબાઇલ નંબર દાખલ કરી 6 અંકના ઓટીપીથી સુરક્ષિત લોગિન કરો"
+  },
+  te: {
+    navHome: "🏠 హోమ్",
+    navComparison: "📊 మార్కెట్ ధరలు",
+    navSell: "💰 పంట అమ్మకం & J-ఫారం",
+    navMap: "🗺️ లైవ్ మ్యాప్",
+    navLogin: "👨‍🌾 రైతు లాగిన్",
+    navLogout: "లాగౌట్",
+    sellPageTitle: "🌾 పంట అమ్మకం & డిజిటల్ J-ఫారం",
+    sellPageSub: "పంట వివరాలు నమోదు చేసి అధికారిక e-NAM J-ఫారం రశీదు పొందండి",
+    comparisonPageTitle: "📊 మార్కెట్ ధరల పోలిక & లాభాల కాలిక్యులేటర్",
+    comparisonPageSub: "అన్ని మార్కెట్ల ధరలను పోల్చి గరిష్ట లాభం పొందండి",
+    mapPageTitle: "🗺️ లైవ్ మార్కెట్ మ్యాప్ & మార్గం",
+    mapPageSub: "మీ పొలం నుండి అన్ని మార్కెట్ల దూరం మరియు తాజా ధరలు చూడండి",
+    loginPageTitle: "🔐 రైతు మొబైల్ OTP లాగిన్",
+    loginPageSub: "మీ మొబైల్ నంబరుతో 6 అంకెల OTP ద్వారా సురక్షితంగా ప్రవేశించండి"
+  },
+  ta: {
+    navHome: "🏠 முகப்பு",
+    navComparison: "📊 மண்டி விலை ஒப்பீடு",
+    navSell: "💰 பயிர் விற்பனை & J-படிவம்",
+    navMap: "🗺️ நேரலை வரைபடம்",
+    navLogin: "👨‍🌾 விவசாயி உள்நுழைவு",
+    navLogout: "வெளியேறு",
+    sellPageTitle: "🌾 பயிர் விற்பனை & டிஜிட்டல் J-படிவம்",
+    sellPageSub: "பயிரை பதிவு செய்து e-NAM டிஜிட்டல் J-படிவ ரசீது பெறுங்கள்",
+    comparisonPageTitle: "📊 மண்டி விலை ஒப்பீடு & போக்குவரத்து கால்குலேட்டர்",
+    comparisonPageSub: "அனைத்து மண்டிகளின் விலைகளை ஒப்பிட்டு அதிக லாபம் பெறுங்கள்",
+    mapPageTitle: "🗺️ நேரலை மண்டி வரைபடம் & வழி",
+    mapPageSub: "உங்கள் நிலத்திலிருந்து மண்டிகளுக்கான தூரம் மற்றும் விலைகளை பாருங்கள்",
+    loginPageTitle: "🔐 விவசாயி OTP உள்நுழைவு",
+    loginPageSub: "உங்கள் கைபேசி எண்ணை உள்ளிட்டு 6 இலக்க OTP மூலம் நுழையுங்கள்"
+  }
+};
+
+// Merge extra translations
+Object.keys(extraTranslations).forEach(lang => {
+  if (TRANSLATIONS[lang]) {
+    Object.assign(TRANSLATIONS[lang], extraTranslations[lang]);
+  }
+});
 
 class I18nManager {
   constructor() {
@@ -692,8 +904,18 @@ class I18nManager {
     if (TRANSLATIONS[langCode]) {
       this.currentLang = langCode;
       localStorage.setItem("kisansetu_lang", langCode);
+      document.documentElement.lang = langCode;
+
+      // Update all language select dropdowns on the page
+      document.querySelectorAll(".header-lang-select, #headerLangSelect").forEach(sel => {
+        sel.value = langCode;
+      });
+
       this.applyTranslations();
       this.notifyListeners();
+
+      // Dispatch global window event for dynamic components to re-render immediately
+      window.dispatchEvent(new CustomEvent("kisansetu:languageChanged", { detail: { lang: langCode } }));
     }
   }
 
@@ -723,6 +945,7 @@ class I18nManager {
   applyTranslations() {
     const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS["en"];
     
+    // 1. Text & HTML elements
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       if (dict[key]) {
@@ -734,6 +957,7 @@ class I18nManager {
       }
     });
 
+    // 2. Input Placeholders
     document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
       const key = el.getAttribute("data-i18n-placeholder");
       if (dict[key]) {
@@ -741,6 +965,23 @@ class I18nManager {
       }
     });
 
+    // 3. Titles and tooltips
+    document.querySelectorAll("[data-i18n-title]").forEach(el => {
+      const key = el.getAttribute("data-i18n-title");
+      if (dict[key]) {
+        el.title = dict[key];
+      }
+    });
+
+    // 4. Aria labels
+    document.querySelectorAll("[data-i18n-aria]").forEach(el => {
+      const key = el.getAttribute("data-i18n-aria");
+      if (dict[key]) {
+        el.setAttribute("aria-label", dict[key]);
+      }
+    });
+
+    // 5. Active language indicators
     document.querySelectorAll(".lang-card, .lang-select-option").forEach(el => {
       const lang = el.getAttribute("data-lang");
       if (lang === this.currentLang) {
@@ -750,8 +991,13 @@ class I18nManager {
       }
     });
 
+    document.querySelectorAll(".header-lang-select, #headerLangSelect").forEach(sel => {
+      sel.value = this.currentLang;
+    });
+
     document.documentElement.lang = this.currentLang;
   }
 }
 
 window.i18n = new I18nManager();
+

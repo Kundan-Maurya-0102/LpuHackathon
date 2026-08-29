@@ -6,24 +6,58 @@ class ProfitCalculator {
     this.selectedCropId = "wheat";
   }
 
-  calculateMandiProfit(cropId, mandiId, vehicleId, quantityQtl) {
-    const crop = AGRI_DATA.crops.find(c => c.id === cropId) || AGRI_DATA.crops[0];
-    const mandi = AGRI_DATA.mandis.find(m => m.id === mandiId) || AGRI_DATA.mandis[0];
-    const vehicle = AGRI_DATA.vehicles.find(v => v.id === vehicleId) || AGRI_DATA.vehicles[0];
+  getMandisList() {
+    if (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.mandis) && window.AGRI_DATA.mandis.length > 0) {
+      return window.AGRI_DATA.mandis;
+    }
+    return [
+      {
+        id: "khanna",
+        name: "Khanna APMC Grain Market",
+        nameHi: "खन्ना अनाज मंडी",
+        namePa: "ਖੰਨਾ ਅਨਾਜ ਮੰਡੀ",
+        subText: "Asia's Largest Grain Market",
+        state: "Punjab",
+        district: "Ludhiana",
+        lat: 30.7072,
+        lng: 76.2167,
+        distanceKm: 28,
+        travelTime: "45 min",
+        rating: 4.9,
+        eNamEnabled: true,
+        facilities: ["Electronic Weighbridge", "Covered Sheds", "Farmer Rest House"],
+        prices: {
+          wheat: { min: 2320, max: 2460, modal: 2410, arrivals: "Heavy (3,400 Qtl)" },
+          paddy: { min: 3600, max: 3950, modal: 3820, arrivals: "Moderate (1,800 Qtl)" },
+          mustard: { min: 5350, max: 5600, modal: 5500, arrivals: "Low (450 Qtl)" }
+        }
+      }
+    ];
+  }
 
-    const priceInfo = mandi.prices[cropId] || { min: 2000, max: 2300, modal: 2150 };
-    const modalPrice = priceInfo.modal;
-    const minPrice = priceInfo.min;
-    const maxPrice = priceInfo.max;
+  calculateMandiProfit(cropId, mandiId, vehicleId, quantityQtl = 30) {
+    const crops = (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.crops)) ? window.AGRI_DATA.crops : [];
+    const vehicles = (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.vehicles)) ? window.AGRI_DATA.vehicles : [];
+    const mandis = this.getMandisList();
+
+    const crop = crops.find(c => c.id === cropId) || crops[0] || { id: cropId, name: "Wheat", nameHi: "गेहूं", unit: "Quintal" };
+    const mandi = mandis.find(m => m.id === mandiId) || mandis[0];
+    const vehicle = vehicles.find(v => v.id === vehicleId) || vehicles[0] || { id: "tractor", name: "Tractor Trolley", ratePerKm: 22, baseLoadingFee: 200, capacityQtl: 40 };
+
+    const prices = (mandi && mandi.prices) ? mandi.prices : {};
+    const priceInfo = prices[cropId] || { min: 2150, max: 2400, modal: 2300 };
+    const modalPrice = priceInfo.modal || 2300;
+    const minPrice = priceInfo.min || Math.round(modalPrice * 0.95);
+    const maxPrice = priceInfo.max || Math.round(modalPrice * 1.05);
 
     const distanceKm = mandi.distanceKm || 15;
-    const transportCost = Math.round((distanceKm * vehicle.ratePerKm) + vehicle.baseLoadingFee);
-    const transportPerQtl = Math.round(transportCost / quantityQtl);
-    const mandiCessFee = Math.round(quantityQtl * 15);
-    const grossRevenue = Math.round(quantityQtl * modalPrice);
+    const transportCost = Math.round((distanceKm * (vehicle.ratePerKm || 20)) + (vehicle.baseLoadingFee || 150));
+    const transportPerQtl = Math.round(transportCost / (quantityQtl || 1));
+    const mandiCessFee = Math.round((quantityQtl || 1) * 15);
+    const grossRevenue = Math.round((quantityQtl || 1) * modalPrice);
     const totalDeductions = transportCost + mandiCessFee;
     const netProfit = grossRevenue - totalDeductions;
-    const netPricePerQtl = Math.round(netProfit / quantityQtl);
+    const netPricePerQtl = Math.round(netProfit / (quantityQtl || 1));
 
     return {
       crop,
@@ -45,18 +79,32 @@ class ProfitCalculator {
   }
 
   getBestMandiRecommendation(cropId, vehicleId, quantityQtl = 30) {
-    const allEvaluations = AGRI_DATA.mandis.map(m => {
+    const mandis = this.getMandisList();
+    const allEvaluations = mandis.map(m => {
       return this.calculateMandiProfit(cropId, m.id, vehicleId, quantityQtl);
     });
+
+    if (allEvaluations.length === 0) {
+      const fallback = this.calculateMandiProfit(cropId, "khanna", vehicleId, quantityQtl);
+      return {
+        bestMandi: fallback,
+        nearestMandi: fallback,
+        extraProfit: 0,
+        isDifferentFromNearest: false,
+        allEvaluations: [fallback]
+      };
+    }
 
     allEvaluations.sort((a, b) => b.netProfit - a.netProfit);
     const bestMandi = allEvaluations[0];
     
     const sortedByDistance = [...allEvaluations].sort((a, b) => a.distanceKm - b.distanceKm);
-    const nearestMandi = sortedByDistance[0];
+    const nearestMandi = sortedByDistance[0] || bestMandi;
 
-    const extraProfit = bestMandi.netProfit - nearestMandi.netProfit;
-    const isDifferentFromNearest = bestMandi.mandi.id !== nearestMandi.mandi.id;
+    const extraProfit = (bestMandi && nearestMandi) ? (bestMandi.netProfit - nearestMandi.netProfit) : 0;
+    const isDifferentFromNearest = (bestMandi && nearestMandi && bestMandi.mandi && nearestMandi.mandi) 
+      ? (bestMandi.mandi.id !== nearestMandi.mandi.id) 
+      : false;
 
     return {
       bestMandi,

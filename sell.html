@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sell Produce & Digital J-Form Receipt - KisanSetu</title>
+  <meta name="description"
+    content="Register crop lots, generate certified e-NAM Digital J-Forms, calculate transparent APMC mandi deductions and download official receipts.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+
+<body>
+
+  <div class="top-ticker-bar">
+    <div class="ticker-left">
+      <div class="pulse-dot"></div>
+      <div class="ticker-marquee">
+        <span>🌾 <strong>e-NAM Digital J-Form:</strong> Official government certified sales receipts with QR code verification</span>
+      </div>
+    </div>
+    <div class="ticker-right">
+      <span id="liveSyncTimestamp" class="sync-text">Live e-NAM Synced Today</span>
+      <select id="headerLangSelect" class="header-lang-select" aria-label="Change Language">
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+        <option value="en">🌐 English</option>
+        <option value="mr">🇮🇳 मराठी</option>
+        <option value="gu">🇮🇳 ગુજરાતી</option>
+        <option value="te">🇮🇳 తెలుగు</option>
+        <option value="ta">🇮🇳 தமிழ்</option>
+        <option value="bn">🇮🇳 বাংলা</option>
+      </select>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
+      <div class="brand-icon-wrap">
+        <span>🚜</span>
+      </div>
+      <div class="brand-text">
+        <h1>KisanSetu</h1>
+        <span class="brand-tagline" data-i18n="tagline">Smart Mandi Price & Farmer Profit Discovery</span>
+      </div>
+    </div>
+
+    <nav class="nav-links-wrap">
+      <a href="index.html" class="nav-link" data-page="home" data-i18n="navHome">🏠 Home</a>
+      <a href="comparison.html" class="nav-link" data-page="comparison" data-i18n="navComparison">📊 Mandi Rates</a>
+      <a href="sell.html" class="nav-link" data-page="sell" data-i18n="navSell">💰 Sell & J-Form</a>
+      <a href="map.html" class="nav-link" data-page="map" data-i18n="navMap">🗺️ Live Map</a>
+    </nav>
+
+    <div class="nav-actions">
+      <div class="nav-center-location" id="navLocationButton" title="Click to update GPS location">
+        <span class="loc-icon">📍</span>
+        <span class="loc-text" id="currentLocationDisplay">Phagwara / Jalandhar, Punjab</span>
+      </div>
+
+      <button class="nav-btn" id="notificationBellBtn" title="Price Alerts">
+        <span>🔔</span>
+      </button>
+      <button class="nav-btn" id="themeToggleBtn" title="Toggle Day/Night Mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <button class="nav-btn nav-btn-user" id="userProfileBtn">
+        <span>👨‍🌾</span>
+        <span id="userNameDisplay" data-i18n="navLogin">Farmer Login</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-container">
+
+    <div class="page-title-banner" style="margin: 20px 0 24px 0;">
+      <h2 data-i18n="sellPageTitle">🌾 Sell Produce & Digital J-Form Receipts</h2>
+      <p data-i18n="sellPageSub">Directly register crop lots and generate official e-NAM Digital J-Forms with QR verification</p>
+    </div>
+
+    <div class="sell-page-grid">
+      <!-- LEFT: Sell Crop Registration Form -->
+      <div class="sell-form-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+          <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main);" data-i18n="lotDetails">📦 Crop Lot Details</h3>
+          <span style="font-size: 11px; color: #15803d; font-weight: 700; background: #dcfce7; padding: 3px 8px; border-radius: 4px;">Verified APMC Gate</span>
+        </div>
+
+        <form id="sellProduceForm">
+          <div class="sell-form-group">
+            <label for="sellFarmerName" data-i18n="nameLabel">Farmer Full Name</label>
+            <input type="text" id="sellFarmerName" class="sell-input" value="Gurpreet Singh" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="sell-form-group">
+              <label for="sellCropSelect" data-i18n="cropSold">Selected Crop</label>
+              <select id="sellCropSelect" class="sell-input">
+                <option value="wheat">🌾 Wheat (गेहूं)</option>
+                <option value="paddy">🌾 Basmati Paddy (धान)</option>
+                <option value="mustard">🌼 Mustard (सरसों)</option>
+                <option value="potato">🥔 Potato (आलू)</option>
+                <option value="onion">🧅 Red Onion (प्याज)</option>
+                <option value="cotton">☁️ Cotton (कपास)</option>
+              </select>
+            </div>
+
+            <div class="sell-form-group">
+              <label for="sellQuantityInput" data-i18n="quantityLabel">Quantity (Quintals)</label>
+              <input type="number" id="sellQuantityInput" class="sell-input" value="40" min="1" max="10000" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="sell-form-group">
+              <label for="sellMandiSelect" data-i18n="destMandi">Destination APMC Mandi</label>
+              <select id="sellMandiSelect" class="sell-input">
+                <option value="khanna">Khanna APMC Grain Market</option>
+                <option value="phagwara">Phagwara APMC Grain Market</option>
+                <option value="jalandhar">Jalandhar City Mandi</option>
+                <option value="amritsar">Amritsar Bhagtanwala Mandi</option>
+                <option value="ludhiana">Ludhiana APMC Fruit & Grain</option>
+              </select>
+            </div>
+
+            <div class="sell-form-group">
+              <label for="sellGradeSelect" data-i18n="qualityGrade">Crop Grade / Quality</label>
+              <select id="sellGradeSelect" class="sell-input">
+                <option value="faq_sharbati">Grade-A (FAQ Sharbati / Premium)</option>
+                <option value="faq_standard">Grade-B (FAQ Standard Market)</option>
+                <option value="industrial">Grade-C (Processing Grade)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="sell-form-group">
+              <label for="sellVehicleSelect" data-i18n="transportLabel">Transport Vehicle</label>
+              <select id="sellVehicleSelect" class="sell-input">
+                <option value="tractor">🚜 Tractor Trolley (40 Qtl)</option>
+                <option value="pickup">🛻 Bolero Pickup (25 Qtl)</option>
+                <option value="truck">🚚 10-Wheeler Truck (160 Qtl)</option>
+                <option value="auto">🛺 3-Wheeler Auto (12 Qtl)</option>
+              </select>
+            </div>
+
+            <div class="sell-form-group">
+              <label for="sellArhtiyaInput">Commission Agent / Arhtiya</label>
+              <input type="text" id="sellArhtiyaInput" class="sell-input" value="M/s Punjab Kisan Traders (Lic #8421)">
+            </div>
+          </div>
+
+          <button type="submit" class="auth-btn-primary" style="margin-top: 10px; width: 100%;">
+            <span data-i18n="generateJFormBtn">📄 Generate Official Digital J-Form</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- RIGHT: J-Form Preview Card -->
+      <div>
+        <div class="jform-preview-card" id="jformPrintArea">
+          <div class="jform-gov-header">
+            <div class="gov-emblem">🏛️</div>
+            <h3 data-i18n="officialJFormHeading">Digital J-Form (e-NAM Certified Sales Receipt)</h3>
+            <p data-i18n="jFormSub">Government of India • Ministry of Agriculture & Farmers Welfare • e-NAM APMC Act</p>
+          </div>
+
+          <div class="jform-meta-row">
+            <div>
+              <span style="color:#64748b;">Certificate No:</span>
+              <strong id="jfCertNo">JF-PB-2026-8941</strong>
+            </div>
+            <div>
+              <span style="color:#64748b;">Date:</span>
+              <strong id="jfDate">30 Aug 2026</strong>
+            </div>
+          </div>
+
+          <div class="jform-meta-row">
+            <div>
+              <span style="color:#64748b;">Farmer:</span>
+              <strong id="jfFarmerName">Gurpreet Singh</strong> (<span id="jfFarmerId">PB-2026-8941</span>)
+            </div>
+            <div>
+              <span style="color:#64748b;">Mandi:</span>
+              <strong id="jfMandiName">Khanna APMC Grain Market</strong>
+            </div>
+          </div>
+
+          <table class="jform-table">
+            <thead>
+              <tr>
+                <th>Crop Commodity</th>
+                <th>Quantity</th>
+                <th>Modal Rate</th>
+                <th>Gross Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="jfCropName">🌾 Wheat (FAQ Sharbati)</td>
+                <td id="jfQuantity">40.0 Quintals</td>
+                <td id="jfRate">₹2,410 / Qtl</td>
+                <td id="jfGrossAmount" style="font-weight: 700;">₹96,400</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="font-size: 13px; margin: 12px 0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; color: #64748b;">
+              <span>APMC Mandi Cess Fee (1.5%):</span>
+              <span id="jfMandiCess" style="color: #dc2626;">- ₹1,446</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; color: #64748b;">
+              <span>Weighing & Electronic Loading:</span>
+              <span id="jfLoadingFee" style="color: #dc2626;">- ₹350</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #64748b;">
+              <span>Vehicle Fuel & Freight Deduction:</span>
+              <span id="jfTransportFee" style="color: #dc2626;">- ₹816</span>
+            </div>
+          </div>
+
+          <div class="jform-total-banner">
+            <div>
+              <div style="font-size: 12px; font-weight: 700; color: #15803d; text-transform: uppercase;" data-i18n="netToBank">Net Direct Bank Transfer Amount</div>
+              <div style="font-size: 11px; color: #64748b;">Credited directly into Farmer Bank Account</div>
+            </div>
+            <div class="amt" id="jfNetPayable">₹93,788</div>
+          </div>
+
+          <div class="jform-footer-seal">
+            <div class="apmc-seal-stamp">
+              ✓ e-NAM APMC SEAL<br>KHANNA GRAIN BOARD
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 24px;">📱</div>
+              <div style="font-size: 10px; color: #64748b;">Scan QR to Verify on Agmarknet</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 18px;">
+          <button class="btn-action-primary" id="printJFormBtn" style="flex: 1;">
+            <span data-i18n="printBtn">🖨️ Print J-Form</span>
+          </button>
+          <button class="btn-action-secondary" id="downloadJFormBtn" style="flex: 1;">
+            <span data-i18n="downloadBtn">📥 Download J-Form (PDF)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent J-Forms History Section -->
+    <section class="section-container" style="margin-top: 40px;">
+      <div class="section-header-row">
+        <div>
+          <h3 data-i18n="recentSalesTitle">📋 Recent Sales & J-Forms History</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Verified digital J-Form transactions synchronized with Mandi e-Registry</p>
+        </div>
+      </div>
+
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); overflow-x: auto;">
+        <table class="jform-table" style="margin: 0; min-width: 650px;">
+          <thead>
+            <tr>
+              <th>J-Form ID</th>
+              <th>Date</th>
+              <th>Crop</th>
+              <th>Quantity</th>
+              <th>Mandi</th>
+              <th>Net Payout</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentJFormsTableBody">
+            <tr>
+              <td><strong>JF-PB-2026-8941</strong></td>
+              <td>29 Aug 2026</td>
+              <td>🌾 Basmati Paddy (1121)</td>
+              <td>35 Qtl</td>
+              <td>Khanna APMC</td>
+              <td style="color: #15803d; font-weight: 800;">₹1,33,700</td>
+              <td><span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">✓ Settled</span></td>
+            </tr>
+            <tr>
+              <td><strong>JF-PB-2026-7732</strong></td>
+              <td>14 Aug 2026</td>
+              <td>🌼 Mustard (Bold)</td>
+              <td>18 Qtl</td>
+              <td>Jalandhar Mandi</td>
+              <td style="color: #15803d; font-weight: 800;">₹97,200</td>
+              <td><span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">✓ Settled</span></td>
+            </tr>
+            <tr>
+              <td><strong>JF-PB-2026-5519</strong></td>
+              <td>28 Jul 2026</td>
+              <td>🥔 Potato (Table)</td>
+              <td>60 Qtl</td>
+              <td>Phagwara Mandi</td>
+              <td style="color: #15803d; font-weight: 800;">₹84,600</td>
+              <td><span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">✓ Settled</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Farmer Profile Modal -->
+  <div id="profileModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 data-i18n="profileTitle">Farmer Profile (किसान प्रोफाइल)</h3>
+        <button class="modal-close-btn" data-close="profileModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-header-banner">
+          <div class="prof-avatar">👨‍🌾</div>
+          <div class="prof-info">
+            <h4 id="profNameDisplay">Gurpreet Singh</h4>
+            <span class="prof-badge" id="profKisanId">Kisan ID: PB-2026-8941</span>
+          </div>
+        </div>
+
+        <div class="profile-details-grid">
+          <div class="prof-item"><span class="lbl">Location:</span><strong id="profAddressDisplay">📍 Khanna Kalan, Ludhiana, Punjab</strong></div>
+          <div class="prof-item"><span class="lbl">Mobile:</span><strong id="profPhoneDisplay">📞 +91 98765 43210</strong></div>
+          <div class="prof-item"><span class="lbl">Farm Land:</span><strong id="profLandDisplay">12 Acres (एकड़)</strong></div>
+          <div class="prof-item"><span class="lbl">Primary Mandi:</span><strong id="profMandiDisplay">Khanna APMC Grain Market</strong></div>
+          <div class="prof-item"><span class="lbl">Transport:</span><strong id="profVehicleDisplay">Tractor Trolley (40 Qtl)</strong></div>
+        </div>
+
+        <div class="modal-actions-row" style="margin-top:20px; display:flex; gap:10px;">
+          <button class="btn-action-primary" onclick="openEditProfileModal()" style="flex:1;">✏️ Edit Profile</button>
+          <button class="btn-action-secondary" onclick="logoutFarmer()" style="flex:1;">🚪 Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Edit Farmer Profile</h3>
+        <button class="modal-close-btn" data-close="editProfileModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="editProfileForm">
+          <div class="auth-form-group">
+            <label>Farmer Full Name</label>
+            <input type="text" id="editNameInput" class="auth-input-control" required>
+          </div>
+          <div class="auth-form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="editPhoneInput" class="auth-input-control" readonly disabled>
+          </div>
+          <div class="auth-form-group">
+            <label>State</label>
+            <select id="editStateSelect" class="auth-input-control">
+              <option value="Punjab">Punjab (ਪੰਜਾਬ)</option>
+              <option value="Haryana">Haryana (हरियाणा)</option>
+              <option value="Uttar Pradesh">Uttar Pradesh (उत्तर प्रदेश)</option>
+              <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश)</option>
+              <option value="Rajasthan">Rajasthan (राजस्थान)</option>
+              <option value="Gujarat">Gujarat (ગુજરાત)</option>
+              <option value="Maharashtra">Maharashtra (महाराष्ट्र)</option>
+            </select>
+          </div>
+          <div class="auth-form-group">
+            <label>District</label>
+            <input type="text" id="editDistrictInput" class="auth-input-control" required>
+          </div>
+          <div class="auth-form-group">
+            <label>Village / Locality</label>
+            <input type="text" id="editVillageInput" class="auth-input-control" required>
+          </div>
+          <div class="auth-form-group">
+            <label>Farm Land (Acres)</label>
+            <input type="number" step="0.5" id="editLandInput" class="auth-input-control" required>
+          </div>
+          <button type="submit" class="auth-btn-primary" style="margin-top:16px;">💾 Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-bottom">
+      <p>© 2026 KisanSetu Platform • Built for Indian Farmers with e-NAM Integration</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api/client.js"></script>
+  <script src="js/api/auth.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/sell.js"></script>
+</body>
+
+</html>

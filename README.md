@@ -3,8 +3,6 @@
 **Empowering Indian Farmers with Live Market Data and Digital Infrastructure.**
 Built for the 28 August Hackathon at LPU by Kundan, Rishi, and Akshith.
 
-![KisanSetu Hero](./images/logo.png) <!-- Add your logo here -->
-
 ## Overview
 KisanSetu is a comprehensive, full-stack platform designed specifically for Indian farmers. It bridges the information gap by providing real-time APMC Mandi prices, historical crop trends, digital sales receipts (J-Forms), and distance-based market recommendations, all wrapped in a localized, farmer-friendly interface.
 
@@ -18,20 +16,33 @@ KisanSetu is a comprehensive, full-stack platform designed specifically for Indi
 - **Mobile-First Design**: Optimized for mobile devices with an intuitive bottom navigation bar.
 
 ## 🏗️ Architecture
-KisanSetu has been upgraded from a static frontend prototype to a robust full-stack application:
-- **Frontend**: Vanilla HTML/CSS/JavaScript (No complex frameworks, ensuring extremely fast load times on slow rural networks). Uses Leaflet.js for maps and Chart.js for data visualization.
-- **Backend**: Node.js & Express.js REST API.
-- **Database**: MySQL database using `mysql2/promise` for robust data integrity and transactions.
+- **Frontend**: Vanilla HTML/CSS/JavaScript (Fast, lightweight, no build step needed). Uses Leaflet.js for maps and Chart.js for data visualization.
+- **Backend**: Python 3 & FastAPI REST API (`backend_python/`).
+- **Database**: SQLite with dynamic initialization and caching.
 - **Authentication**: Stateless JWT-based authentication with secure Bcrypt password hashing.
+
+## 🚀 Quick Start
+
+### 1. Start the Python Backend
+```bash
+cd backend_python
+pip install -r requirements.txt
+python run.py
+```
+Backend runs on `http://localhost:3000` (API Docs available at `http://localhost:3000/docs`).
+
+### 2. Start the Frontend
+Open `index.html` via a local server (e.g. VS Code Live Server, or Python HTTP server):
+```bash
+python -m http.server 8000
+```
+Open `http://localhost:8000` in your browser.
 
 ## 📚 Documentation
 For detailed technical documentation, please refer to the `docs/` directory:
 - [SETUP.md](./docs/SETUP.md): Instructions to run the project locally.
 - [API.md](./docs/API.md): Comprehensive documentation of backend API endpoints.
-- [DATABASE.md](./docs/DATABASE.md): Schema definitions and ERD details.
-
-## 🚀 Live Demo
-[Original Prototype Link](https://kundan-maurya-0102.github.io/LpuHackathon/)
+- [DATABASE.md](./docs/DATABASE.md): Schema definitions and database architecture.
 
 ## 🤝 Team
 - Kundan

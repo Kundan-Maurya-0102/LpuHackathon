@@ -4,15 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KisanSetu - Smart Mandi Price & Farmer Profit Discovery</title>
+  <title>Mandi Rate Comparison & Transport Profit Calculator - KisanSetu</title>
   <meta name="description"
-    content="Empowering Indian farmers with live APMC mandi prices, best mandi profit recommendation, transport cost estimation, interactive maps and price history.">
+    content="Compare live APMC mandi prices, calculate real vehicle transport costs and discover maximum take-home profit for your crops.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
@@ -31,7 +32,6 @@
         <span>🌼 <strong>Mustard (सरसों):</strong> Jalandhar Mandi ₹5,490/qtl (+₹75)</span>
         <span>🥔 <strong>Potato (आलू):</strong> Phagwara Mandi ₹1,450/qtl (-₹10)</span>
         <span>🧅 <strong>Red Onion (प्याज):</strong> Ludhiana Mandi ₹2,790/qtl (+₹140)</span>
-        <span>☁️ <strong>Cotton (कपास):</strong> Khanna Mandi ₹7,350/qtl (+₹60)</span>
       </div>
     </div>
     <div class="ticker-right">
@@ -50,7 +50,7 @@
   </div>
 
   <header class="navbar">
-    <div class="nav-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
       <div class="brand-icon-wrap">
         <span>🚜</span>
       </div>
@@ -61,7 +61,7 @@
     </div>
 
     <nav class="nav-links-wrap">
-      <a href="index.html" class="nav-link active" data-page="home" data-i18n="navHome">🏠 Home</a>
+      <a href="index.html" class="nav-link" data-page="home" data-i18n="navHome">🏠 Home</a>
       <a href="comparison.html" class="nav-link" data-page="comparison" data-i18n="navComparison">📊 Mandi Rates</a>
       <a href="sell.html" class="nav-link" data-page="sell" data-i18n="navSell">💰 Sell & J-Form</a>
       <a href="map.html" class="nav-link" data-page="map" data-i18n="navMap">🗺️ Live Map</a>
@@ -88,107 +88,177 @@
 
   <main class="app-container">
 
-    <!-- Hero Search Section -->
-    <section class="hero-search-section">
-      <div class="hero-header">
-        <h2 data-i18n="selectCropPrompt">Select Your Harvested Crop & Discover Maximum Mandi Profit</h2>
-        <p data-i18n="voiceAssistantPrompt">Search or speak crop name to compare APMC mandi rates and vehicle transport costs.</p>
+    <!-- Page Header Banner -->
+    <div class="page-title-banner" style="margin: 20px 0 24px 0;">
+      <h2 data-i18n="comparisonPageTitle">📊 Mandi Rate Comparison & Smart Transport Calculator</h2>
+      <p data-i18n="comparisonPageSub">Compare APMC mandi prices, select your transport vehicle, and maximize your take-home farm earnings</p>
+    </div>
+
+    <!-- Filter Bar -->
+    <section class="filter-controls-bar">
+      <div class="filter-control-item">
+        <label for="compCropSelect" style="font-weight: 700; font-size: 13px; color: var(--text-main); margin-bottom: 4px; display: block;">
+          🌾 <span data-i18n="selectCropPrompt">Select Crop</span>:
+        </label>
+        <select id="compCropSelect" class="filter-select-input">
+          <option value="wheat">🌾 Wheat (गेहूं / ਕਣਕ)</option>
+          <option value="paddy">🌾 Basmati Paddy (बासमती धान)</option>
+          <option value="mustard">🌼 Mustard (सरसों / ਸਰ੍ਹੋਂ)</option>
+          <option value="potato">🥔 Potato (आलू / ਆਲੂ)</option>
+          <option value="onion">🧅 Red Onion (लाल प्याज)</option>
+          <option value="cotton">☁️ Cotton (कपास / ਨਰਮਾ)</option>
+          <option value="maize">🌽 Maize / Corn (मक्का)</option>
+          <option value="chana">🧆 Desi Chana (चना)</option>
+        </select>
       </div>
 
-      <div class="search-bar-wrap">
-        <span style="font-size: 20px; color: #64748b; margin-right: 8px;">🔍</span>
-        <input type="text" id="cropSearchInput" class="search-input-field"
-          placeholder="Search crop (e.g. Wheat, Basmati, Potato, Mustard, Cotton)..."
-          data-i18n-placeholder="searchPlaceholder" autocomplete="off">
-        <button class="mic-voice-btn" id="voiceSearchBtn" title="Tap to speak crop name">
-          <span class="mic-icon">🎙️</span>
-        </button>
+      <div class="filter-control-item">
+        <label for="compQuantityInput" style="font-weight: 700; font-size: 13px; color: var(--text-main); margin-bottom: 4px; display: block;">
+          ⚖️ <span data-i18n="calcQuantityLabel">Harvest Quantity (Qtl)</span>:
+        </label>
+        <input type="number" id="compQuantityInput" class="filter-select-input" value="30" min="1" max="5000">
       </div>
 
-      <div class="category-pills-row">
-        <button class="cat-pill active" data-category="all" data-i18n="catAll">🌾 All Crops</button>
-        <button class="cat-pill" data-category="cereals" data-i18n="catCereals">🌾 Cereals</button>
-        <button class="cat-pill" data-category="pulses" data-i18n="catPulses">🧆 Pulses</button>
-        <button class="cat-pill" data-category="vegetables" data-i18n="catVegetables">🥔 Vegetables</button>
-        <button class="cat-pill" data-category="oilseeds" data-i18n="catOilseeds">🌼 Oilseeds</button>
-        <button class="cat-pill" data-category="cash_crops" data-i18n="catCashCrops">☁️ Cash Crops</button>
+      <div class="filter-control-item" style="flex-grow: 1;">
+        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; color: var(--text-main); margin-bottom: 4px;">
+          <span>📍 <span data-i18n="radiusLabel">Mandi Search Radius</span>:</span>
+          <span id="radiusVal" style="color: var(--primary-green);">100 km</span>
+        </div>
+        <input type="range" id="radiusSlider" min="10" max="200" step="5" value="100" class="radius-range-slider">
       </div>
     </section>
 
     <!-- AI Best Mandi Recommendation Banner -->
-    <div id="bestMandiBanner" style="margin: 20px 0 28px 0;"></div>
+    <div id="bestMandiBanner" style="margin: 24px 0;"></div>
 
-    <!-- Quick Navigation Action Cards -->
-    <section style="margin: 32px 0;">
-      <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 14px;" data-i18n="quickNavTitle">
-        🚀 Quick Navigation & Farmer Services
-      </h3>
-
-      <div class="quick-nav-grid">
-        <a href="comparison.html" class="quick-feature-card">
-          <div class="card-icon-wrap">📊</div>
-          <h3 data-i18n="featureCompTitle">APMC Rate Comparison</h3>
-          <p data-i18n="featureCompDesc">Compare modal rates across all regional mandis within 200 km.</p>
-          <div class="cta-link">Compare Mandis →</div>
-        </a>
-
-        <a href="sell.html" class="quick-feature-card">
-          <div class="card-icon-wrap" style="background: rgba(15, 118, 110, 0.1); color: #0f766e;">💰</div>
-          <h3 data-i18n="featureSellTitle">Sell Crop & J-Form</h3>
-          <p data-i18n="featureSellDesc">Generate verified digital J-Form receipts with transparent deductions.</p>
-          <div class="cta-link" style="color: #0f766e;">Create J-Form →</div>
-        </a>
-
-        <a href="map.html" class="quick-feature-card">
-          <div class="card-icon-wrap" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">🗺️</div>
-          <h3 data-i18n="featureMapTitle">GPS Mandi Navigation</h3>
-          <p data-i18n="featureMapDesc">Interactive map with live distance, travel time & Google Maps routes.</p>
-          <div class="cta-link" style="color: #2563eb;">Open Map →</div>
-        </a>
-      </div>
-    </section>
-
-    <!-- Crop Catalog Grid -->
-    <section class="section-container" style="margin-top: 24px;">
+    <!-- Multi-Mandi Comparison Grid -->
+    <section class="section-container" style="margin-top: 28px;">
       <div class="section-header-row">
         <div>
-          <h3 data-i18n="selectCropPrompt">Select Your Harvested Crop</h3>
-          <p style="font-size: 13px; color: var(--text-muted);">Click any crop to explore all nearby mandis and calculate vehicle transport profits</p>
+          <h3 id="selectedCropComparisonTitle">Today's Mandi Rate Comparison</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Real-time APMC verified prices with travel distance and net in-hand payout calculation</p>
         </div>
       </div>
 
-      <div id="cropCatalogGrid" class="crop-grid-container"></div>
+      <div id="mandiComparisonCards" class="mandi-cards-grid"></div>
     </section>
 
-    <!-- Live Weather & Harvest Advisory Section -->
-    <section class="section-container weather-section" style="margin-top: 36px;">
+    <!-- Smart Transport & Profit Calculator Section -->
+    <section class="section-container calculator-section" id="calculatorSection" style="margin-top: 36px;">
       <div class="section-header-row">
         <div>
-          <h3 data-i18n="weatherTitle">⛅ Live Weather & Mandi Transport Advisory</h3>
-          <p style="font-size: 13px; color: var(--text-muted);">Real-time weather forecast to plan harvesting and grain transport safely</p>
+          <h3 data-i18n="calculatorTitle">🧮 Smart Farm Profit & Transport Cost Calculator</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Select your vehicle to compute exact road fuel, driver cost, loading charges & net bank transfer</p>
         </div>
       </div>
 
-      <div class="weather-dashboard-card">
-        <div class="weather-current-row">
-          <div class="weather-main-stat">
-            <span class="w-temp" id="weatherTemp">31°C</span>
-            <span class="w-cond" id="weatherCondition">⛅ Clear Sky</span>
+      <div class="calc-main-layout">
+        <!-- Controls & Vehicle Selector -->
+        <div class="calc-controls-col">
+          <div class="calc-control-group">
+            <label data-i18n="selectedMandiLabel">Destination Mandi</label>
+            <select id="calcMandiSelect" class="calc-select-field"></select>
           </div>
 
-          <div class="weather-details-pills">
-            <div class="w-pill"><span class="lbl" data-i18n="humidityLabel">Humidity</span><strong id="weatherHumidity">62%</strong></div>
-            <div class="w-pill"><span class="lbl" data-i18n="windLabel">Wind Speed</span><strong id="weatherWind">12 km/h</strong></div>
-            <div class="w-pill"><span class="lbl">Precipitation</span><strong>0% Rain</strong></div>
+          <div class="calc-control-group">
+            <label data-i18n="selectVehicleLabel">Select Your Transport Vehicle</label>
+            <div class="vehicles-grid" id="vehicleCardsGrid">
+              <div class="vehicle-card active" data-vehicle="tractor">
+                <div class="v-icon">🚜</div>
+                <div class="v-title">Tractor Trolley</div>
+                <div class="v-rate">₹22 / km + ₹200 load</div>
+                <div class="v-badge">Cap: 40 Qtl</div>
+              </div>
+
+              <div class="vehicle-card" data-vehicle="pickup">
+                <div class="v-icon">🛻</div>
+                <div class="v-title">Bolero Pickup</div>
+                <div class="v-rate">₹18 / km + ₹150 load</div>
+                <div class="v-badge">Cap: 25 Qtl</div>
+              </div>
+
+              <div class="vehicle-card" data-vehicle="truck">
+                <div class="v-icon">🚚</div>
+                <div class="v-title">10-Wheeler Truck</div>
+                <div class="v-rate">₹38 / km + ₹500 load</div>
+                <div class="v-badge">Cap: 160 Qtl</div>
+              </div>
+
+              <div class="vehicle-card" data-vehicle="auto">
+                <div class="v-icon">🛺</div>
+                <div class="v-title">3-Wheeler Auto</div>
+                <div class="v-rate">₹14 / km + ₹100 load</div>
+                <div class="v-badge">Cap: 12 Qtl</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="weather-advisory-banner">
-          <span class="advisory-icon">📢</span>
-          <span id="weatherAdvisoryText">Ideal conditions for harvesting and grain transport. No rain expected for the next 48 hours.</span>
+        <!-- Receipt & Profit Breakdown Card -->
+        <div class="calc-receipt-col">
+          <div class="calc-receipt-card">
+            <div class="receipt-header">
+              <h4>🧾 Verified Settlement Preview</h4>
+              <span style="font-size: 11px; color: #15803d; font-weight: 700;">e-NAM Standard Formula</span>
+            </div>
+
+            <div class="receipt-body">
+              <div class="receipt-line-item">
+                <span data-i18n="grossRevenue">Gross Crop Value</span>
+                <strong id="calcGrossRevenue">₹72,300</strong>
+              </div>
+
+              <div class="receipt-line-item deduction">
+                <span data-i18n="transportDeduction">Vehicle & Fuel Cost</span>
+                <span id="calcTransportCost">- ₹750</span>
+              </div>
+
+              <div class="receipt-line-item deduction">
+                <span data-i18n="mandiCess">Mandi Fees & Weighing</span>
+                <span id="calcMandiCess">- ₹450</span>
+              </div>
+
+              <div class="receipt-divider"></div>
+
+              <div class="receipt-total-row">
+                <div>
+                  <span class="total-lbl" data-i18n="finalNetProfit">Your Final In-Hand Earnings</span>
+                  <span class="total-sub" id="calcNetPerQtl">(₹2,370 per Quintal)</span>
+                </div>
+                <div class="total-amount" id="calcNetProfit">₹71,100</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 18px; display: flex; gap: 10px;">
+              <a href="sell.html" class="btn-action-primary" style="flex: 1; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>📄 Generate J-Form / फसल बेचें</span>
+              </a>
+              <a href="map.html" class="btn-action-secondary" style="flex: 1; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>🗺️ View on Map</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Price History & Market Prediction Chart -->
+    <section class="section-container" style="margin-top: 36px;">
+      <div class="section-header-row">
+        <div>
+          <h3 data-i18n="priceHistoryTitle">📈 Price History & Market Prediction</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Historical modal price movements with AI-based 7-day trend forecast</p>
         </div>
 
-        <div class="forecast-5day-grid" id="weatherForecastGrid"></div>
+        <div class="period-tabs">
+          <button class="period-tab-btn active" data-period="7d">7 Days</button>
+          <button class="period-tab-btn" data-period="30d">30 Days</button>
+          <button class="period-tab-btn" data-period="90d">90 Days</button>
+        </div>
+      </div>
+
+      <div class="chart-wrapper-card" style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px;">
+        <canvas id="priceHistoryChart" height="110"></canvas>
       </div>
     </section>
 
@@ -278,33 +348,6 @@
     </div>
   </div>
 
-  <!-- Price Alert Modal -->
-  <div id="alertModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 data-i18n="priceAlertTitle">🔔 Set WhatsApp / SMS Price Alert</h3>
-        <button class="modal-close-btn" data-close="alertModal">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="auth-form-group">
-          <label>Crop</label>
-          <select id="alertCropSelect" class="auth-input-control">
-            <option value="wheat">🌾 Wheat (गेहूं)</option>
-            <option value="paddy">🌾 Basmati Paddy (धान)</option>
-            <option value="mustard">🌼 Mustard (सरसों)</option>
-          </select>
-        </div>
-        <div class="auth-form-group">
-          <label data-i18n="targetPriceLabel">Alert me when rate crosses (₹/Qtl)</label>
-          <input type="number" id="alertTargetPriceInput" class="auth-input-control" value="2500">
-        </div>
-        <button type="button" class="auth-btn-primary" onclick="handleSavePriceAlert()" style="margin-top:16px;">
-          <span data-i18n="saveAlertBtn">🔔 Set Free Price Alert</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Footer -->
   <footer class="app-footer">
     <div class="footer-bottom">
@@ -319,9 +362,10 @@
   <script src="js/api/auth.js"></script>
   <script src="js/api/market.js"></script>
   <script src="js/calculator.js"></script>
+  <script src="js/charts.js"></script>
   <script src="js/speech.js"></script>
   <script src="js/common.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/comparison.js"></script>
 </body>
 
 </html>
