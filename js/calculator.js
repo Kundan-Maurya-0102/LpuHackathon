@@ -1,11 +1,6 @@
-/**
- * KisanSetu - Transportation Cost & Farm Profit Engine
- * Computes exact vehicle transport costs, APMC mandi fees, and net in-hand profits.
- */
-
 class ProfitCalculator {
   constructor() {
-    this.defaultQuantityQtl = 30; // 30 Quintals
+    this.defaultQuantityQtl = 30;
     this.selectedVehicleId = "tractor";
     this.selectedMandiId = "khanna";
     this.selectedCropId = "wheat";
@@ -24,17 +19,9 @@ class ProfitCalculator {
     const distanceKm = mandi.distanceKm || 15;
     const transportCost = Math.round((distanceKm * vehicle.ratePerKm) + vehicle.baseLoadingFee);
     const transportPerQtl = Math.round(transportCost / quantityQtl);
-    
-    // APMC Mandi Cess & Weighbridge handling (approx ₹15/quintal)
     const mandiCessFee = Math.round(quantityQtl * 15);
-
-    // Total gross sale value
     const grossRevenue = Math.round(quantityQtl * modalPrice);
-
-    // Total deductions
     const totalDeductions = transportCost + mandiCessFee;
-
-    // Net take-home in-hand earnings
     const netProfit = grossRevenue - totalDeductions;
     const netPricePerQtl = Math.round(netProfit / quantityQtl);
 
@@ -57,20 +44,14 @@ class ProfitCalculator {
     };
   }
 
-  /**
-   * Evaluates all nearby mandis and ranks them by True Net Take-Home Earnings
-   */
   getBestMandiRecommendation(cropId, vehicleId, quantityQtl = 30) {
     const allEvaluations = AGRI_DATA.mandis.map(m => {
       return this.calculateMandiProfit(cropId, m.id, vehicleId, quantityQtl);
     });
 
-    // Sort by Highest Net In-Hand Profit
     allEvaluations.sort((a, b) => b.netProfit - a.netProfit);
-
     const bestMandi = allEvaluations[0];
     
-    // Find nearest mandi for profit delta comparison
     const sortedByDistance = [...allEvaluations].sort((a, b) => a.distanceKm - b.distanceKm);
     const nearestMandi = sortedByDistance[0];
 

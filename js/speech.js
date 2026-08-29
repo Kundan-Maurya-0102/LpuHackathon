@@ -1,8 +1,3 @@
-/**
- * KisanSetu - Speech Synthesis & Voice Search Engine
- * Empowers illiterate / semi-literate farmers with real-time audio rate readouts and voice search.
- */
-
 class SpeechEngine {
   constructor() {
     this.synth = window.speechSynthesis;
@@ -18,11 +13,10 @@ class SpeechEngine {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
-      this.recognition.lang = "hi-IN"; // Default to Hindi-India
+      this.recognition.lang = "hi-IN";
 
       this.recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript.toLowerCase();
-        console.log("Voice Search Transcript:", transcript);
         if (window.handleVoiceSearchResult) {
           window.handleVoiceSearchResult(transcript);
         }
@@ -30,7 +24,6 @@ class SpeechEngine {
       };
 
       this.recognition.onerror = (event) => {
-        console.warn("Speech Recognition Error:", event.error);
         this.stopListening();
       };
 
@@ -62,7 +55,6 @@ class SpeechEngine {
       this.isListening = true;
       if (callback) callback(true);
     } catch (e) {
-      console.error("Failed to start voice recognition:", e);
       this.stopListening();
     }
   }
@@ -95,7 +87,6 @@ class SpeechEngine {
   speak(text, langCode = "hi") {
     if (!this.synth) return;
     
-    // Stop any ongoing speech
     this.synth.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -111,10 +102,9 @@ class SpeechEngine {
     };
 
     utterance.lang = langMap[langCode] || "hi-IN";
-    utterance.rate = 0.95; // Slightly slower for clear farmer comprehension
+    utterance.rate = 0.95;
     utterance.pitch = 1.0;
 
-    // Visual animation on active speaker button
     document.querySelectorAll(".speak-btn.speaking").forEach(b => b.classList.remove("speaking"));
 
     this.synth.speak(utterance);
@@ -131,9 +121,8 @@ class SpeechEngine {
     } else if (currentLang === "mr") {
       text = `${mandiName} मध्ये ${cropName} चा सरासरी भाव ₹${modalPrice} प्रति क्विंटल आहे. अंतर ${distanceKm} किलोमीटर आहे. ${extraText}`;
     } else if (currentLang === "gu") {
-      text = `${mandiName} માં ${cropName} નો સરેરાશ ભાવ ₹${modalPrice} પ્રતિ ક્વિન્ટલ છે. અંતર ${distanceKm} કિલોમીટર છે. ${extraText}`;
+      text = `${mandiName} માં ${cropName} નો સરેਰਾશ ભાવ ₹${modalPrice} પ્રતિ ક્વિન્ટલ છે. અંતર ${distanceKm} કિલોમીટર છે. ${extraText}`;
     } else {
-      // Default Hindi
       text = `${mandiName} में ${cropName} का औसत भाव ₹${modalPrice} प्रति क्विंटल है। न्यूनतम भाव ₹${minPrice} और अधिकतम भाव ₹${maxPrice} है। आपके खेत से दूरी ${distanceKm} किलोमीटर है। ${extraText}`;
     }
 

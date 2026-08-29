@@ -1,15 +1,10 @@
-/**
- * KisanSetu - Interactive Mandi Map Engine
- * Powered by Leaflet.js & OpenStreetMap (Zero external API keys required).
- */
-
 class MandiMapManager {
   constructor() {
     this.map = null;
     this.farmerMarker = null;
     this.mandiMarkers = [];
     this.routePolyline = null;
-    this.defaultFarmerCoords = [31.2550, 75.7050]; // Near LPU Phagwara / Jalandhar, Punjab
+    this.defaultFarmerCoords = [31.2550, 75.7050];
     this.currentFarmerCoords = [...this.defaultFarmerCoords];
   }
 
@@ -17,7 +12,6 @@ class MandiMapManager {
     const mapContainer = document.getElementById(elementId);
     if (!mapContainer || this.map) return;
 
-    // Initialize Leaflet map
     this.map = L.map(elementId, {
       center: this.currentFarmerCoords,
       zoom: 10,
@@ -25,7 +19,6 @@ class MandiMapManager {
       scrollWheelZoom: false
     });
 
-    // Add high quality tile layer
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -76,7 +69,6 @@ class MandiMapManager {
   renderMandiMarkers(selectedCropId = "wheat") {
     if (!this.map) return;
 
-    // Clear existing markers
     this.mandiMarkers.forEach(m => this.map.removeLayer(m));
     this.mandiMarkers = [];
 
@@ -84,7 +76,7 @@ class MandiMapManager {
 
     AGRI_DATA.mandis.forEach(mandi => {
       const price = mandi.prices[selectedCropId] ? mandi.prices[selectedCropId].modal : 2400;
-      const isKhanna = mandi.id === "khanna"; // Top rated
+      const isKhanna = mandi.id === "khanna";
 
       const mandiIcon = L.divIcon({
         className: "custom-mandi-pin",
@@ -100,7 +92,6 @@ class MandiMapManager {
       });
 
       const marker = L.marker([mandi.lat, mandi.lng], { icon: mandiIcon }).addTo(this.map);
-      
       const gmapsLink = `https://www.google.com/maps/dir/?api=1&origin=${this.currentFarmerCoords[0]},${this.currentFarmerCoords[1]}&destination=${mandi.lat},${mandi.lng}`;
 
       marker.bindPopup(`
@@ -137,7 +128,6 @@ class MandiMapManager {
     const start = this.currentFarmerCoords;
     const end = [mandi.lat, mandi.lng];
 
-    // Create a smooth curved route visualization
     const midPoint = [
       (start[0] + end[0]) / 2 + 0.02,
       (start[1] + end[1]) / 2 - 0.03

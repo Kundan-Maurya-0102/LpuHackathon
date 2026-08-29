@@ -1,7 +1,3 @@
-/**
- * KisanSetu - Chart.js Price History & Market Prediction Visualizer
- */
-
 class PriceChartManager {
   constructor() {
     this.chartInstance = null;
@@ -12,7 +8,6 @@ class PriceChartManager {
   initChart(elementId = "priceHistoryChart") {
     const canvas = document.getElementById(elementId);
     if (!canvas || typeof Chart === "undefined") return;
-
     this.renderChart();
   }
 

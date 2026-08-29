@@ -1,9 +1,3 @@
-/**
- * KisanSetu - UI Components Stylesheet
- * Cards, calculators, map pins, price breakdown badges, charts and audio buttons.
- */
-
-/* ================= 1. CROP CATALOG GRID ================= */
 .crop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -166,7 +160,6 @@
   border-color: var(--primary-green);
 }
 
-/* ================= 2. BEST MANDI RECOMMENDATION CARD ================= */
 .best-mandi-card {
   background: linear-gradient(135deg, #052e16 0%, #14532d 100%);
   border: 2px solid #22c55e;
@@ -372,7 +365,6 @@
   background: #fbbf24;
 }
 
-/* ================= 3. SIDE-BY-SIDE MANDI COMPARISON CARDS ================= */
 .mandi-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -443,7 +435,6 @@
   font-weight: 600;
 }
 
-/* Price Breakdown Pills (Min, Modal, Max) */
 .price-breakdown-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -600,7 +591,6 @@
   font-weight: 600;
 }
 
-/* ================= 4. PROFIT & TRANSPORT CALCULATOR ================= */
 .calculator-container {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -722,7 +712,6 @@
   align-self: flex-start;
 }
 
-/* Calculator Receipt / Profit Summary Box */
 .calc-receipt-card {
   background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   border: 2px dashed #cbd5e1;
@@ -819,7 +808,6 @@
   color: #86efac;
 }
 
-/* ================= 5. INTERACTIVE MAP & PINS ================= */
 .map-container-wrap {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -843,7 +831,6 @@
   z-index: 1;
 }
 
-/* Custom Farmer Marker Pin */
 .custom-farmer-pin {
   display: flex;
   align-items: center;
@@ -874,7 +861,6 @@
   z-index: 2;
 }
 
-/* Custom Mandi Marker Pin */
 .custom-mandi-pin {
   display: flex;
   align-items: center;
@@ -904,7 +890,6 @@
   font-weight: 800;
 }
 
-/* ================= 6. CHART.JS WRAPPER ================= */
 .chart-container-wrap {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -959,7 +944,6 @@
   position: relative;
 }
 
-/* ================= 7. WEATHER & ADVISORY ================= */
 .weather-advisory-container {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -1061,7 +1045,6 @@
   color: #86efac;
 }
 
-/* ================= 8. PRICE ALERTS MODAL & LIST ================= */
 .alert-items-list {
   display: flex;
   flex-direction: column;
@@ -1132,4 +1115,250 @@
   border-radius: var(--radius-sm);
   font-size: 14px;
   outline: none;
+}
+
+.profile-modal-box {
+  max-width: 620px;
+}
+
+.profile-hero-card {
+  background: linear-gradient(135deg, #14532d 0%, #15803d 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(20, 83, 45, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.profile-status-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: #22c55e;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.profile-hero-info {
+  flex: 1;
+}
+
+.profile-hero-info h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.prof-badges-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.prof-kisan-id {
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.prof-verified-badge {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.prof-address,
+.prof-phone {
+  font-size: 12px;
+  color: #dcfce7;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.profile-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.prof-spec-card {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-theme="dark"] .prof-spec-card {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.prof-spec-card .spec-icon {
+  font-size: 24px;
+}
+
+.prof-spec-card .spec-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.prof-spec-card .spec-value {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.prof-spec-card .spec-value.green {
+  color: var(--primary-green);
+  font-size: 15px;
+}
+
+[data-theme="dark"] .prof-spec-card .spec-value.green {
+  color: #4ade80;
+}
+
+.profile-crops-section {
+  margin-bottom: 20px;
+  border-top: 1px solid var(--card-border);
+  padding-top: 14px;
+}
+
+.profile-crops-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.crop-tag-pill {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+[data-theme="dark"] .crop-tag-pill {
+  background: rgba(21, 128, 61, 0.2);
+  color: #86efac;
+}
+
+.profile-switch-section {
+  margin-bottom: 20px;
+  border-top: 1px solid var(--card-border);
+  padding-top: 14px;
+}
+
+.switch-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.switch-pills-wrap {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.switch-pill {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.switch-pill:hover {
+  border-color: var(--primary-emerald);
+}
+
+.switch-pill.active {
+  background: var(--primary-emerald);
+  color: #ffffff;
+  border-color: var(--primary-emerald);
+}
+
+.profile-actions-bar {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid var(--card-border);
+  padding-top: 18px;
+}
+
+.btn-profile-edit {
+  flex: 1;
+  background: var(--card-bg);
+  border: 2px solid var(--primary-green);
+  color: var(--primary-green);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-profile-edit:hover {
+  background: rgba(46, 125, 50, 0.08);
+}
+
+.btn-profile-logout {
+  flex: 1;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+}
+
+.btn-profile-logout:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }

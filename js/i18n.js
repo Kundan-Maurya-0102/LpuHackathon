@@ -1,8 +1,3 @@
-/**
- * KisanSetu - Multi-Language Localization Engine (i18n)
- * Supports 8 Indian Languages with dynamic live UI translation
- */
-
 const TRANSLATIONS = {
   en: {
     langName: "English",
@@ -81,7 +76,21 @@ const TRANSLATIONS = {
     mapLegendFarmer: "Your Farm Location",
     mapLegendMandi: "Mandi Location & Rate Pin",
     getDirections: "🚗 Open Google Maps Directions",
-    voiceAssistantPrompt: "Namaste Kisan brother! Tap any speaker button to hear mandi rates in your language."
+    voiceAssistantPrompt: "Namaste Kisan brother! Tap any speaker button to hear mandi rates in your language.",
+    profileTitle: "Farmer Profile (किसान प्रोफाइल)",
+    profileSub: "Manage your farm details, registered crops and preferences",
+    farmLandLabel: "Total Farm Land",
+    primaryCropsLabel: "Major Sown Crops",
+    favMandiLabel: "Primary APMC Mandi",
+    transportLabel: "Preferred Transport",
+    editProfileBtn: "✏️ Edit Farm Details",
+    switchProfileBtn: "🔄 Switch Demo Profile",
+    logoutBtn: "🚪 Logout (लॉगआउट)",
+    saveProfileBtn: "💾 Save Profile",
+    kisanId: "Kisan ID: PB-2026-8941",
+    verifiedBadge: "🟢 Verified e-NAM Farmer",
+    seasonEstLabel: "Est. Season Harvest Value",
+    activeAlertsLabel: "Active Price Alerts"
   },
 
   hi: {
@@ -161,7 +170,21 @@ const TRANSLATIONS = {
     mapLegendFarmer: "आपका खेत / स्थान",
     mapLegendMandi: "मंडी की लोकेशन व भाव",
     getDirections: "🚗 गूगल मैप्स पर रास्ता देखें",
-    voiceAssistantPrompt: "नमस्ते किसान भाई! किसी भी मंडी का भाव सुनने के लिए स्पीकर बटन दबाएं।"
+    voiceAssistantPrompt: "नमस्ते किसान भाई! किसी भी मंडी का भाव सुनने के लिए स्पीकर बटन दबाएं।",
+    profileTitle: "किसान प्रोफाइल (Farmer Profile)",
+    profileSub: "अपने खेत का विवरण, पंजीकृत फसलें और प्राथमिकताएं प्रबंधित करें",
+    farmLandLabel: "कुल कृषि भूमि (जमीन)",
+    primaryCropsLabel: "प्रमुख बोई गई फसलें",
+    favMandiLabel: "पसंदीदा APMC मंडी",
+    transportLabel: "पसंदीदा वाहन",
+    editProfileBtn: "✏️ प्रोफाइल बदलें (Edit)",
+    switchProfileBtn: "🔄 दूसरा किसान प्रोफाइल चुनें",
+    logoutBtn: "🚪 लॉगआउट करें (Logout)",
+    saveProfileBtn: "💾 बदलाव सुरक्षित करें",
+    kisanId: "किसान आईडी: PB-2026-8941",
+    verifiedBadge: "🟢 सत्यापित e-NAM किसान",
+    seasonEstLabel: "अनुमानित रबी सीजन फसल मूल्य",
+    activeAlertsLabel: "सक्रिय भाव अलर्ट"
   },
 
   pa: {
@@ -241,7 +264,21 @@ const TRANSLATIONS = {
     mapLegendFarmer: "ਤੁਹਾਡਾ ਖੇਤ / ਪਿੰਡ",
     mapLegendMandi: "ਮੰਡੀ ਦੀ ਲੋਕੇਸ਼ਨ ਤੇ ਭਾਅ",
     getDirections: "🚗 ਗੂਗਲ ਮੈਪ ਤੇ ਰਸਤਾ ਦੇਖੋ",
-    voiceAssistantPrompt: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ਕਿਸਾਨ ਵੀਰੋ! ਕਿਸੇ ਵੀ ਮੰਡੀ ਦਾ ਭਾਅ ਸੁਣਨ ਲਈ ਸਪੀਕਰ ਬਟਨ ਦਬਾਓ।"
+    voiceAssistantPrompt: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ਕਿਸਾਨ ਵੀਰੋ! ਕਿਸੇ ਵੀ ਮੰਡੀ ਦਾ ਭਾਅ ਸੁਣਨ ਲਈ ਸਪੀਕਰ ਬਟਨ ਦਬਾਓ।",
+    profileTitle: "ਕਿਸਾਨ ਪ੍ਰੋਫਾਈਲ (Farmer Profile)",
+    profileSub: "ਆਪਣੇ ਖੇਤ ਦਾ ਵੇਰਵਾ, ਫ਼ਸਲਾਂ ਅਤੇ ਪਸੰਦਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
+    farmLandLabel: "ਕੁੱਲ ਖੇਤੀ ਵਾਲੀ ਜ਼ਮੀਨ",
+    primaryCropsLabel: "ਮੁੱਖ ਬੀਜੀਆਂ ਫ਼ਸਲਾਂ",
+    favMandiLabel: "ਮੁੱਖ APMC ਮੰਡੀ",
+    transportLabel: "ਪਸੰਦੀਦਾ ਵਾਹਨ",
+    editProfileBtn: "✏️ ਪ੍ਰੋਫਾਈਲ ਬਦਲੋ (Edit)",
+    switchProfileBtn: "🔄 ਹੋਰ ਕਿਸਾਨ ਪ੍ਰੋਫਾਈਲ ਚੁਣੋ",
+    logoutBtn: "🚪 ਲੌਗਆਉਟ ਕਰੋ (Logout)",
+    saveProfileBtn: "💾 ਵੇਰਵਾ ਸੇਵ ਕਰੋ",
+    kisanId: "ਕਿਸਾਨ ID: PB-2026-8941",
+    verifiedBadge: "🟢 ਤਸਦੀਕਸ਼ੁਦਾ e-NAM ਕਿਸਾਨ",
+    seasonEstLabel: "ਅੰਦਾਜ਼ਨ ਹਾੜ੍ਹੀ ਸੀਜ਼ਨ ਕਮਾਈ",
+    activeAlertsLabel: "ਸਰਗਰਮ ਭਾਅ ਅਲਰਟ"
   },
 
   mr: {
@@ -686,7 +723,6 @@ class I18nManager {
   applyTranslations() {
     const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS["en"];
     
-    // Update elements with data-i18n
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       if (dict[key]) {
@@ -698,7 +734,6 @@ class I18nManager {
       }
     });
 
-    // Update placeholders with data-i18n-placeholder
     document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
       const key = el.getAttribute("data-i18n-placeholder");
       if (dict[key]) {
@@ -706,7 +741,6 @@ class I18nManager {
       }
     });
 
-    // Update active state on language selector elements
     document.querySelectorAll(".lang-card, .lang-select-option").forEach(el => {
       const lang = el.getAttribute("data-lang");
       if (lang === this.currentLang) {
@@ -716,10 +750,8 @@ class I18nManager {
       }
     });
 
-    // Update HTML lang attribute
     document.documentElement.lang = this.currentLang;
   }
 }
 
-// Instantiate global i18n
 window.i18n = new I18nManager();

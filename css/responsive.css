@@ -1,28 +1,56 @@
-/**
- * KisanSetu - Responsive & Accessibility Styles
- * Optimized for mobile touchscreens, low-bandwidth conditions, and high accessibility.
- */
+@media (max-width: 1200px) {
+  .app-container {
+    padding: 20px 16px 60px 16px;
+  }
+
+  .crop-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+}
 
 @media (max-width: 992px) {
   .calculator-container {
     grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
   }
 
   .best-mandi-body {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .best-col-metrics {
     grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .mandi-cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 10px 14px;
+  .top-ticker-bar {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 
-  .nav-brand .brand-tagline {
+  .sync-text {
+    display: none;
+  }
+
+  .navbar {
+    padding: 10px 16px;
+  }
+
+  .brand-text h1 {
+    font-size: 18px;
+  }
+
+  .brand-text .brand-tagline {
     display: none;
   }
 
@@ -30,77 +58,32 @@
     display: none;
   }
 
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
   .hero-search-section {
-    padding: 24px 16px;
+    padding: 22px 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
   }
 
   .hero-header h2 {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .hero-header p {
     font-size: 13px;
   }
 
-  .crop-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 12px;
-  }
-
-  .crop-img-wrap {
-    height: 105px;
-  }
-
-  .crop-card .crop-name {
-    font-size: 13px;
-  }
-
-  .crop-price-row .crop-price {
-    font-size: 15px;
-  }
-
-  .mandi-cards-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .best-col-metrics {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .vehicle-selector-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .calc-receipt-card {
-    padding: 16px;
-  }
-
-  .receipt-net-highlight .net-num {
-    font-size: 26px;
-  }
-
-  .weather-forecast-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .modal-box {
-    padding: 22px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .brand-text h1 {
-    font-size: 18px;
-  }
-
-  .top-ticker-bar {
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-
   .search-bar-wrap {
-    padding: 4px 8px 4px 14px;
+    padding: 4px 6px 4px 14px;
+    margin-bottom: 14px;
   }
 
   .search-input-field {
@@ -113,13 +96,359 @@
     font-size: 16px;
   }
 
+  .hero-quick-tools {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
   .btn-gps-detect {
-    font-size: 12px;
-    padding: 6px 12px;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .radius-control-pill {
+    width: 100%;
+    justify-content: space-between;
+    padding: 8px 16px;
+  }
+
+  .radius-control-pill input[type="range"] {
+    flex: 1;
+    margin: 0 10px;
+  }
+
+  .category-filter-bar {
+    gap: 8px;
+    margin-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
   }
 
   .category-pill {
     padding: 8px 14px;
-    font-size: 12px;
+    font-size: 13px;
+  }
+
+  .crop-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .crop-img-wrap {
+    height: 110px;
+  }
+
+  .crop-info {
+    padding: 10px 8px;
+  }
+
+  .crop-name {
+    font-size: 13px;
+  }
+
+  .crop-price-row .crop-price {
+    font-size: 15px;
+  }
+
+  .best-mandi-card {
+    padding: 18px 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+  }
+
+  .mandi-title {
+    font-size: 19px;
+  }
+
+  .best-col-metrics {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .metric-box {
+    padding: 8px 4px;
+  }
+
+  .metric-box .m-lbl {
+    font-size: 10px;
+  }
+
+  .metric-box .m-val {
+    font-size: 16px;
+  }
+
+  .metric-box.gold .profit-highlight {
+    font-size: 17px;
+  }
+
+  .best-mandi-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .best-mandi-footer button {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .mandi-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .mandi-card {
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .mandi-header-info .m-name {
+    font-size: 16px;
+  }
+
+  .vehicle-selector-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .calc-receipt-card {
+    padding: 18px 14px;
+  }
+
+  .receipt-net-highlight .net-num {
+    font-size: 26px;
+  }
+
+  #mandiMap {
+    height: 300px;
+  }
+
+  .chart-canvas-box {
+    height: 240px;
+  }
+
+  .chart-header-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .period-tabs {
+    width: 100%;
+    display: flex;
+  }
+
+  .period-tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .weather-current-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .weather-metric-pills {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .weather-forecast-grid {
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 6px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-box {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .lang-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .profile-hero-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding: 16px 12px;
+  }
+
+  .prof-badges-row {
+    justify-content: center;
+  }
+
+  .profile-details-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .profile-actions-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-profile-edit,
+  .btn-profile-logout {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-ticker-bar {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  .header-lang-select {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  .navbar {
+    padding: 8px 10px;
+  }
+
+  .brand-icon-wrap {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    border-radius: 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 16px;
+  }
+
+  #userNameDisplay {
+    display: none;
+  }
+
+  .nav-btn-user {
+    padding: 6px 10px;
+  }
+
+  .hero-search-section {
+    padding: 16px 10px;
+  }
+
+  .hero-header h2 {
+    font-size: 18px;
+  }
+
+  .best-col-metrics {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .metric-box {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .metric-box .m-lbl {
+    margin-bottom: 0;
+  }
+
+  .metric-box .m-val {
+    font-size: 17px;
+  }
+
+  .price-breakdown-grid {
+    gap: 4px;
+  }
+
+  .price-pill {
+    padding: 6px 2px;
+  }
+
+  .price-pill .p-lbl {
+    font-size: 9px;
+  }
+
+  .price-pill .p-amt {
+    font-size: 13px;
+  }
+
+  .mandi-card-actions {
+    flex-wrap: wrap;
+  }
+
+  .mandi-btn.primary {
+    flex: 1 1 100%;
+    padding: 10px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .mandi-btn.secondary {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .mandi-btn.audio {
+    flex: 0 0 44px;
+    text-align: center;
+  }
+
+  .quantity-input-wrap {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .vehicle-selector-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  #mandiMap {
+    height: 250px;
+  }
+
+  .chart-canvas-box {
+    height: 200px;
+  }
+
+  .toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .toast-pill {
+    max-width: 100%;
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 340px) {
+  .crop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lang-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-forecast-grid {
+    grid-template-columns: 1fr;
   }
 }

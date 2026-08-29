@@ -6,22 +6,17 @@
   <title>KisanSetu (किसान सेतु) - Smart Mandi Price & Farmer Profit Discovery</title>
   <meta name="description" content="Empowering Indian farmers with live APMC mandi prices, best mandi profit recommendation, transport cost estimation, interactive maps and price history.">
 
-  <!-- Google Fonts: Outfit & Noto Sans Devanagari for pristine multi-language rendering -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Leaflet CSS for Interactive OpenStreetMap (Zero API key required) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
-  <!-- App Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
-  <!-- 1. TOP LIVE TICKER MARQUEE -->
   <div class="top-ticker-bar">
     <div class="ticker-left">
       <div class="pulse-dot"></div>
@@ -49,7 +44,6 @@
     </div>
   </div>
 
-  <!-- 2. MAIN NAVBAR -->
   <header class="navbar">
     <div class="nav-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
       <div class="brand-icon-wrap">
@@ -75,17 +69,15 @@
       <button class="nav-btn" id="themeToggleBtn" title="Toggle Day/Night Mode">
         <span id="themeIcon">🌙</span>
       </button>
-      <button class="nav-btn nav-btn-user" id="userProfileBtn" onclick="showAuthModal()">
+      <button class="nav-btn nav-btn-user" id="userProfileBtn" onclick="handleProfileButtonClick()">
         <span>👨‍🌾</span>
         <span id="userNameDisplay">Farmer Login</span>
       </button>
     </div>
   </header>
 
-  <!-- 3. MAIN APPLICATION CONTAINER -->
   <main class="app-container">
 
-    <!-- HERO SEARCH & GPS LOCATION DISCOVERY -->
     <section class="hero-search-section">
       <div class="hero-header">
         <h2 data-i18n="selectCropPrompt">Select Your Harvested Crop & Discover Maximum Mandi Profit</h2>
@@ -112,7 +104,6 @@
       </div>
     </section>
 
-    <!-- CROP CATEGORY FILTER TABS -->
     <div class="category-filter-bar">
       <button class="category-pill active" data-category="all" data-i18n="catAll">🌾 All Crops</button>
       <button class="category-pill" data-category="cereals" data-i18n="catCereals">🌾 Cereals (अनाज)</button>
@@ -122,21 +113,16 @@
       <button class="category-pill" data-category="cash_crops" data-i18n="catCashCrops">☁️ Cash Crops (नकदी)</button>
     </div>
 
-    <!-- CROP SELECTION GRID WITH REAL IMAGES -->
     <section class="crop-catalog-section">
       <div id="cropCatalogGrid" class="crop-grid">
-        <!-- Rendered dynamically by app.js -->
       </div>
     </section>
 
-    <!-- AI BEST MANDI RECOMMENDATION BANNER -->
     <section class="best-mandi-recommendation-section" id="bestMandiSection">
       <div id="bestMandiBanner">
-        <!-- Rendered dynamically by app.js -->
       </div>
     </section>
 
-    <!-- MANDI PRICE COMPARISON CARDS -->
     <section class="mandi-comparison-section" id="mandiComparisonSection">
       <div class="section-header">
         <div class="section-header-title">
@@ -149,11 +135,9 @@
       </div>
 
       <div id="mandiComparisonCards" class="mandi-cards-grid">
-        <!-- Rendered dynamically by app.js -->
       </div>
     </section>
 
-    <!-- SMART FARM PROFIT & TRANSPORTATION CALCULATOR -->
     <section class="calculator-section" id="calculatorSection">
       <div class="section-header">
         <div class="section-header-title">
@@ -163,7 +147,6 @@
       </div>
 
       <div class="calculator-container">
-        <!-- Calculator Inputs -->
         <div class="calc-input-section">
           <h4>Farm Produce & Transport Inputs</h4>
           
@@ -181,7 +164,6 @@
           <div class="calc-field-group">
             <label data-i18n="selectedMandiLabel">Destination Mandi:</label>
             <select id="calcMandiSelect" class="form-select-mandi" style="width:100%; padding:10px 14px; border-radius:var(--radius-md); border:2px solid var(--card-border); background:var(--card-bg); color:var(--text-main); font-size:14px; font-weight:700;">
-              <!-- Populated dynamically -->
             </select>
           </div>
 
@@ -216,7 +198,6 @@
           </div>
         </div>
 
-        <!-- Calculator Receipt / Summary Breakdown -->
         <div class="calc-receipt-card">
           <div class="receipt-header">
             <h4>🧾 In-Hand Earnings Summary</h4>
@@ -249,7 +230,6 @@
       </div>
     </section>
 
-    <!-- INTERACTIVE MANDI MAP SECTION -->
     <section class="map-section" id="mapSection">
       <div class="section-header">
         <div class="section-header-title">
@@ -272,7 +252,6 @@
       </div>
     </section>
 
-    <!-- PRICE HISTORY CHART & MARKET PREDICTION -->
     <section class="chart-section" id="chartSection">
       <div class="section-header">
         <div class="section-header-title">
@@ -299,7 +278,6 @@
       </div>
     </section>
 
-    <!-- LIVE WEATHER & MANDI TRANSPORT ADVISORY -->
     <section class="weather-section" id="weatherSection">
       <div class="section-header">
         <div class="section-header-title">
@@ -321,7 +299,6 @@
         </div>
 
         <div class="weather-forecast-grid" id="weatherForecastGrid">
-          <!-- Populated dynamically -->
         </div>
 
         <div class="weather-advisory-box">
@@ -333,9 +310,6 @@
 
   </main>
 
-  <!-- ================= MODALS ================= -->
-
-  <!-- 1. ONBOARDING LANGUAGE SELECTION MODAL -->
   <div class="modal-overlay" id="langModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -392,7 +366,6 @@
     </div>
   </div>
 
-  <!-- 2. FARMER AUTHENTICATION MODAL -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="hideModal('authModal')">✕</button>
@@ -403,7 +376,6 @@
         <p data-i18n="loginSub">Access verified APMC mandi rates & maximize your farm profits</p>
       </div>
 
-      <!-- Quick 1-Click Demo Login for Judges & Farmers -->
       <button class="modal-footer-btn" id="demoLoginBtn" style="background: linear-gradient(135deg, #15803d, #16a34a); margin-bottom: 20px;">
         <span data-i18n="demoLogin">⚡ 1-Click Demo Farmer Login (Ramesh Kumar, Punjab)</span>
       </button>
@@ -412,7 +384,6 @@
         <span>── OR LOGIN WITH MOBILE OTP ──</span>
       </div>
 
-      <!-- Mobile + OTP Form -->
       <div class="form-group-alert">
         <label data-i18n="phoneLabel">Mobile Number:</label>
         <input type="tel" id="phoneInput" placeholder="Enter 10-digit mobile number" data-i18n-placeholder="phonePlaceholder" maxlength="10">
@@ -438,7 +409,6 @@
     </div>
   </div>
 
-  <!-- 3. PRICE ALERTS MODAL -->
   <div class="modal-overlay" id="alertModal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="hideModal('alertModal')">✕</button>
@@ -451,7 +421,6 @@
 
       <h4 style="font-size:14px; margin-bottom:8px;" data-i18n="activeAlerts">Your Active Price Alerts:</h4>
       <div class="alert-items-list" id="activeAlertsContainer">
-        <!-- Rendered dynamically -->
       </div>
 
       <div style="border-top:1px solid var(--card-border); padding-top:16px; margin-top:16px;">
@@ -494,7 +463,144 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-box profile-modal-box">
+      <button class="modal-close-btn" onclick="hideModal('profileModal')">✕</button>
+
+      <div class="profile-hero-card">
+        <div class="profile-avatar-wrap">
+          <span class="profile-avatar-emoji">👨‍🌾</span>
+          <span class="profile-status-dot"></span>
+        </div>
+        <div class="profile-hero-info">
+          <h3 id="profNameDisplay">Ramesh Kumar (ਰਮੇਸ਼ ਕੁਮਾਰ)</h3>
+          <div class="prof-badges-row">
+            <span class="prof-kisan-id" id="profKisanId">Kisan ID: PB-2026-8941</span>
+            <span class="prof-verified-badge" data-i18n="verifiedBadge">🟢 Verified e-NAM Farmer</span>
+          </div>
+          <p class="prof-address" id="profAddressDisplay">📍 Phagwara, Kapurthala, Punjab (Near LPU)</p>
+          <p class="prof-phone" id="profPhoneDisplay">📞 +91 98765 43210</p>
+        </div>
+      </div>
+
+      <div class="profile-details-grid">
+        <div class="prof-spec-card">
+          <span class="spec-icon">🌾</span>
+          <div class="spec-text">
+            <span class="spec-label" data-i18n="farmLandLabel">Total Farm Land</span>
+            <strong class="spec-value" id="profLandDisplay">8.5 Acres (एकड़)</strong>
+          </div>
+        </div>
+
+        <div class="prof-spec-card">
+          <span class="spec-icon">🏛️</span>
+          <div class="spec-text">
+            <span class="spec-label" data-i18n="favMandiLabel">Primary Mandi</span>
+            <strong class="spec-value" id="profMandiDisplay">Khanna APMC Market</strong>
+          </div>
+        </div>
+
+        <div class="prof-spec-card">
+          <span class="spec-icon">🚜</span>
+          <div class="spec-text">
+            <span class="spec-label" data-i18n="transportLabel">Preferred Vehicle</span>
+            <strong class="spec-value" id="profVehicleDisplay">Tractor Trolley (40 Qtl)</strong>
+          </div>
+        </div>
+
+        <div class="prof-spec-card">
+          <span class="spec-icon">💰</span>
+          <div class="spec-text">
+            <span class="spec-label" data-i18n="seasonEstLabel">Est. Harvest Value</span>
+            <strong class="spec-value green" id="profHarvestValDisplay">₹2,45,000</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-crops-section">
+        <h4 style="font-size:14px; font-weight:800; margin-bottom:8px;" data-i18n="primaryCropsLabel">Major Sown Crops:</h4>
+        <div class="profile-crops-tags" id="profCropsList">
+        </div>
+      </div>
+
+      <div class="profile-switch-section">
+        <span class="switch-title" data-i18n="switchProfileBtn">🔄 Switch Demo Farmer Profile:</span>
+        <div class="switch-pills-wrap">
+          <button class="switch-pill active" onclick="switchFarmerProfile('ramesh')">Punjab (Ramesh Kumar)</button>
+          <button class="switch-pill" onclick="switchFarmerProfile('balwinder')">Amritsar (Balwinder Singh)</button>
+          <button class="switch-pill" onclick="switchFarmerProfile('suresh')">Gujarat (Suresh Patel)</button>
+          <button class="switch-pill" onclick="switchFarmerProfile('shivam')">UP (Shivam Yadav)</button>
+        </div>
+      </div>
+
+      <div class="profile-actions-bar">
+        <button class="btn-profile-edit" onclick="openEditProfileModal()" data-i18n="editProfileBtn">
+          ✏️ Edit Farm Details
+        </button>
+        <button class="btn-profile-logout" onclick="logoutFarmer()" data-i18n="logoutBtn">
+          🚪 Logout (लॉगआउट)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editProfileModal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="hideModal('editProfileModal')">✕</button>
+
+      <div class="modal-header">
+        <div class="modal-icon">✏️</div>
+        <h3>Edit Farmer Profile / विवरण बदलें</h3>
+        <p>Update your name, farm size, location, and crops</p>
+      </div>
+
+      <form id="editProfileForm" onsubmit="handleSaveProfile(event)">
+        <div class="form-group-alert">
+          <label>Farmer Full Name (किसान का नाम):</label>
+          <input type="text" id="editNameInput" required>
+        </div>
+
+        <div class="form-group-alert">
+          <label>Mobile Number (फ़ोन नंबर):</label>
+          <input type="tel" id="editPhoneInput" required maxlength="10">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group-alert">
+            <label>State (राज्य):</label>
+            <select id="editStateSelect">
+              <option value="Punjab">Punjab (ਪੰਜਾਬ)</option>
+              <option value="Haryana">Haryana (हरियाणा)</option>
+              <option value="Uttar Pradesh">Uttar Pradesh (उत्तर प्रदेश)</option>
+              <option value="Maharashtra">Maharashtra (महाराष्ट्र)</option>
+              <option value="Gujarat">Gujarat (ગુજરાત)</option>
+              <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश)</option>
+              <option value="Rajasthan">Rajasthan (राजस्थान)</option>
+            </select>
+          </div>
+          <div class="form-group-alert">
+            <label>District / City (जिला):</label>
+            <input type="text" id="editDistrictInput" required>
+          </div>
+        </div>
+
+        <div class="form-group-alert">
+          <label>Village / Landmark (गाँव / क्षेत्र):</label>
+          <input type="text" id="editVillageInput" required>
+        </div>
+
+        <div class="form-group-alert">
+          <label>Total Farm Land (कुल जमीन - Acres):</label>
+          <input type="number" id="editLandInput" step="0.5" min="0.5" max="500" required>
+        </div>
+
+        <button type="submit" class="modal-footer-btn" style="margin-top:10px;" data-i18n="saveProfileBtn">
+          💾 Save Profile / बदलाव सुरक्षित करें
+        </button>
+      </form>
+    </div>
+  </div>
+
   <footer style="background:var(--card-bg); border-top:1px solid var(--card-border); padding:32px 16px; text-align:center; color:var(--text-muted); font-size:13px;">
     <p style="margin-bottom:8px; font-weight:700; color:var(--text-main);">
       🚜 KisanSetu (किसान सेतु) - Built for LPU Hackathon by Kundan, Rishi, Akshith
@@ -507,13 +613,9 @@
     </p>
   </footer>
 
-  <!-- Core Scripts -->
-  <!-- Leaflet JS for Maps -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <!-- Chart.js for Price History -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <!-- Application Logic Modules -->
   <script src="js/data.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/speech.js"></script>

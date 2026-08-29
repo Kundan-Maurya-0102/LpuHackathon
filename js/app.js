@@ -1,8 +1,3 @@
-/**
- * KisanSetu - Main Application Coordinator & Controller
- * Controls state, modals, events, filters, and audio/visual interactions.
- */
-
 const APP_STATE = {
   user: null,
   selectedLanguage: "hi",
@@ -31,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initApp() {
-  // Check stored preferences
   const storedUser = localStorage.getItem("kisansetu_user");
   const storedLang = localStorage.getItem("kisansetu_lang");
   const storedTheme = localStorage.getItem("kisansetu_theme");
@@ -46,10 +40,8 @@ function initApp() {
     document.documentElement.setAttribute("data-theme", storedTheme);
   }
 
-  // Setup Event Listeners
   setupEventListeners();
 
-  // Show Language Modal first if not selected, or Auth Modal if not logged in
   if (!storedLang) {
     showLanguageModal();
   } else if (!storedUser) {
@@ -61,12 +53,10 @@ function initApp() {
     renderAllViews();
   }
 
-  // Live timestamp ticker update
   updateLiveTimestamp();
 }
 
 function setupEventListeners() {
-  // Language Select Cards in Onboarding Modal
   document.querySelectorAll(".lang-card").forEach(card => {
     card.addEventListener("click", () => {
       document.querySelectorAll(".lang-card").forEach(c => c.classList.remove("selected"));
@@ -77,7 +67,6 @@ function setupEventListeners() {
     });
   });
 
-  // Language Audio Preview Button in modal
   const langSpeakerBtn = document.getElementById("langSpeakerBtn");
   if (langSpeakerBtn) {
     langSpeakerBtn.addEventListener("click", () => {
@@ -96,7 +85,6 @@ function setupEventListeners() {
     });
   }
 
-  // Language Modal Confirm Button
   const confirmLangBtn = document.getElementById("confirmLangBtn");
   if (confirmLangBtn) {
     confirmLangBtn.addEventListener("click", () => {
@@ -109,7 +97,6 @@ function setupEventListeners() {
     });
   }
 
-  // Header Language Switcher Dropdown
   const headerLangSelect = document.getElementById("headerLangSelect");
   if (headerLangSelect) {
     headerLangSelect.value = APP_STATE.selectedLanguage;
@@ -121,7 +108,6 @@ function setupEventListeners() {
     });
   }
 
-  // 1-Click Demo Login Button
   const demoLoginBtn = document.getElementById("demoLoginBtn");
   if (demoLoginBtn) {
     demoLoginBtn.addEventListener("click", () => {
@@ -136,7 +122,6 @@ function setupEventListeners() {
     });
   }
 
-  // Guest Login Button
   const guestLoginBtn = document.getElementById("guestLoginBtn");
   if (guestLoginBtn) {
     guestLoginBtn.addEventListener("click", () => {
@@ -151,7 +136,6 @@ function setupEventListeners() {
     });
   }
 
-  // Phone OTP Flow
   const sendOtpBtn = document.getElementById("sendOtpBtn");
   const phoneInput = document.getElementById("phoneInput");
   const otpSection = document.getElementById("otpSection");
@@ -185,7 +169,6 @@ function setupEventListeners() {
     });
   }
 
-  // Search Input for Crops
   const cropSearchInput = document.getElementById("cropSearchInput");
   if (cropSearchInput) {
     cropSearchInput.addEventListener("input", (e) => {
@@ -194,7 +177,6 @@ function setupEventListeners() {
     });
   }
 
-  // Voice Search Button
   const voiceSearchBtn = document.getElementById("voiceSearchBtn");
   if (voiceSearchBtn) {
     voiceSearchBtn.addEventListener("click", () => {
@@ -202,7 +184,6 @@ function setupEventListeners() {
     });
   }
 
-  // Category Filter Pills
   document.querySelectorAll(".category-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       document.querySelectorAll(".category-pill").forEach(p => p.classList.remove("active"));
@@ -212,13 +193,11 @@ function setupEventListeners() {
     });
   });
 
-  // GPS Auto-Detect Location Button
   const detectLocationBtn = document.getElementById("detectLocationBtn");
   if (detectLocationBtn) {
     detectLocationBtn.addEventListener("click", handleLocationAutoDetect);
   }
 
-  // Radius Slider
   const radiusSlider = document.getElementById("radiusSlider");
   const radiusValue = document.getElementById("radiusValue");
   if (radiusSlider) {
@@ -229,14 +208,13 @@ function setupEventListeners() {
     });
   }
 
-  // Quantity Input in Calculator
   const quantityInput = document.getElementById("quantityInput");
   const quantityUnitSelect = document.getElementById("quantityUnitSelect");
   if (quantityInput) {
     quantityInput.addEventListener("input", (e) => {
       let val = parseFloat(e.target.value) || 1;
       if (quantityUnitSelect && quantityUnitSelect.value === "bags") {
-        val = val * 0.5; // 50kg bag = 0.5 quintal
+        val = val * 0.5;
       }
       APP_STATE.harvestQuantityQtl = val;
       updateCalculatorView();
@@ -255,7 +233,6 @@ function setupEventListeners() {
     });
   }
 
-  // Calculator Vehicle Selection
   document.querySelectorAll(".vehicle-card").forEach(card => {
     card.addEventListener("click", () => {
       document.querySelectorAll(".vehicle-card").forEach(c => c.classList.remove("active"));
@@ -265,7 +242,6 @@ function setupEventListeners() {
     });
   });
 
-  // Price History Tab Buttons
   document.querySelectorAll(".period-tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const period = btn.getAttribute("data-period");
@@ -273,19 +249,16 @@ function setupEventListeners() {
     });
   });
 
-  // Theme Toggle Button
   const themeToggleBtn = document.getElementById("themeToggleBtn");
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", toggleTheme);
   }
 
-  // Price Alert Modal Form
   const saveAlertBtn = document.getElementById("saveAlertBtn");
   if (saveAlertBtn) {
     saveAlertBtn.addEventListener("click", handleSavePriceAlert);
   }
 
-  // Notification Bell Click
   const notificationBellBtn = document.getElementById("notificationBellBtn");
   if (notificationBellBtn) {
     notificationBellBtn.addEventListener("click", () => {
@@ -293,32 +266,217 @@ function setupEventListeners() {
       renderAlertsList();
     });
   }
+
+  window.addEventListener("resize", () => {
+    if (window.mandiMap) window.mandiMap.invalidateSize();
+  });
+}
+
+function handleProfileButtonClick() {
+  if (APP_STATE.user) {
+    renderProfileModal();
+    showModal("profileModal");
+  } else {
+    showAuthModal();
+  }
 }
 
 function loginFarmer(userData) {
-  APP_STATE.user = userData;
-  localStorage.setItem("kisansetu_user", JSON.stringify(userData));
+  APP_STATE.user = {
+    name: userData.name || "Ramesh Kumar",
+    phone: userData.phone || "+91 98765 43210",
+    state: userData.state || "Punjab",
+    district: userData.district || "Kapurthala",
+    village: userData.village || "Near Phagwara, LPU Region",
+    landAcres: userData.landAcres || 8.5,
+    kisanId: userData.kisanId || "PB-2026-8941",
+    primaryMandi: userData.primaryMandi || "Khanna APMC Market",
+    preferredVehicle: userData.preferredVehicle || "Tractor Trolley (40 Qtl)",
+    crops: userData.crops || ["Wheat (गेहूं)", "Basmati Paddy (धान)", "Potato (आलू)"]
+  };
+  localStorage.setItem("kisansetu_user", JSON.stringify(APP_STATE.user));
   hideModal("authModal");
   renderUserUI();
   renderAllViews();
-  showToast(`🌾 राम राम ${userData.name}! Welcome to KisanSetu`, "success");
+  showToast(`🌾 राम राम ${APP_STATE.user.name}! Welcome to KisanSetu`, "success");
 }
 
 function logoutFarmer() {
   localStorage.removeItem("kisansetu_user");
   APP_STATE.user = null;
+  hideModal("profileModal");
+  hideModal("editProfileModal");
+  renderUserUI();
+  renderAllViews();
+  showToast("👋 राम राम किसान भाई! Successfully Logged Out (लॉगआउट हो गए)", "info");
   showAuthModal();
 }
 
 function renderUserUI() {
   const userNameDisplay = document.getElementById("userNameDisplay");
-  if (userNameDisplay && APP_STATE.user) {
-    userNameDisplay.textContent = APP_STATE.user.name;
+  const userProfileBtn = document.getElementById("userProfileBtn");
+  
+  if (APP_STATE.user) {
+    if (userNameDisplay) userNameDisplay.textContent = APP_STATE.user.name.split(" ")[0] + " (Profile)";
+    if (userProfileBtn) userProfileBtn.title = "View Farmer Profile";
+  } else {
+    if (userNameDisplay) userNameDisplay.textContent = "Farmer Login";
+    if (userProfileBtn) userProfileBtn.title = "Login / Register";
   }
+  
   const userLocDisplay = document.getElementById("currentLocationDisplay");
   if (userLocDisplay) {
     userLocDisplay.textContent = APP_STATE.userLocation.name;
   }
+}
+
+function renderProfileModal() {
+  if (!APP_STATE.user) return;
+  const u = APP_STATE.user;
+
+  const nameEl = document.getElementById("profNameDisplay");
+  const idEl = document.getElementById("profKisanId");
+  const addrEl = document.getElementById("profAddressDisplay");
+  const phoneEl = document.getElementById("profPhoneDisplay");
+  const landEl = document.getElementById("profLandDisplay");
+  const mandiEl = document.getElementById("profMandiDisplay");
+  const vehEl = document.getElementById("profVehicleDisplay");
+  const harvestEl = document.getElementById("profHarvestValDisplay");
+  const cropsListEl = document.getElementById("profCropsList");
+
+  if (nameEl) nameEl.textContent = u.name;
+  if (idEl) idEl.textContent = u.kisanId || "Kisan ID: PB-2026-8941";
+  if (addrEl) addrEl.textContent = `📍 ${u.village}, ${u.district}, ${u.state}`;
+  if (phoneEl) phoneEl.textContent = `📞 ${u.phone}`;
+  if (landEl) landEl.textContent = `${u.landAcres || 8.5} Acres (एकड़)`;
+  if (mandiEl) mandiEl.textContent = u.primaryMandi || "Khanna APMC Market";
+  if (vehEl) vehEl.textContent = u.preferredVehicle || "Tractor Trolley (40 Qtl)";
+  
+  const estVal = Math.round((u.landAcres || 8.5) * 28000);
+  if (harvestEl) harvestEl.textContent = `₹${estVal.toLocaleString("en-IN")}`;
+
+  if (cropsListEl) {
+    const crops = u.crops || ["Wheat (गेहूं)", "Basmati Paddy (धान)", "Mustard (सरसों)"];
+    cropsListEl.innerHTML = crops.map(c => `<span class="crop-tag-pill">🌾 ${c}</span>`).join("");
+  }
+}
+
+function openEditProfileModal() {
+  hideModal("profileModal");
+  if (!APP_STATE.user) return;
+  const u = APP_STATE.user;
+
+  const nameInp = document.getElementById("editNameInput");
+  const phoneInp = document.getElementById("editPhoneInput");
+  const stateSel = document.getElementById("editStateSelect");
+  const distInp = document.getElementById("editDistrictInput");
+  const villInp = document.getElementById("editVillageInput");
+  const landInp = document.getElementById("editLandInput");
+
+  if (nameInp) nameInp.value = u.name;
+  if (phoneInp) phoneInp.value = u.phone.replace(/[^0-9]/g, "").slice(-10);
+  if (stateSel) stateSel.value = u.state;
+  if (distInp) distInp.value = u.district;
+  if (villInp) villInp.value = u.village;
+  if (landInp) landInp.value = u.landAcres || 8.5;
+
+  showModal("editProfileModal");
+}
+
+function handleSaveProfile(e) {
+  if (e) e.preventDefault();
+
+  const nameInp = document.getElementById("editNameInput");
+  const phoneInp = document.getElementById("editPhoneInput");
+  const stateSel = document.getElementById("editStateSelect");
+  const distInp = document.getElementById("editDistrictInput");
+  const villInp = document.getElementById("editVillageInput");
+  const landInp = document.getElementById("editLandInput");
+
+  const updatedUser = {
+    ...APP_STATE.user,
+    name: nameInp.value.trim() || APP_STATE.user.name,
+    phone: `+91 ${phoneInp.value.trim() || '9876543210'}`,
+    state: stateSel.value,
+    district: distInp.value.trim(),
+    village: villInp.value.trim(),
+    landAcres: parseFloat(landInp.value) || 8.5
+  };
+
+  APP_STATE.user = updatedUser;
+  localStorage.setItem("kisansetu_user", JSON.stringify(updatedUser));
+
+  APP_STATE.userLocation.name = `${updatedUser.village}, ${updatedUser.district}, ${updatedUser.state}`;
+  APP_STATE.userLocation.state = updatedUser.state;
+  APP_STATE.userLocation.district = updatedUser.district;
+
+  hideModal("editProfileModal");
+  renderUserUI();
+  renderProfileModal();
+  showModal("profileModal");
+  renderAllViews();
+
+  showToast("✅ किसान प्रोफाइल सफलतापूर्वक अपडेट हुई (Profile updated successfully)!", "success");
+}
+
+function switchFarmerProfile(profileKey) {
+  document.querySelectorAll(".switch-pill").forEach(p => p.classList.remove("active"));
+  if (event && event.target) event.target.classList.add("active");
+
+  const sampleProfiles = {
+    ramesh: {
+      name: "Ramesh Kumar (ਰਮੇਸ਼ ਕੁਮਾਰ)",
+      phone: "+91 98765 43210",
+      state: "Punjab",
+      district: "Kapurthala",
+      village: "Near Phagwara, LPU Region",
+      landAcres: 8.5,
+      kisanId: "PB-2026-8941",
+      primaryMandi: "Khanna APMC Grain Market",
+      preferredVehicle: "Tractor Trolley (40 Qtl)",
+      crops: ["Wheat (गेहूं)", "Basmati Paddy (धान)", "Potato (आलू)"]
+    },
+    balwinder: {
+      name: "Sardar Balwinder Singh (ਬਲਵਿੰਦਰ ਸਿੰਘ)",
+      phone: "+91 98140 55678",
+      state: "Punjab",
+      district: "Amritsar",
+      village: "Majitha Road, Amritsar",
+      landAcres: 14.0,
+      kisanId: "PB-2026-3312",
+      primaryMandi: "Amritsar Bhagtanwala Mandi",
+      preferredVehicle: "10-Wheeler Heavy Truck",
+      crops: ["Basmati Paddy (1121)", "Wheat", "Mustard (सरसों)"]
+    },
+    suresh: {
+      name: "Suresh Bhai Patel (સુરેશભાઈ પટેલ)",
+      phone: "+91 99099 33221",
+      state: "Gujarat",
+      district: "Rajkot",
+      village: "Gondal Road, Rajkot",
+      landAcres: 6.5,
+      kisanId: "GJ-2026-7781",
+      primaryMandi: "Gondal APMC Market Yard",
+      preferredVehicle: "Bolero Pickup Maxi",
+      crops: ["Cotton (कपास)", "Groundnut (मूंगफली)", "Wheat (गेहूं)"]
+    },
+    shivam: {
+      name: "Shivam Yadav (शिवम यादव)",
+      phone: "+91 94500 77889",
+      state: "Uttar Pradesh",
+      district: "Varanasi",
+      village: "Raja Talab, Varanasi",
+      landAcres: 5.0,
+      kisanId: "UP-2026-1145",
+      primaryMandi: "Chandauli APMC Mandi",
+      preferredVehicle: "3-Wheeler Cargo Auto",
+      crops: ["Wheat (गेहूं)", "Potato (आलू)", "Mustard (सरसों)"]
+    }
+  };
+
+  const selectedProf = sampleProfiles[profileKey] || sampleProfiles.ramesh;
+  loginFarmer(selectedProf);
+  renderProfileModal();
 }
 
 function showLanguageModal() {
@@ -360,7 +518,6 @@ function renderAllViews() {
   updateCalculatorView();
   renderWeatherWidget();
   
-  // Render Map and Charts
   setTimeout(() => {
     if (window.mandiMap) {
       window.mandiMap.initMap("mandiMap");
@@ -375,9 +532,6 @@ function renderAllViews() {
   }, 200);
 }
 
-/**
- * Renders the Visual Crop Grid with real crop images & fallback handling
- */
 function renderCropCatalog() {
   const container = document.getElementById("cropCatalogGrid");
   if (!container) return;
@@ -385,10 +539,7 @@ function renderCropCatalog() {
   const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
 
   const filteredCrops = AGRI_DATA.crops.filter(crop => {
-    // Category filter
     const matchesCategory = (APP_STATE.selectedCategory === "all") || (crop.category === APP_STATE.selectedCategory);
-    
-    // Search query filter
     const matchesSearch = !APP_STATE.searchQuery ||
       crop.name.toLowerCase().includes(APP_STATE.searchQuery) ||
       (crop.nameHi && crop.nameHi.toLowerCase().includes(APP_STATE.searchQuery)) ||
@@ -456,7 +607,6 @@ function selectCrop(cropId) {
     window.mandiMap.renderMandiMarkers(cropId);
   }
 
-  // Smooth scroll to Mandi Rates section
   const section = document.getElementById("mandiComparisonSection");
   if (section) {
     section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -466,9 +616,6 @@ function selectCrop(cropId) {
   showToast(`🌾 Selected: ${selectedCrop ? selectedCrop.name : cropId}`, "info");
 }
 
-/**
- * Computes and renders the AI Top Mandi Recommendation Banner
- */
 function renderBestMandiRecommendation() {
   const container = document.getElementById("bestMandiBanner");
   if (!container) return;
@@ -547,9 +694,6 @@ function renderBestMandiRecommendation() {
   `;
 }
 
-/**
- * Side-by-side Mandi Price Comparison Cards
- */
 function renderMandiComparison() {
   const container = document.getElementById("mandiComparisonCards");
   if (!container) return;
@@ -557,7 +701,6 @@ function renderMandiComparison() {
   const currentCrop = AGRI_DATA.crops.find(c => c.id === APP_STATE.selectedCropId) || AGRI_DATA.crops[0];
   const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
   
-  // Title update
   const cropTitleEl = document.getElementById("selectedCropComparisonTitle");
   if (cropTitleEl) {
     const name = (currentLang === "hi" && currentCrop.nameHi) ? currentCrop.nameHi : currentCrop.name;
@@ -656,7 +799,6 @@ function selectMandiForCalc(mandiId) {
     window.mandiMap.drawRouteToMandi(mandiId);
   }
   
-  // Scroll to calculator
   const calcSection = document.getElementById("calculatorSection");
   if (calcSection) {
     calcSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -703,9 +845,6 @@ function speakMandiDetails(mandiId) {
   );
 }
 
-/**
- * Updates the Transportation & Profit Calculator
- */
 function updateCalculatorView() {
   const result = window.profitCalculator.calculateMandiProfit(
     APP_STATE.selectedCropId,
@@ -727,7 +866,6 @@ function updateCalculatorView() {
     });
   }
 
-  // Update Summary Numbers
   const grossEl = document.getElementById("calcGrossRevenue");
   const transportEl = document.getElementById("calcTransportCost");
   const cessEl = document.getElementById("calcMandiCess");
@@ -740,7 +878,6 @@ function updateCalculatorView() {
   if (netEl) netEl.textContent = `₹${result.netProfit.toLocaleString("en-IN")}`;
   if (netPerQtlEl) netPerQtlEl.textContent = `(₹${result.netPricePerQtl} per Quintal)`;
 
-  // Update vehicle cards active state
   document.querySelectorAll(".vehicle-card").forEach(card => {
     if (card.getAttribute("data-vehicle") === APP_STATE.selectedVehicleId) {
       card.classList.add("active");
@@ -750,9 +887,6 @@ function updateCalculatorView() {
   });
 }
 
-/**
- * Live Weather & Transport Advisory Widget
- */
 function renderWeatherWidget() {
   const weather = AGRI_DATA.weather;
   const tempEl = document.getElementById("weatherTemp");
@@ -785,9 +919,6 @@ function renderWeatherWidget() {
   }
 }
 
-/**
- * Price Alerts Manager
- */
 function renderAlertsList() {
   const container = document.getElementById("activeAlertsContainer");
   if (!container) return;
@@ -837,7 +968,6 @@ function handleSavePriceAlert() {
   renderAlertsList();
   showToast(`🔔 Price Alert Set for ${crop} (> ₹${price})! Notification will arrive on WhatsApp/SMS.`, "success");
 
-  // Simulate instant WhatsApp test trigger
   setTimeout(() => {
     showToast(`📱 [WhatsApp Alert Simulation]: ${crop} has crossed ₹${price} at ${mandi}! Current Rate: ₹${price + 20}. Check KisanSetu.`, "success");
   }, 4000);
@@ -862,7 +992,6 @@ function handleLocationAutoDetect() {
         showToast("✅ Location Detected successfully!", "success");
       },
       (err) => {
-        // Fallback to high-precision Punjab coordinates
         APP_STATE.userLocation = {
           lat: 31.2550,
           lng: 75.7050,

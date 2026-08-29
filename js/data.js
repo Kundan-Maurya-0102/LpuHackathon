@@ -1,10 +1,4 @@
-/**
- * KisanSetu - Agricultural Data Store
- * Comprehensive dataset of crops, mandis across India, transport rates, and historical analytics.
- */
-
 const AGRI_DATA = {
-  // 1. Crops Catalog with high-quality real crop photography & fallback metadata
   crops: [
     {
       id: "wheat",
@@ -236,7 +230,6 @@ const AGRI_DATA = {
     }
   ],
 
-  // 2. Mandis Database with realistic APMC details around Punjab / North India
   mandis: [
     {
       id: "khanna",
@@ -438,7 +431,6 @@ const AGRI_DATA = {
     }
   ],
 
-  // 3. Vehicles Database
   vehicles: [
     {
       id: "tractor",
@@ -498,7 +490,6 @@ const AGRI_DATA = {
     }
   ],
 
-  // 4. Historical Price Trends for Chart.js
   priceHistory: {
     wheat: {
       "7d": {
@@ -562,7 +553,6 @@ const AGRI_DATA = {
     }
   },
 
-  // 5. Live Weather & Agro Advisory
   weather: {
     location: "Phagwara / Jalandhar, Punjab",
     temp: 29,
@@ -583,7 +573,6 @@ const AGRI_DATA = {
     advisoryText: "Weather is completely clear today with low humidity (58%). Produce moisture will test well at the APMC weighbridge. Recommended to transport produce before peak afternoon heat."
   },
 
-  // 6. Realistic Default Active Alerts
   sampleAlerts: [
     {
       id: "alt_1",
