@@ -114,22 +114,45 @@ async function loadMarketData() {
             });
             
             const liveMandis = Object.values(marketMap);
-              const liveCrops = [...new Map(rawPrices.filter(item => item?.commodity && Number(item.modal_price) > 0).map(item => {
+              const liveCrops = [...new Map(rawPrices.filter(item => item?.commodity && Number(item.modal_price) > 0 && cropImageUrl(item.commodity)).map(item => {
                 const id = String(item.commodity).toLowerCase().replace(/[^a-z0-9]+/g, "-");
-                return [id, { id, name: item.commodity, nameHi: item.commodity, namePa: item.commodity, category: "all", fallbackIcon: "🌾", unit: "Quintal (100 kg)", allIndiaAvg: Number(item.modal_price), priceTrend: "Live", trendDirection: "flat", msp: 0, description: "Live price from data.gov.in." }];
+                return [id, { id, name: item.commodity, nameHi: item.commodity, namePa: item.commodity, category: "all", image: cropImageUrl(item.commodity), fallbackIcon: "🌾", unit: "Quintal (100 kg)", allIndiaAvg: Number(item.modal_price), priceTrend: "Live", trendDirection: "flat", msp: 0, description: "Live price from data.gov.in." }];
               })).values()];
                 if (!liveCrops.length || !liveMandis.length) throw new Error("No usable mandi records returned by the market API.");
                 AGRI_DATA.mandis.splice(0, AGRI_DATA.mandis.length, ...liveMandis);
                 AGRI_DATA.crops.splice(0, AGRI_DATA.crops.length, ...liveCrops);
                 AGRI_DATA.priceHistory = {};
                 APP_STATE.selectedCropId = AGRI_DATA.crops[0].id;
-                APP_STATE.selectedMandiId = AGRI_DATA.mandis[0].id;
+                APP_STATE.selectedMandiId = AGRI_DATA.mandis.find(m => m.prices[APP_STATE.selectedCropId])?.id || AGRI_DATA.mandis[0].id;
               APP_STATE.marketDataStatus = "ready";
         }
     } catch (err) {
         console.error("Failed to load market data:", err);
             APP_STATE.marketDataStatus = AGRI_DATA.crops.length && AGRI_DATA.mandis.length ? "ready" : "error";
     }
+}
+
+function cropImageUrl(name) {
+  const value = String(name || "").toLowerCase();
+  const imageByCrop = {
+    wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80",
+    rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+    paddy: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+    mustard: "https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?auto=format&fit=crop&w=600&q=80",
+    potato: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80",
+    onion: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=600&q=80",
+    tomato: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=600&q=80",
+    cotton: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=600&q=80",
+    maize: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=600&q=80",
+    corn: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=600&q=80",
+    soybean: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80",
+    chana: "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=600&q=80",
+    gram: "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=600&q=80",
+    sugarcane: "https://images.unsplash.com/photo-1589135233689-d41a766c1eb9?auto=format&fit=crop&w=600&q=80",
+    garlic: "https://images.unsplash.com/photo-1588615419957-462725e2e858?auto=format&fit=crop&w=600&q=80"
+  };
+  const key = Object.keys(imageByCrop).find(crop => value.includes(crop));
+  return key ? imageByCrop[key] : "";
 }
 
 function setupEventListeners() {
@@ -848,7 +871,7 @@ function renderCropCatalog() {
     return `
       <div class="crop-card ${isSelected ? 'selected' : ''}" onclick="selectCrop('${crop.id}')" id="crop_card_${crop.id}">
         <div class="crop-img-wrap">
-          <img src="${crop.image}" alt="${crop.name}" class="crop-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" loading="lazy">
+          <img src="${crop.image || cropImageUrl(crop.name)}" alt="${crop.name}" class="crop-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" loading="lazy">
           <div class="crop-icon-fallback" style="display:none;">
             <span>${crop.fallbackIcon}</span>
           </div>
@@ -1139,6 +1162,7 @@ function updateCalculatorView() {
     APP_STATE.selectedVehicleId,
     APP_STATE.harvestQuantityQtl
   );
+  if (!result) return;
 
   const mandiSelect = document.getElementById("calcMandiSelect");
   if (mandiSelect && mandiSelect.options.length === 0) {
