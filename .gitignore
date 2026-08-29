@@ -1,3 +1,30 @@
+<<<<<<< HEAD
 .env
 .env.*
 !.env.example
+=======
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+.env.test
+.env.production
+
+# Logs
+logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Optional IDE files
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+>>>>>>> a8ce17e9aed00d288924b2176c7fa236e7c96ab5
