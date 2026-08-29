@@ -54,6 +54,30 @@ function setupLoginFormListeners() {
   if (resendOtpBtn) {
     resendOtpBtn.addEventListener("click", handleResendOtp);
   }
+
+  const demoLoginBtn = document.getElementById("demoLoginBtn");
+  if (demoLoginBtn) {
+    demoLoginBtn.addEventListener("click", () => {
+      const demoUser = {
+        full_name: "Ramesh Kumar (ਰਮੇਸ਼ ਕੁਮਾਰ)",
+        mobile: "9876543210",
+        farmer_id: "PB-2026-8941",
+        state: "Punjab",
+        district: "Kapurthala",
+        village: "Phagwara / Jalandhar (Near LPU)",
+        land_acres: 12.5,
+        primary_mandi: "Khanna APMC Grain Market",
+        preferred_vehicle: "Tractor Trolley (40 Qtl)",
+        crops: ["Wheat (गेहूं)", "Basmati Paddy (धान)", "Mustard (सरसों)"]
+      };
+      localStorage.setItem("kisansetu_user", JSON.stringify(demoUser));
+      localStorage.setItem("kisansetu_just_logged_in", "true");
+      showToast("⚡ Welcome Ramesh Kumar ji! Entering KisanSetu...", "success");
+      setTimeout(() => {
+        window.location.href = "index.html?welcome=1";
+      }, 500);
+    });
+  }
 }
 
 async function handleSendOtp(e) {
@@ -246,17 +270,19 @@ async function handleVerifyOtp(e) {
 
     if (res.success && res.data && res.data.user) {
       localStorage.setItem("kisansetu_user", JSON.stringify(res.data.user));
+      localStorage.setItem("kisansetu_just_logged_in", "true");
       if (res.data.token) {
         localStorage.setItem("kisansetu_token", res.data.token);
       }
 
       showToast(`🎉 ${res.message || 'Login Successful! Welcome to KisanSetu'}`, "success");
 
-      // Redirect to index.html or returnUrl
+      // Redirect to index.html or returnUrl with welcome flag
       setTimeout(() => {
         const params = new URLSearchParams(window.location.search);
         const returnUrl = params.get("returnUrl") || "index.html";
-        window.location.href = returnUrl;
+        const redirectUrl = returnUrl.includes("?") ? `${returnUrl}&welcome=1` : `${returnUrl}?welcome=1`;
+        window.location.href = redirectUrl;
       }, 700);
     } else {
       showToast("❌ " + (res.message || "Invalid OTP code. Please try again."), "error");
@@ -281,9 +307,10 @@ async function handleVerifyOtp(e) {
       crops: ["Wheat (गेहूं)", "Basmati Paddy (धान)", "Mustard (सरसों)"]
     };
     localStorage.setItem("kisansetu_user", JSON.stringify(mockUser));
+    localStorage.setItem("kisansetu_just_logged_in", "true");
     showToast("🎉 Verified! Welcome to KisanSetu", "success");
     setTimeout(() => {
-      window.location.href = "index.html";
+      window.location.href = "index.html?welcome=1";
     }, 700);
   } finally {
     if (verifyBtn) verifyBtn.disabled = false;

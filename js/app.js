@@ -15,11 +15,17 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initDashboard() {
   setupDashboardEventListeners();
 
-  // Load dynamic market data
+  // Load dynamic market data from backend SQLite DB
   if (window.apiMarket && typeof window.apiMarket.getPrices === "function") {
     try {
       const res = await window.apiMarket.getPrices();
       if (res.success && res.data && res.data.length > 0) {
+        // 1. Update all crop card prices from live DB data
+        if (typeof window.updateCropPricesFromAPI === "function") {
+          window.updateCropPricesFromAPI(res.data);
+        }
+
+        // 2. Build mandi list for profit calculator
         const marketMap = {};
         res.data.forEach(item => {
           const mId = item.market.toLowerCase().replace(/ /g, "_");
@@ -47,17 +53,24 @@ async function initDashboard() {
             min: parseFloat(item.min_price),
             max: parseFloat(item.max_price),
             modal: parseFloat(item.modal_price),
-            arrivals: "Available"
+            arrivals: item.arrivals || "Available"
           };
         });
         if (Object.keys(marketMap).length > 0) {
           AGRI_DATA.mandis = Object.values(marketMap);
         }
+
+        // 3. Update live ticker bar with real prices
+        updateTickerBar(res.data);
+
+        const now = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+        showToast(`🟢 Live APMC prices loaded (${res.data.length} records) — ${now}`, "success");
       }
     } catch (err) {
-      console.warn("Dynamic price fetch fallback:", err);
+      console.warn("Dynamic price fetch fallback (backend may be offline):", err);
     }
   }
+
 
   renderAllDashboardViews();
 
@@ -106,12 +119,15 @@ function renderCropCatalog() {
   if (!container) return;
 
   const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
+  const t = (k) => window.i18n ? window.i18n.t(k) : k;
   const crops = (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.crops)) ? window.AGRI_DATA.crops : [];
 
   const filteredCrops = crops.filter(crop => {
     const matchesCategory = (HOME_STATE.selectedCategory === "all") || (crop.category === HOME_STATE.selectedCategory);
+    const localized = window.getLocalizedCropName ? window.getLocalizedCropName(crop, currentLang) : crop.name;
     const matchesSearch = !HOME_STATE.searchQuery ||
       crop.name.toLowerCase().includes(HOME_STATE.searchQuery) ||
+      localized.toLowerCase().includes(HOME_STATE.searchQuery) ||
       (crop.nameHi && crop.nameHi.toLowerCase().includes(HOME_STATE.searchQuery)) ||
       (crop.namePa && crop.namePa.toLowerCase().includes(HOME_STATE.searchQuery));
 
@@ -130,42 +146,47 @@ function renderCropCatalog() {
   }
 
   container.innerHTML = filteredCrops.map(crop => {
-    let localizedName = crop.name;
-    if (currentLang === "hi" && crop.nameHi) localizedName = `${crop.nameHi} (${crop.name})`;
-    if (currentLang === "pa" && crop.namePa) localizedName = `${crop.namePa} (${crop.name})`;
-
+    const localizedName = window.getLocalizedCropName ? window.getLocalizedCropName(crop, currentLang) : crop.name;
     const isSelected = crop.id === HOME_STATE.selectedCropId;
+
+    // Trend arrow icon
+    const trendIcon = crop.trendDirection === "up" ? "▲" : crop.trendDirection === "down" ? "▼" : "●";
 
     return `
       <div class="crop-card ${isSelected ? 'selected' : ''}" onclick="selectCrop('${crop.id}')" id="crop_card_${crop.id}">
+
+        <!-- Image with overlaid badges -->
         <div class="crop-img-wrap">
-          <img src="${crop.image}" alt="${crop.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80'">
+          <img src="${crop.image}" alt="${crop.name}" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80'">
+          <span class="price-trend-badge ${crop.trendDirection || 'flat'}">${trendIcon} ${crop.priceTrend || '0%'}</span>
           <span class="crop-cat-badge">${crop.category}</span>
         </div>
 
+        <!-- Card Body -->
         <div class="crop-card-content">
+          <!-- Name + Grade -->
           <div class="crop-card-header">
             <h4 class="crop-name">${localizedName}</h4>
-            <span class="crop-grade">${crop.grade}</span>
+            <span class="crop-grade">${crop.grade || 'FAQ'}</span>
           </div>
 
+          <!-- Live Price Box -->
           <div class="crop-price-row">
             <div>
-              <span class="price-lbl">Avg APMC Rate:</span>
+              <span class="price-lbl">${t("liveApmcRate")}</span>
               <span class="price-val">₹${crop.allIndiaAvg.toLocaleString("en-IN")}</span>
-              <span class="price-unit">/ Qtl</span>
             </div>
-            <div class="price-trend-badge ${crop.trendDirection}">
-              <span>${crop.priceTrend}</span>
-            </div>
+            <span class="price-unit">${t("perQtl")}</span>
           </div>
 
-          <div class="crop-card-footer" style="display: flex; gap: 8px; margin-top: 12px;">
-            <a href="comparison.html?crop=${crop.id}" class="mandi-btn primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 12px; padding: 7px 10px;">
-              <span>📊 Compare Mandis</span>
+          <!-- Action Buttons — always at bottom via margin-top: auto -->
+          <div class="crop-card-footer">
+            <a href="comparison.html?crop=${crop.id}" class="crop-btn-compare">
+              ${t("btnCompare")}
             </a>
-            <a href="sell.html?crop=${crop.id}" class="mandi-btn secondary" style="flex: 1; text-align: center; text-decoration: none; font-size: 12px; padding: 7px 10px; background: #0f766e; color: #ffffff;">
-              <span>📄 Sell Lot</span>
+            <a href="sell.html?crop=${crop.id}" class="crop-btn-sell">
+              ${t("btnSell")}
             </a>
           </div>
         </div>
@@ -195,6 +216,8 @@ function renderBestMandiRecommendation() {
 
   const best = result.bestMandi;
   const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
+  const t = (k) => window.i18n ? window.i18n.t(k) : k;
+
   let mandiName = best.mandi.name || "Khanna APMC Grain Market";
   if (currentLang === "hi" && best.mandi.nameHi) mandiName = best.mandi.nameHi;
   if (currentLang === "pa" && best.mandi.namePa) mandiName = best.mandi.namePa;
@@ -224,32 +247,32 @@ function renderBestMandiRecommendation() {
 
         <div class="best-col-metrics">
           <div class="metric-box green">
-            <span class="m-lbl">Modal Rate (भाव)</span>
+            <span class="m-lbl">${t("modalPrice")}</span>
             <span class="m-val">₹${best.modalPrice || 2300}</span>
-            <span class="m-unit">/ Quintal</span>
+            <span class="m-unit">${t("perQuintal")}</span>
           </div>
           <div class="metric-box blue">
-            <span class="m-lbl">Net Take-Home</span>
+            <span class="m-lbl">${t("netTakeHome")}</span>
             <span class="m-val">₹${best.netPricePerQtl || 2150}</span>
-            <span class="m-unit">/ Qtl after travel</span>
+            <span class="m-unit">${t("perQtl")}</span>
           </div>
           <div class="metric-box gold">
-            <span class="m-lbl">Total Profit (${best.quantityQtl || 30} Qtl)</span>
+            <span class="m-lbl">${t("finalNetProfit")} (${best.quantityQtl || 30} Qtl)</span>
             <span class="m-val profit-highlight">₹${(best.netProfit || 65000).toLocaleString("en-IN")}</span>
-            <span class="m-unit">In-Hand Earnings</span>
+            <span class="m-unit">${t("netTakeHome")}</span>
           </div>
         </div>
       </div>
 
       <div class="best-mandi-footer">
         <a href="comparison.html?crop=${HOME_STATE.selectedCropId}&mandi=${best.mandi.id || 'khanna'}" class="btn-action-primary" style="text-decoration:none;">
-          <span>📊 Open Mandi Rate Comparison & Calculator</span>
+          <span>📊 ${t("compareMandisLink") || "Compare Mandis"}</span>
         </a>
         <a href="sell.html?crop=${HOME_STATE.selectedCropId}&mandi=${best.mandi.id || 'khanna'}" class="btn-action-secondary" style="text-decoration:none; background:#0f766e; color:#ffffff;">
-          <span>📄 Sell Produce & Digital J-Form</span>
+          <span>📄 ${t("createJFormLink") || "Create J-Form"}</span>
         </a>
         <a href="map.html?crop=${HOME_STATE.selectedCropId}&mandi=${best.mandi.id || 'khanna'}" class="btn-action-secondary" style="text-decoration:none;">
-          <span>🗺️ GPS Navigation Route</span>
+          <span>🗺️ ${t("openMapLink") || "Open Map"}</span>
         </a>
       </div>
     </div>
@@ -329,3 +352,50 @@ function handleSavePriceAlert() {
   showToast(`🔔 Price Alert Activated for ${crop.toUpperCase()} when rate crosses ₹${target}/Qtl!`, "success");
 }
 window.handleSavePriceAlert = handleSavePriceAlert;
+
+/**
+ * updateTickerBar
+ * Replaces the hardcoded static ticker HTML with live APMC prices from DB.
+ * Shows top 6 commodity prices in the scrolling marquee at the top of the page.
+ *
+ * @param {Array} pricesData - Raw array from /api/market-prices
+ */
+function updateTickerBar(pricesData) {
+  const marquee = document.querySelector(".ticker-marquee");
+  if (!marquee || !Array.isArray(pricesData) || pricesData.length === 0) return;
+
+  // Crop emoji map
+  const cropEmoji = {
+    wheat: "🌾", paddy: "🌾", basmati: "🌾",
+    mustard: "🌼", potato: "🥔", onion: "🧅",
+    tomato: "🍅", cotton: "☁️", maize: "🌽",
+    chana: "🧆", soybean: "🌱", garlic: "🧄", sugarcane: "🎋"
+  };
+
+  // Aggregate: pick one representative price per commodity (highest modal)
+  const best = {};
+  pricesData.forEach(item => {
+    const key = (item.commodity || "").toLowerCase().split(" ")[0];
+    const modal = parseFloat(item.modal_price) || 0;
+    if (!best[key] || modal > best[key].modal) {
+      best[key] = {
+        name: item.commodity,
+        market: item.market,
+        modal,
+        district: item.district
+      };
+    }
+  });
+
+  const entries = Object.entries(best).slice(0, 8);
+  if (entries.length === 0) return;
+
+  const spans = entries.map(([key, data]) => {
+    const emoji = cropEmoji[key] || "🌿";
+    const price = data.modal.toLocaleString("en-IN");
+    return `<span>${emoji} <strong>${data.name}:</strong> ${data.market} ₹${price}/qtl</span>`;
+  });
+
+  marquee.innerHTML = spans.join("");
+}
+

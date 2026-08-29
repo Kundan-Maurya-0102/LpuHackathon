@@ -1,5 +1,5 @@
 import secrets
-from typing import Optional, List
+from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
@@ -23,27 +23,44 @@ class CreateSaleRequest(BaseModel):
 @router.post("/")
 def create_sale(body: CreateSaleRequest, current_user: dict = Depends(get_current_user)):
     user_id = current_user["id"]
-    total_amount = round(body.quantity * body.price_per_unit, 2)
+    gross_amount = round(body.quantity * body.price_per_unit, 2)
+    
+    # Apply standard APMC mandi cess (1.5%) and a small loading fee
+    mandi_cess = round(gross_amount * 0.015, 2)
+    loading_fee = round(body.quantity * 10, 2)   # ₹10 per quintal loading
+    net_amount = round(gross_amount - mandi_cess - loading_fee, 2)
+    
     receipt_id = f"REC-{secrets.token_hex(4).upper()}"
+    farmer_name = current_user.get("full_name", "Farmer")
+    farmer_mobile = current_user.get("mobile", "")
+    farmer_id_str = current_user.get("farmer_id", "")
     
     conn = get_db_connection()
     cursor = conn.cursor()
     
     cursor.execute("""
         INSERT INTO sales (
-            user_id, commodity, variety, quantity, unit,
-            price_per_unit, total_amount, mandi_name, buyer_name,
-            buyer_contact, notes, receipt_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            user_id, farmer_name, farmer_mobile, farmer_id_str,
+            commodity, variety, quantity, unit,
+            price_per_unit, gross_amount, mandi_cess, loading_fee,
+            net_amount, mandi_name, buyer_name, buyer_contact,
+            notes, receipt_id, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Settled')
     """, (
         user_id,
+        farmer_name,
+        farmer_mobile,
+        farmer_id_str,
         body.commodity,
         body.variety,
         body.quantity,
         body.unit or "Quintal",
         body.price_per_unit,
-        total_amount,
-        body.mandi_name,
+        gross_amount,
+        mandi_cess,
+        loading_fee,
+        net_amount,
+        body.mandi_name or current_user.get("primary_mandi", ""),
         body.buyer_name,
         body.buyer_contact,
         body.notes,
@@ -59,7 +76,10 @@ def create_sale(body: CreateSaleRequest, current_user: dict = Depends(get_curren
         "data": {
             "id": sale_id,
             "receipt_id": receipt_id,
-            "total_amount": total_amount
+            "gross_amount": gross_amount,
+            "mandi_cess": mandi_cess,
+            "loading_fee": loading_fee,
+            "net_amount": net_amount
         }
     }
 
@@ -92,7 +112,7 @@ def get_sale_receipt(receipt_id: str, current_user: dict = Depends(get_current_u
     cursor = conn.cursor()
     
     cursor.execute("""
-        SELECT s.*, u.full_name as farmer_name, u.village, u.district, u.state, u.farmer_id
+        SELECT s.*, u.full_name as farmer_name_full, u.village, u.district, u.state, u.farmer_id
         FROM sales s
         JOIN users u ON s.user_id = u.id
         WHERE s.receipt_id = ? AND s.user_id = ?

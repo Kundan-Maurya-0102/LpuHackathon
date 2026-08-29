@@ -157,6 +157,18 @@ function setupComparisonEventListeners() {
 
 function renderAllComparisonViews() {
   if (window.i18n) window.i18n.applyTranslations();
+
+  // Localize crop select dropdown options
+  const cropSelect = document.getElementById("compCropSelect");
+  if (cropSelect && window.AGRI_DATA && Array.isArray(window.AGRI_DATA.crops)) {
+    const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
+    const selectedVal = COMP_STATE.selectedCropId;
+    cropSelect.innerHTML = window.AGRI_DATA.crops.map(c => {
+      const locName = window.getLocalizedCropName ? window.getLocalizedCropName(c, currentLang) : c.name;
+      return `<option value="${c.id}" ${c.id === selectedVal ? 'selected' : ''}>${c.fallbackIcon || '🌾'} ${locName}</option>`;
+    }).join("");
+  }
+
   renderBestMandiRecommendation();
   renderMandiComparison();
   updateCalculatorView();

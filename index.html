@@ -76,6 +76,10 @@
       <button class="nav-btn" id="notificationBellBtn" title="Price Alerts">
         <span>🔔</span>
       </button>
+      <button class="nav-btn nav-btn-guide" id="navGuideBtn" title="Platform Guide & Instructions">
+        <span>📖</span>
+        <span class="nav-guide-text" data-i18n="navGuide">Guide</span>
+      </button>
       <button class="nav-btn" id="themeToggleBtn" title="Toggle Day/Night Mode">
         <span id="themeIcon">🌙</span>
       </button>
@@ -129,21 +133,21 @@
           <div class="card-icon-wrap">📊</div>
           <h3 data-i18n="featureCompTitle">APMC Rate Comparison</h3>
           <p data-i18n="featureCompDesc">Compare modal rates across all regional mandis within 200 km.</p>
-          <div class="cta-link">Compare Mandis →</div>
+          <div class="cta-link" data-i18n="compareMandisLink">Compare Mandis →</div>
         </a>
 
         <a href="sell.html" class="quick-feature-card">
           <div class="card-icon-wrap" style="background: rgba(15, 118, 110, 0.1); color: #0f766e;">💰</div>
           <h3 data-i18n="featureSellTitle">Sell Crop & J-Form</h3>
           <p data-i18n="featureSellDesc">Generate verified digital J-Form receipts with transparent deductions.</p>
-          <div class="cta-link" style="color: #0f766e;">Create J-Form →</div>
+          <div class="cta-link" style="color: #0f766e;" data-i18n="createJFormLink">Create J-Form →</div>
         </a>
 
         <a href="map.html" class="quick-feature-card">
           <div class="card-icon-wrap" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">🗺️</div>
           <h3 data-i18n="featureMapTitle">GPS Mandi Navigation</h3>
           <p data-i18n="featureMapDesc">Interactive map with live distance, travel time & Google Maps routes.</p>
-          <div class="cta-link" style="color: #2563eb;">Open Map →</div>
+          <div class="cta-link" style="color: #2563eb;" data-i18n="openMapLink">Open Map →</div>
         </a>
       </div>
     </section>
@@ -153,7 +157,7 @@
       <div class="section-header-row">
         <div>
           <h3 data-i18n="selectCropPrompt">Select Your Harvested Crop</h3>
-          <p style="font-size: 13px; color: var(--text-muted);">Click any crop to explore all nearby mandis and calculate vehicle transport profits</p>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="selectCropSub">Click any crop to explore all nearby mandis and calculate vehicle transport profits</p>
         </div>
       </div>
 
@@ -165,7 +169,7 @@
       <div class="section-header-row">
         <div>
           <h3 data-i18n="weatherTitle">⛅ Live Weather & Mandi Transport Advisory</h3>
-          <p style="font-size: 13px; color: var(--text-muted);">Real-time weather forecast to plan harvesting and grain transport safely</p>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="weatherSub">Real-time weather forecast to plan harvesting and grain transport safely</p>
         </div>
       </div>
 
@@ -179,7 +183,7 @@
           <div class="weather-details-pills">
             <div class="w-pill"><span class="lbl" data-i18n="humidityLabel">Humidity</span><strong id="weatherHumidity">62%</strong></div>
             <div class="w-pill"><span class="lbl" data-i18n="windLabel">Wind Speed</span><strong id="weatherWind">12 km/h</strong></div>
-            <div class="w-pill"><span class="lbl">Precipitation</span><strong>0% Rain</strong></div>
+            <div class="w-pill"><span class="lbl" data-i18n="precipitationLabel">Precipitation</span><strong id="weatherPrecipitation" data-i18n="rainVal">0% Rain</strong></div>
           </div>
         </div>
 

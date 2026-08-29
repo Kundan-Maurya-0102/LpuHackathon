@@ -42,10 +42,47 @@ function initSellPage() {
 function setupSellEventListeners() {
   const form = document.getElementById("sellProduceForm");
   if (form) {
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       recalculateAndRenderJForm();
-      showToast("🎉 Digital J-Form Generated Successfully!", "success");
+
+      // Save sale to backend SQLite DB if user is authenticated
+      if (window.apiSales && window.apiAuth && window.apiAuth.isAuthenticated()) {
+        try {
+          const cropId = document.getElementById("sellCropSelect")?.value || "wheat";
+          const crops = (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.crops)) ? window.AGRI_DATA.crops : [];
+          const crop = crops.find(c => c.id === cropId) || { name: "Wheat" };
+
+          const mandis = (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.mandis)) ? window.AGRI_DATA.mandis : [];
+          const mandiId = document.getElementById("sellMandiSelect")?.value || "khanna";
+          const mandi = mandis.find(m => m.id === mandiId) || { name: "Khanna APMC Grain Market" };
+
+          const salePayload = {
+            commodity: crop.name,
+            variety: document.getElementById("sellGradeSelect")?.value || null,
+            quantity: parseFloat(document.getElementById("sellQuantityInput")?.value) || 40,
+            price_per_unit: currentJFormData.modalRate || 2410,
+            mandi_name: mandi.name,
+            buyer_name: null,
+            notes: `J-Form: ${currentJFormData.certNo || ''}`
+          };
+
+          const res = await window.apiSales.createSale(salePayload);
+          if (res.success && res.data) {
+            // Update the receipt ID in the J-Form with the backend-assigned one
+            currentJFormData.certNo = res.data.receipt_id || currentJFormData.certNo;
+            const certEl = document.getElementById("jfCertNo");
+            if (certEl) certEl.textContent = currentJFormData.certNo;
+            showToast(`🎉 Sale saved! Receipt: ${res.data.receipt_id} • Net: ₹${(res.data.net_amount || 0).toLocaleString("en-IN")}`, "success");
+          }
+        } catch (err) {
+          // Non-fatal — J-Form still works offline
+          console.warn("Sale save fallback (backend offline):", err);
+          showToast("🎉 Digital J-Form Generated! (Backend offline — sale not saved to DB)", "info");
+        }
+      } else {
+        showToast("🎉 Digital J-Form Generated! Login to save this sale to your records.", "info");
+      }
     });
 
     form.querySelectorAll("input, select").forEach(el => {
@@ -66,6 +103,19 @@ function setupSellEventListeners() {
 }
 
 function recalculateAndRenderJForm() {
+  const currentLang = window.i18n ? window.i18n.getLanguage() : "hi";
+  if (window.i18n) window.i18n.applyTranslations();
+
+  // Localize crop options in sell dropdown if empty or on language change
+  const cropSelect = document.getElementById("sellCropSelect");
+  if (cropSelect && window.AGRI_DATA && Array.isArray(window.AGRI_DATA.crops) && !cropSelect.dataset.localized) {
+    const selectedVal = cropSelect.value || "wheat";
+    cropSelect.innerHTML = window.AGRI_DATA.crops.map(c => {
+      const locName = window.getLocalizedCropName ? window.getLocalizedCropName(c, currentLang) : c.name;
+      return `<option value="${c.id}" ${c.id === selectedVal ? 'selected' : ''}>${c.fallbackIcon || '🌾'} ${locName}</option>`;
+    }).join("");
+  }
+
   const farmerName = document.getElementById("sellFarmerName")?.value.trim() || "Gurpreet Singh";
   const cropId = document.getElementById("sellCropSelect")?.value || "wheat";
   const quantityQtl = parseFloat(document.getElementById("sellQuantityInput")?.value) || 40;
@@ -78,6 +128,11 @@ function recalculateAndRenderJForm() {
   
   const crops = (window.AGRI_DATA && Array.isArray(window.AGRI_DATA.crops)) ? window.AGRI_DATA.crops : [];
   const crop = crops.find(c => c.id === cropId) || { name: "Wheat", nameHi: "गेहूं" };
+
+  const localizedCropName = window.getLocalizedCropName ? window.getLocalizedCropName(crop, currentLang) : crop.name;
+  let localizedMandiName = mandi.name || "APMC Grain Market";
+  if (currentLang === "hi" && mandi.nameHi) localizedMandiName = mandi.nameHi;
+  if (currentLang === "pa" && mandi.namePa) localizedMandiName = mandi.namePa;
 
   const prices = (mandi.prices && mandi.prices[cropId]) ? mandi.prices[cropId] : { modal: 2410 };
   let modalRate = prices.modal || 2410;
@@ -99,8 +154,8 @@ function recalculateAndRenderJForm() {
 
   currentJFormData = {
     farmerName,
-    cropName: crop.name,
-    mandiName: mandi.name,
+    cropName: localizedCropName,
+    mandiName: localizedMandiName,
     quantityQtl,
     modalRate,
     grossAmount,
