@@ -12,6 +12,15 @@ const apiAuth = {
     return await apiClient.post('/auth/send-otp', { mobile });
   },
 
+  async verifyOtp(mobile, otp) {
+    const res = await apiClient.post('/auth/verify-otp', { mobile, otp });
+    if (res.success && res.data?.token) {
+      localStorage.setItem('kisan_token', res.data.token);
+      localStorage.setItem('kisan_user', JSON.stringify(res.data.user));
+    }
+    return res;
+  },
+
   async login(mobile, password) {
     const res = await apiClient.post('/auth/login', { mobile, password });
     if (res.success && res.data.token) {

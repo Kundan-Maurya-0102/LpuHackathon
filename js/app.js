@@ -54,10 +54,6 @@ async function initApp() {
     APP_STATE.user = JSON.parse(storedUser);
     renderUserUI();
     hideAllModals();
-<<<<<<< HEAD
-    handleLocationAutoDetect();
-=======
->>>>>>> a8ce17e9aed00d288924b2176c7fa236e7c96ab5
   }
 
   updateLiveTimestamp();
@@ -199,190 +195,85 @@ function setupEventListeners() {
     });
   }
 
-<<<<<<< HEAD
-  const sendOtpBtn = document.getElementById("sendOtpBtn");
-  const phoneInput = document.getElementById("phoneInput");
-  const farmerIdInput = document.getElementById("farmerIdInput");
-  const otpSection = document.getElementById("otpSection");
-  const verifyOtpBtn = document.getElementById("verifyOtpBtn");
-
-  if (sendOtpBtn) {
-    sendOtpBtn.addEventListener("click", async () => {
-      const phone = phoneInput ? phoneInput.value.trim() : "";
-      const farmerId = farmerIdInput ? farmerIdInput.value.trim().toUpperCase() : "";
-      if (!/^\d{10}$/.test(phone)) {
-        showToast("Enter a valid 10-digit mobile number", "error");
-        return;
-      }
-      if (!/^[A-Z]{2}-\d{4}-\d{4}$/.test(farmerId)) {
-        showToast("Enter Farmer ID like PB-2026-8941", "error");
-        return;
-      }
-      sendOtpBtn.disabled = true;
-      try {
-        const response = await fetch(`${window.KISANSETU_BACKEND_URL || "http://localhost:3001"}/api/auth/send-otp`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone, farmerId })
-        });
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || "Unable to send OTP.");
-        otpSection.style.display = "block";
-        sendOtpBtn.style.display = "none";
-        showToast(result.mode === "sms" ? "OTP sent to your mobile number." : "Initial OTP is active for testing.", "success");
-      } catch (error) {
-        sendOtpBtn.disabled = false;
-        showToast(error.message, "error");
-=======
+  // Login button handler
   const loginBtn = document.getElementById("loginBtn");
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
-      const mobile = document.getElementById("loginPhoneInput").value.trim();
-      const password = document.getElementById("loginPasswordInput").value.trim();
+      const mobile = document.getElementById("loginPhoneInput")?.value.trim();
+      const password = document.getElementById("loginPasswordInput")?.value.trim();
       
-      if (mobile.length < 10 || !password) {
-        showToast("Please enter valid mobile and password", "error");
+      if (!mobile || mobile.length < 10) {
+        showToast("Please enter valid 10-digit mobile number", "error");
+        return;
+      }
+      if (!password) {
+        showToast("Please enter password", "error");
         return;
       }
       
       const originalText = loginBtn.innerText;
       loginBtn.innerText = "Logging in...";
+      loginBtn.disabled = true;
       
       try {
         const res = await apiAuth.login(mobile, password);
         if (res.success) {
           APP_STATE.user = res.data.user;
+          localStorage.setItem('kisansetu_user', JSON.stringify(res.data.user));
           renderUserUI();
           hideAllModals();
           renderAllViews();
           showToast("✅ Login successful!", "success");
         }
       } catch (err) {
-        showToast("❌ " + err.message, "error");
+        showToast("❌ " + (err.message || "Login failed"), "error");
       } finally {
         loginBtn.innerText = originalText;
->>>>>>> a8ce17e9aed00d288924b2176c7fa236e7c96ab5
+        loginBtn.disabled = false;
       }
     });
   }
 
-<<<<<<< HEAD
-  if (verifyOtpBtn) {
-    verifyOtpBtn.addEventListener("click", async () => {
-      const phone = phoneInput.value.trim();
-      const farmerId = farmerIdInput.value.trim().toUpperCase();
-      const otp = document.getElementById("otpInput").value.trim();
-      verifyOtpBtn.disabled = true;
-      try {
-        const response = await fetch(`${window.KISANSETU_BACKEND_URL || "http://localhost:3001"}/api/auth/verify-otp`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone, farmerId, otp })
-        });
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || "Invalid or expired OTP.");
-        loginFarmer({
-          name: "Kisan Farmer",
-          phone,
-          kisanId: farmerId,
-          state: "Punjab",
-          district: "Ludhiana",
-          village: "Agro Farm",
-          crops: ["Wheat", "Paddy"]
-        });
-      } catch (error) {
-        verifyOtpBtn.disabled = false;
-        showToast(error.message, "error");
-=======
   const sendOtpBtn = document.getElementById("sendOtpBtn");
-  if (sendOtpBtn) {
+  const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+  if (sendOtpBtn && verifyOtpBtn) {
     sendOtpBtn.addEventListener("click", async () => {
-      const mobile = document.getElementById("signupPhoneInput").value.trim();
-      if (mobile.length < 10) {
-        showToast("Please enter a valid 10-digit mobile number", "error");
+      const mobile = document.getElementById("loginPhoneInput")?.value.trim();
+      if (!/^\d{10}$/.test(mobile || "")) {
+        showToast("Please enter valid 10-digit mobile number", "error");
         return;
       }
-      
-      const originalText = sendOtpBtn.innerText;
-      sendOtpBtn.innerText = "Sending...";
-      sendOtpBtn.disabled = true;
-      
       try {
-        const res = await apiAuth.sendOtp(mobile);
-        if (res.success) {
-          showToast("✅ OTP Sent to your mobile number!", "success");
-        } else {
-          showToast("❌ " + res.message, "error");
-        }
-      } catch (err) {
-        showToast("❌ " + err.message, "error");
-      } finally {
-        sendOtpBtn.innerText = originalText;
-        sendOtpBtn.disabled = false;
->>>>>>> a8ce17e9aed00d288924b2176c7fa236e7c96ab5
+        const result = await apiAuth.sendOtp(mobile);
+        verifyOtpBtn.style.display = "block";
+        showToast(`OTP sent. Demo OTP: ${result.debug_otp || "check SMS"}`, "success");
+      } catch (error) {
+        showToast("❌ " + (error.message || "Could not send OTP"), "error");
       }
     });
-  }
 
-<<<<<<< HEAD
-  const sellCropBtn = document.getElementById("sellCropBtn");
-  if (sellCropBtn) sellCropBtn.addEventListener("click", openSellCropModal);
-  const sellCropForm = document.getElementById("sellCropForm");
-  if (sellCropForm) sellCropForm.addEventListener("submit", handleCropSale);
-  ["saleCropSelect", "saleMandiSelect", "saleQuantityInput"].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) input.addEventListener("input", updateSaleRatePreview);
-    if (input) input.addEventListener("change", updateSaleRatePreview);
-  });
-  const printTradeReceiptBtn = document.getElementById("printTradeReceiptBtn");
-  if (printTradeReceiptBtn) printTradeReceiptBtn.addEventListener("click", () => window.print());
-=======
-  const signupBtn = document.getElementById("signupBtn");
-  if (signupBtn) {
-    signupBtn.addEventListener("click", async () => {
-      const mobile = document.getElementById("signupPhoneInput").value.trim();
-      const farmer_id = document.getElementById("signupFarmerIdInput").value.trim();
-      const otp = document.getElementById("signupOtpInput").value.trim();
-      
-      if (mobile.length < 10 || !farmer_id || !otp) {
-        showToast("Please fill all fields (Mobile, Farmer ID, OTP)", "error");
+    verifyOtpBtn.addEventListener("click", async () => {
+      const mobile = document.getElementById("loginPhoneInput")?.value.trim();
+      const otp = document.getElementById("loginOtpInput")?.value.trim();
+      if (!/^\d{10}$/.test(mobile || "") || !/^\d{6}$/.test(otp || "")) {
+        showToast("Enter mobile number and 6-digit OTP", "error");
         return;
       }
-      
-      const originalText = signupBtn.innerText;
-      signupBtn.innerText = "Registering...";
-      
       try {
-        const res = await apiAuth.signup({ mobile, farmer_id, otp });
-        if (res.success) {
-          APP_STATE.user = res.data.user;
-          renderUserUI();
+        const result = await apiAuth.verifyOtp(mobile, otp);
+        if (result.success && result.data?.token) {
+          APP_STATE.user = result.data.user;
+          localStorage.setItem("kisansetu_user", JSON.stringify(result.data.user));
           hideAllModals();
+          renderUserUI();
           renderAllViews();
-          showToast("✅ Registration successful!", "success");
+          showToast("✅ OTP login successful!", "success");
         }
-      } catch (err) {
-        showToast("❌ " + err.message, "error");
-      } finally {
-        signupBtn.innerText = originalText;
+      } catch (error) {
+        showToast("❌ " + (error.message || "OTP verification failed"), "error");
       }
     });
   }
-  
-  window.toggleAuthMode = function(mode) {
-    if (mode === 'signup') {
-        document.getElementById('loginFormSection').style.display = 'none';
-        document.getElementById('signupFormSection').style.display = 'block';
-        document.getElementById('authModalTitle').innerText = 'Create Account / नया खाता';
-        document.getElementById('authModalSub').innerText = 'Register in 10 seconds to access live mandi rates';
-    } else {
-        document.getElementById('signupFormSection').style.display = 'none';
-        document.getElementById('loginFormSection').style.display = 'block';
-        document.getElementById('authModalTitle').innerText = 'Farmer Login / किसान प्रवेश';
-        document.getElementById('authModalSub').innerText = 'Access verified APMC mandi rates & maximize your farm profits';
-    }
-  };
->>>>>>> a8ce17e9aed00d288924b2176c7fa236e7c96ab5
 
   const cropSearchInput = document.getElementById("cropSearchInput");
   if (cropSearchInput) {
@@ -610,7 +501,8 @@ function renderUserUI() {
   const userProfileBtn = document.getElementById("userProfileBtn");
   
   if (APP_STATE.user) {
-    if (userNameDisplay) userNameDisplay.textContent = APP_STATE.user.name.split(" ")[0] + " (Profile)";
+    const displayName = String(APP_STATE.user.full_name || APP_STATE.user.name || "Farmer").trim();
+    if (userNameDisplay) userNameDisplay.textContent = displayName.split(/\s+/)[0] + " (Profile)";
     if (userProfileBtn) userProfileBtn.title = "View Farmer Profile";
   } else {
     if (userNameDisplay) userNameDisplay.textContent = "Farmer Login";

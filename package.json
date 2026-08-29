@@ -1,5 +1,12 @@
 {
+  "name": "kisansetu-frontend",
+  "version": "1.0.0",
+  "description": "KisanSetu frontend for farmers",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "twilio": "^6.1.0"
   }
 }

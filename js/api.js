@@ -1,5 +1,5 @@
-const KISANSETU_BACKEND_URL = window.KISANSETU_BACKEND_URL || "http://localhost:3001";
-const KISANSETU_API_URL = window.KISANSETU_API_URL || `${KISANSETU_BACKEND_URL}/api/daily-prices`;
+const KISANSETU_BACKEND_URL = window.KISANSETU_BACKEND_URL || "http://localhost:3000";
+const KISANSETU_API_URL = window.KISANSETU_API_URL || `${KISANSETU_BACKEND_URL}/api/market-prices`;
 
 function numberValue(...values) {
   for (const value of values) {

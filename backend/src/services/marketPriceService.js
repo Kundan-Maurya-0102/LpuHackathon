@@ -38,8 +38,8 @@ class MarketPriceService {
           min_price: parseFloat(r.min_price) || 0,
           max_price: parseFloat(r.max_price) || 0,
           modal_price: parseFloat(r.modal_price) || 0,
-          // Convert DD/MM/YYYY to YYYY-MM-DD
-          arrival_date: r.arrival_date.split('/').reverse().join('-'),
+          // Convert DD/MM/YYYY to YYYY-MM-DD when the API provides a date.
+          arrival_date: normalizeArrivalDate(r.arrival_date),
           source: 'data.gov.in'
         }));
 
@@ -51,6 +51,17 @@ class MarketPriceService {
       console.error('[MarketPriceService] Fetch failed:', error.message);
     }
   }
+}
+
+function normalizeArrivalDate(value) {
+  if (!value) return new Date().toISOString().slice(0, 10);
+  const text = String(value);
+  if (text.includes('/')) {
+    const parts = text.split('/');
+    if (parts.length === 3) return parts.reverse().join('-');
+  }
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString().slice(0, 10) : parsed.toISOString().slice(0, 10);
 }
 
 module.exports = new MarketPriceService();
