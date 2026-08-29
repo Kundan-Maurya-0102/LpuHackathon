@@ -16,7 +16,18 @@ const SHARED_STATE = {
   }
 };
 
-window.SHARED_STATE = SHARED_STATE;
+// Ensure unauthenticated visitors land on login.html first
+(function enforceLoginFirst() {
+  if (typeof window === "undefined" || !window.location || !window.location.pathname) return;
+  const path = window.location.pathname.toLowerCase();
+  const isLoginPage = path.endsWith("login.html") || path.endsWith("/login");
+  const storedUser = localStorage.getItem("kisansetu_user");
+  const isGuest = localStorage.getItem("kisansetu_guest") === "true";
+
+  if (!isLoginPage && !storedUser && !isGuest) {
+    window.location.href = "login.html";
+  }
+})();
 
 document.addEventListener("DOMContentLoaded", () => {
   initSharedComponents();
@@ -343,9 +354,15 @@ function logoutFarmer() {
   }
   SHARED_STATE.user = null;
   localStorage.removeItem("kisansetu_user");
+  localStorage.removeItem("kisansetu_token");
+  localStorage.removeItem("kisansetu_guest");
+  localStorage.removeItem("kisansetu_just_logged_in");
   hideAllModals();
   renderSharedUserUI();
   showToast("👋 Logged out successfully. जय जवान, जय किसान!", "info");
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 400);
 }
 window.logoutFarmer = logoutFarmer;
 

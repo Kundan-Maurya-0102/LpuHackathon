@@ -18,6 +18,12 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/mobile.css">
+
+  <script>
+    if (!localStorage.getItem("kisansetu_user") && localStorage.getItem("kisansetu_guest") !== "true") {
+      window.location.replace("login.html");
+    }
+  </script>
 </head>
 
 <body>
