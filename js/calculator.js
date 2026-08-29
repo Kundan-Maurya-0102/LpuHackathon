@@ -11,7 +11,8 @@ class ProfitCalculator {
     const mandi = AGRI_DATA.mandis.find(m => m.id === mandiId) || AGRI_DATA.mandis[0];
     const vehicle = AGRI_DATA.vehicles.find(v => v.id === vehicleId) || AGRI_DATA.vehicles[0];
 
-    const priceInfo = mandi.prices[cropId] || { min: 2000, max: 2300, modal: 2150 };
+    const priceInfo = mandi.prices[cropId];
+    if (!priceInfo) return null;
     const modalPrice = priceInfo.modal;
     const minPrice = priceInfo.min;
     const maxPrice = priceInfo.max;

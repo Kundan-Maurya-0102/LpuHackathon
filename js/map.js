@@ -75,7 +75,9 @@ class MandiMapManager {
     const bounds = [this.currentFarmerCoords];
 
     AGRI_DATA.mandis.forEach(mandi => {
-      const price = mandi.prices[selectedCropId] ? mandi.prices[selectedCropId].modal : 2400;
+      const priceInfo = mandi.prices[selectedCropId];
+      if (!priceInfo) return;
+      const price = priceInfo.modal;
       const isKhanna = mandi.id === "khanna";
 
       const mandiIcon = L.divIcon({

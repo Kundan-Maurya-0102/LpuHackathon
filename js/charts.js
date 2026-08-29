@@ -19,9 +19,12 @@ class PriceChartManager {
     this.currentPeriod = period;
 
     const crop = AGRI_DATA.crops.find(c => c.id === cropId) || AGRI_DATA.crops[0];
-    const historyData = (AGRI_DATA.priceHistory[cropId] && AGRI_DATA.priceHistory[cropId][period])
-      ? AGRI_DATA.priceHistory[cropId][period]
-      : this.generateDynamicHistory(crop.allIndiaAvg, period);
+    const historyData = AGRI_DATA.priceHistory[cropId] && AGRI_DATA.priceHistory[cropId][period];
+    if (!historyData) {
+      const chartBox = canvas.parentElement;
+      if (chartBox) chartBox.innerHTML = `<div class="empty-state"><div class="empty-icon">📈</div><h3>Price history unavailable</h3><p>Your daily-prices API has not returned historical data for this crop.</p></div>`;
+      return;
+    }
 
     if (this.chartInstance) {
       this.chartInstance.destroy();

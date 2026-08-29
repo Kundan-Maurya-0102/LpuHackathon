@@ -12,7 +12,7 @@ const TRANSLATIONS = {
     phoneLabel: "Mobile Number",
     phonePlaceholder: "Enter 10-digit mobile number",
     getOtpBtn: "Send OTP / कोड भेजें",
-    otpLabel: "Enter 4-Digit OTP",
+    otpLabel: "Enter 6-Digit OTP",
     verifyLoginBtn: "Verify & Enter KisanSetu",
     guestLoginBtn: "Continue as Guest (No Login Required)",
     registerPrompt: "New Farmer? Create 10-second profile",

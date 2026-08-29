@@ -8,6 +8,7 @@ const APP_STATE = {
   selectedVehicleId: "tractor",
   harvestQuantityQtl: 30,
   maxSearchRadiusKm: 100,
+  marketDataStatus: "idle",
   userLocation: {
     lat: 31.2550,
     lng: 75.7050,
@@ -41,6 +42,9 @@ function initApp() {
   }
 
   setupEventListeners();
+  AGRI_DATA.crops.splice(0);
+  AGRI_DATA.mandis.splice(0);
+  AGRI_DATA.priceHistory = {};
 
   if (!storedLang) {
     showLanguageModal();
@@ -50,7 +54,7 @@ function initApp() {
     APP_STATE.user = JSON.parse(storedUser);
     renderUserUI();
     hideAllModals();
-    renderAllViews();
+    handleLocationAutoDetect();
   }
 
   updateLiveTimestamp();
@@ -104,7 +108,17 @@ function setupEventListeners() {
       const lang = e.target.value;
       APP_STATE.selectedLanguage = lang;
       if (window.i18n) window.i18n.setLanguage(lang);
+      updateTickerLanguage(lang);
       renderAllViews();
+      if (APP_STATE.user && document.getElementById("profileModal") && document.getElementById("profileModal").classList.contains("active")) {
+        renderProfileModal();
+      }
+    });
+  }
+
+  if (window.i18n) {
+    window.i18n.subscribe((lang) => {
+      updateTickerLanguage(lang);
     });
   }
 
@@ -126,35 +140,82 @@ function setupEventListeners() {
 
   const sendOtpBtn = document.getElementById("sendOtpBtn");
   const phoneInput = document.getElementById("phoneInput");
+  const farmerIdInput = document.getElementById("farmerIdInput");
   const otpSection = document.getElementById("otpSection");
   const verifyOtpBtn = document.getElementById("verifyOtpBtn");
 
   if (sendOtpBtn) {
-    sendOtpBtn.addEventListener("click", () => {
+    sendOtpBtn.addEventListener("click", async () => {
       const phone = phoneInput ? phoneInput.value.trim() : "";
-      if (phone.length < 10) {
-        showToast("कृपया 10 अंकों का मान्य मोबाइल नंबर दर्ज करें (Enter 10-digit mobile number)", "error");
+      const farmerId = farmerIdInput ? farmerIdInput.value.trim().toUpperCase() : "";
+      if (!/^\d{10}$/.test(phone)) {
+        showToast("Enter a valid 10-digit mobile number", "error");
         return;
       }
-      otpSection.style.display = "block";
-      sendOtpBtn.style.display = "none";
-      showToast("✅ OTP भेजा गया! अपना OTP दर्ज करें (OTP sent! Please enter your OTP)", "success");
+      if (!/^[A-Z]{2}-\d{4}-\d{4}$/.test(farmerId)) {
+        showToast("Enter Farmer ID like PB-2026-8941", "error");
+        return;
+      }
+      sendOtpBtn.disabled = true;
+      try {
+        const response = await fetch(`${window.KISANSETU_BACKEND_URL || "http://localhost:3001"}/api/auth/send-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, farmerId })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Unable to send OTP.");
+        otpSection.style.display = "block";
+        sendOtpBtn.style.display = "none";
+        showToast(result.mode === "sms" ? "OTP sent to your mobile number." : "Initial OTP is active for testing.", "success");
+      } catch (error) {
+        sendOtpBtn.disabled = false;
+        showToast(error.message, "error");
+      }
     });
   }
 
   if (verifyOtpBtn) {
-    verifyOtpBtn.addEventListener("click", () => {
-      const phone = phoneInput.value.trim() || "+91 98765 12345";
-      loginFarmer({
-        name: "Kisan Brother",
-        phone: phone,
-        state: "Punjab",
-        district: "Ludhiana",
-        village: "Agro Farm",
-        crops: ["Wheat", "Paddy"]
-      });
+    verifyOtpBtn.addEventListener("click", async () => {
+      const phone = phoneInput.value.trim();
+      const farmerId = farmerIdInput.value.trim().toUpperCase();
+      const otp = document.getElementById("otpInput").value.trim();
+      verifyOtpBtn.disabled = true;
+      try {
+        const response = await fetch(`${window.KISANSETU_BACKEND_URL || "http://localhost:3001"}/api/auth/verify-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, farmerId, otp })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Invalid or expired OTP.");
+        loginFarmer({
+          name: "Kisan Farmer",
+          phone,
+          kisanId: farmerId,
+          state: "Punjab",
+          district: "Ludhiana",
+          village: "Agro Farm",
+          crops: ["Wheat", "Paddy"]
+        });
+      } catch (error) {
+        verifyOtpBtn.disabled = false;
+        showToast(error.message, "error");
+      }
     });
   }
+
+  const sellCropBtn = document.getElementById("sellCropBtn");
+  if (sellCropBtn) sellCropBtn.addEventListener("click", openSellCropModal);
+  const sellCropForm = document.getElementById("sellCropForm");
+  if (sellCropForm) sellCropForm.addEventListener("submit", handleCropSale);
+  ["saleCropSelect", "saleMandiSelect", "saleQuantityInput"].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) input.addEventListener("input", updateSaleRatePreview);
+    if (input) input.addEventListener("change", updateSaleRatePreview);
+  });
+  const printTradeReceiptBtn = document.getElementById("printTradeReceiptBtn");
+  if (printTradeReceiptBtn) printTradeReceiptBtn.addEventListener("click", () => window.print());
 
   const cropSearchInput = document.getElementById("cropSearchInput");
   if (cropSearchInput) {
@@ -284,8 +345,86 @@ function loginFarmer(userData) {
   localStorage.setItem("kisansetu_user", JSON.stringify(APP_STATE.user));
   hideModal("authModal");
   renderUserUI();
-  renderAllViews();
+  handleLocationAutoDetect();
   showToast(`🌾 राम राम ${APP_STATE.user.name}! Welcome to KisanSetu`, "success");
+}
+
+async function loadMarketData() {
+  APP_STATE.marketDataStatus = "loading";
+  renderMarketDataState();
+  try {
+    const marketData = await window.marketApi.loadDailyPrices(APP_STATE.userLocation);
+    AGRI_DATA.crops.splice(0, AGRI_DATA.crops.length, ...marketData.crops);
+    AGRI_DATA.mandis.splice(0, AGRI_DATA.mandis.length, ...marketData.mandis);
+    AGRI_DATA.priceHistory = marketData.priceHistory || {};
+    APP_STATE.selectedCropId = AGRI_DATA.crops[0].id;
+    APP_STATE.selectedMandiId = AGRI_DATA.mandis[0].id;
+    APP_STATE.marketDataStatus = "ready";
+    renderAllViews();
+    showToast("Live daily mandi prices loaded for your location.", "success");
+  } catch (error) {
+    APP_STATE.marketDataStatus = "error";
+    renderMarketDataState(error.message);
+  }
+}
+
+function renderMarketDataState(message = "Loading live mandi prices...") {
+  const catalog = document.getElementById("cropCatalogGrid");
+  const mandis = document.getElementById("mandiComparisonCards");
+  const recommendation = document.getElementById("bestMandiBanner");
+  if (APP_STATE.marketDataStatus === "loading") {
+    if (catalog) catalog.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><h3>Loading live crop prices</h3><p>Finding today's prices and nearest mandis for your location.</p></div>`;
+    if (mandis) mandis.innerHTML = "";
+    if (recommendation) recommendation.innerHTML = "";
+  } else if (APP_STATE.marketDataStatus === "error") {
+    const content = `<div class="empty-state"><div class="empty-icon">📡</div><h3>Live market data unavailable</h3><p>${message}</p><button class="modal-footer-btn" onclick="loadMarketData()">Retry</button></div>`;
+    if (catalog) catalog.innerHTML = content;
+    if (mandis) mandis.innerHTML = "";
+    if (recommendation) recommendation.innerHTML = "";
+  }
+}
+
+function openSellCropModal() {
+  if (!APP_STATE.user) {
+    showAuthModal();
+    showToast("Login with your Farmer ID before recording a sale.", "info");
+    return;
+  }
+  const cropSelect = document.getElementById("saleCropSelect");
+  const mandiSelect = document.getElementById("saleMandiSelect");
+  if (!cropSelect || !mandiSelect) return;
+  cropSelect.innerHTML = AGRI_DATA.crops.map(crop => `<option value="${crop.id}" ${crop.id === APP_STATE.selectedCropId ? "selected" : ""}>${crop.name} (${crop.nameHi})</option>`).join("");
+  mandiSelect.innerHTML = AGRI_DATA.mandis.map(mandi => `<option value="${mandi.id}" ${mandi.id === APP_STATE.selectedMandiId ? "selected" : ""}>${mandi.name}</option>`).join("");
+  updateSaleRatePreview();
+  showModal("sellCropModal");
+}
+
+function getSaleDetails() {
+  const cropId = document.getElementById("saleCropSelect").value;
+  const mandiId = document.getElementById("saleMandiSelect").value;
+  const quantity = parseFloat(document.getElementById("saleQuantityInput").value) || 0;
+  const crop = AGRI_DATA.crops.find(item => item.id === cropId);
+  const mandi = AGRI_DATA.mandis.find(item => item.id === mandiId);
+  const rate = mandi && mandi.prices[cropId] ? mandi.prices[cropId].modal : crop.allIndiaAvg;
+  return { crop, mandi, quantity, rate, buyer: document.getElementById("saleBuyerInput").value.trim() };
+}
+
+function updateSaleRatePreview() {
+  const preview = document.getElementById("saleRatePreview");
+  if (!preview || !document.getElementById("saleCropSelect").value) return;
+  const sale = getSaleDetails();
+  preview.innerHTML = `<span>Current modal rate</span><strong>₹${sale.rate.toLocaleString("en-IN")} / quintal</strong><span>Estimated trade value</span><strong>₹${(sale.rate * sale.quantity).toLocaleString("en-IN")}</strong>`;
+}
+
+function handleCropSale(event) {
+  event.preventDefault();
+  const sale = getSaleDetails();
+  if (!sale.buyer || sale.quantity <= 0) return;
+  const receipt = { ...sale, receiptId: `KS-${Date.now().toString().slice(-8)}`, date: new Date().toLocaleDateString("en-IN") };
+  localStorage.setItem("kisansetu_last_trade", JSON.stringify(receipt));
+  document.getElementById("tradeReceiptContent").innerHTML = `<div class="trade-receipt-heading"><span>🌾 KisanSetu</span><strong>Trade Receipt</strong><small>${receipt.receiptId} · ${receipt.date}</small></div><div class="trade-receipt-grid"><span>Farmer</span><strong>${APP_STATE.user.name} (${APP_STATE.user.kisanId})</strong><span>Buyer / trader</span><strong>${receipt.buyer}</strong><span>Crop</span><strong>${receipt.crop.name}</strong><span>Mandi</span><strong>${receipt.mandi.name}</strong><span>Quantity</span><strong>${receipt.quantity} quintals</strong><span>Rate</span><strong>₹${receipt.rate.toLocaleString("en-IN")} / quintal</strong></div><div class="trade-total"><span>Total trade value</span><strong>₹${(receipt.rate * receipt.quantity).toLocaleString("en-IN")}</strong></div><p class="receipt-note">Rate source: current KisanSetu mandi modal rate. Keep this receipt for your records.</p>`;
+  hideModal("sellCropModal");
+  showModal("tradeReceiptModal");
 }
 
 function logoutFarmer() {
@@ -315,6 +454,82 @@ function renderUserUI() {
   if (userLocDisplay) {
     userLocDisplay.textContent = APP_STATE.userLocation.name;
   }
+}
+
+function updateTickerLanguage(lang) {
+  const marquee = document.querySelector(".ticker-marquee");
+  if (!marquee) return;
+
+  const tickerData = {
+    en: [
+      "🌾 <strong>Wheat:</strong> Khanna Mandi ₹2,510/Qtl (+₹80)",
+      "🌾 <strong>Basmati Paddy:</strong> Amritsar Mandi ₹4,080/Qtl (+₹160)",
+      "🌼 <strong>Mustard:</strong> Jalandhar Mandi ₹5,490/Qtl (+₹75)",
+      "🥔 <strong>Potato:</strong> Phagwara Mandi ₹1,450/Qtl (-₹10)",
+      "🧅 <strong>Red Onion:</strong> Ludhiana Mandi ₹2,790/Qtl (+₹140)",
+      "☁️ <strong>Cotton:</strong> Khanna Mandi ₹7,350/Qtl (+₹60)"
+    ],
+    hi: [
+      "🌾 <strong>गेहूं:</strong> खन्ना मंडी ₹2,510/क्विंटल (+₹80)",
+      "🌾 <strong>बासमती धान:</strong> अमृतसर मंडी ₹4,080/क्विंटल (+₹160)",
+      "🌼 <strong>सरसों:</strong> जालंधर मंडी ₹5,490/क्विंटल (+₹75)",
+      "🥔 <strong>आलू:</strong> फगवाड़ा मंडी ₹1,450/क्विंटल (-₹10)",
+      "🧅 <strong>लाल प्याज:</strong> लुधियाना मंडी ₹2,790/क्विंटल (+₹140)",
+      "☁️ <strong>कपास:</strong> खन्ना मंडी ₹7,350/क्विंटल (+₹60)"
+    ],
+    pa: [
+      "🌾 <strong>ਕਣਕ:</strong> ਖੰਨਾ ਮੰਡੀ ₹2,510/ਕੁਇੰਟਲ (+₹80)",
+      "🌾 <strong>ਬਾਸਮਤੀ ਝੋਨਾ:</strong> ਅੰਮ੍ਰਿਤਸਰ ਮੰਡੀ ₹4,080/ਕੁਇੰਟਲ (+₹160)",
+      "🌼 <strong>ਸਰ੍ਹੋਂ:</strong> ਜਲੰਧਰ ਮੰਡੀ ₹5,490/ਕੁਇੰਟਲ (+₹75)",
+      "🥔 <strong>ਆਲੂ:</strong> ਫਗਵਾੜਾ ਮੰਡੀ ₹1,450/ਕੁਇੰਟਲ (-₹10)",
+      "🧅 <strong>ਲਾਲ ਪਿਆਜ਼:</strong> ਲੁਧਿਆਣਾ ਮੰਡੀ ₹2,790/ਕੁਇੰਟਲ (+₹140)",
+      "☁️ <strong>ਕਪਾਹ:</strong> ਖੰਨਾ ਮੰਡੀ ₹7,350/ਕੁਇੰਟਲ (+₹60)"
+    ],
+    mr: [
+      "🌾 <strong>गहू:</strong> खन्ना मंडी ₹2,510/क्विंटल (+₹80)",
+      "🌾 <strong>बासमती भात:</strong> अमृतसर मंडी ₹4,080/क्विंटल (+₹160)",
+      "🌼 <strong>मोहरी:</strong> जालंधर मंडी ₹5,490/क्विंटल (+₹75)",
+      "🥔 <strong>बटाटा:</strong> फगवाडा मंडी ₹1,450/क्विंटल (-₹10)",
+      "🧅 <strong>लाल कांदा:</strong> लुधियाना मंडी ₹2,790/क्विंटल (+₹140)",
+      "☁️ <strong>कापूस:</strong> खन्ना मंडी ₹7,350/क्विंटल (+₹60)"
+    ],
+    gu: [
+      "🌾 <strong>ઘઉં:</strong> ખન્ના મંડી ₹2,510/ક્વિન્ટલ (+₹80)",
+      "🌾 <strong>બાસમતી ડાંગર:</strong> અમૃતસર મંડી ₹4,080/ક્વિન્ટલ (+₹160)",
+      "🌼 <strong>સરસવ:</strong> જાલંધર મંડી ₹5,490/ક્વિન્ટલ (+₹75)",
+      "🥔 <strong>બટાટા:</strong> ફગવારા મંડી ₹1,450/ક્વિન્ટલ (-₹10)",
+      "🧅 <strong>લાલ ડુંગળી:</strong> લુધિયાણા મંડી ₹2,790/ક્વિન્ટલ (+₹140)",
+      "☁️ <strong>કપાસ:</strong> ખન્ના મંડી ₹7,350/ક્વિન્ટલ (+₹60)"
+    ],
+    te: [
+      "🌾 <strong>గోధుమ:</strong> ఖన్నా మండి ₹2,510/క్వింటాల్ (+₹80)",
+      "🌾 <strong>బాస్మతి వరి:</strong> అమృత్‌సర్ మండి ₹4,080/క్వింటాల్ (+₹160)",
+      "🌼 <strong>ఆవాలు:</strong> జలంధర్ మండి ₹5,490/క్వింటాల్ (+₹75)",
+      "🥔 <strong>బంగాళాదుంప:</strong> ఫగ్వారా మండి ₹1,450/క్వింటాల్ (-₹10)",
+      "🧅 <strong>ఎరుపు ఉల్లిపాయ:</strong> లూథియానా మండి ₹2,790/క్వింటాల్ (+₹140)",
+      "☁️ <strong>పత్తి:</strong> ఖన్నా మండి ₹7,350/క్వింటాల్ (+₹60)"
+    ],
+    ta: [
+      "🌾 <strong>கோதுமை:</strong> கன்னா மண்டி ₹2,510/குவிண்டால் (+₹80)",
+      "🌾 <strong>பாஸ்மதி நெல்:</strong> அமிர்தசர் மண்டி ₹4,080/குவிண்டால் (+₹160)",
+      "🌼 <strong>கடுகு:</strong> ஜலந்தர் மண்டி ₹5,490/குவிண்டால் (+₹75)",
+      "🥔 <strong>உருளைக்கிழங்கு:</strong> பகுவாரா மண்டி ₹1,450/குவிண்டால் (-₹10)",
+      "🧅 <strong>சிவப்பு வெங்காயம்:</strong> லூதியானா மண்டி ₹2,790/குவிண்டால் (+₹140)",
+      "☁️ <strong>பருத்தி:</strong> கன்னா மண்டி ₹7,350/குவிண்டால் (+₹60)"
+    ],
+    bn: [
+      "🌾 <strong>গম:</strong> খান্না মান্ডি ₹2,510/কুইন্টাল (+₹80)",
+      "🌾 <strong>বাসমতি ধান:</strong> অমৃতসর মান্ডি ₹4,080/কুইন্টাল (+₹160)",
+      "🌼 <strong>সরিষা:</strong> জলন্ধর মান্ডি ₹5,490/কুইন্টাল (+₹75)",
+      "🥔 <strong>আলু:</strong> ফগওয়ারা মান্ডি ₹1,450/কুইন্টাল (-₹10)",
+      "🧅 <strong>লাল পেঁয়াজ:</strong> লুধিয়ানা মান্ডি ₹2,790/কুইন্টাল (+₹140)",
+      "☁️ <strong>তুলা:</strong> খান্না মান্ডি ₹7,350/কুইন্টাল (+₹60)"
+    ]
+  };
+
+  const items = tickerData[lang] || tickerData["en"];
+  const doubled = [...items, ...items];
+  marquee.innerHTML = doubled.map(txt => `<span>${txt}</span>`).join("");
 }
 
 function renderProfileModal() {
@@ -498,6 +713,10 @@ function hideAllModals() {
 }
 
 function renderAllViews() {
+  if (APP_STATE.marketDataStatus !== "ready" || !AGRI_DATA.crops.length || !AGRI_DATA.mandis.length) {
+    renderMarketDataState();
+    return;
+  }
   if (window.i18n) window.i18n.applyTranslations();
   renderCropCatalog();
   renderBestMandiRecommendation();
@@ -820,7 +1039,8 @@ function speakMandiDetails(mandiId) {
   const mandiName = (currentLang === "hi" && mandi.nameHi) ? mandi.nameHi : mandi.name;
   const cropName = (currentLang === "hi" && crop.nameHi) ? crop.nameHi : crop.name;
 
-  const priceInfo = mandi.prices[crop.id] || { modal: 2400, min: 2300, max: 2500 };
+  const priceInfo = mandi.prices[crop.id];
+  if (!priceInfo) return;
 
   window.speechEngine.speakMandiRate(
     mandiName,
@@ -971,9 +1191,9 @@ function handleLocationAutoDetect() {
         APP_STATE.userLocation = {
           lat: lat,
           lng: lng,
-          name: "📍 Detected Live Location (Punjab)",
-          state: "Punjab",
-          district: "Ludhiana"
+          name: `📍 Detected Live Location (${lat.toFixed(3)}, ${lng.toFixed(3)})`,
+          state: APP_STATE.user ? APP_STATE.user.state : "",
+          district: APP_STATE.user ? APP_STATE.user.district : ""
         };
         updateLocationUI();
         showToast("✅ Location Detected successfully!", "success");
@@ -984,7 +1204,7 @@ function handleLocationAutoDetect() {
           lng: 75.7050,
           name: "Phagwara / Jalandhar, Punjab (Near LPU Campus)",
           state: "Punjab",
-          district: "Kapurthala"
+          district: APP_STATE.user ? APP_STATE.user.district : "Kapurthala"
         };
         updateLocationUI();
         showToast("✅ Farm Location set to Phagwara / LPU Region, Punjab", "success");
@@ -999,6 +1219,10 @@ function handleLocationAutoDetect() {
 function updateLocationUI() {
   const display = document.getElementById("currentLocationDisplay");
   if (display) display.textContent = APP_STATE.userLocation.name;
+  if (APP_STATE.user && window.marketApi) {
+    loadMarketData();
+    return;
+  }
   if (window.mandiMap) {
     window.mandiMap.setFarmerLocation(
       APP_STATE.userLocation.lat,

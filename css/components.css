@@ -1362,3 +1362,132 @@
   filter: brightness(1.1);
   transform: translateY(-1px);
 }
+
+.btn-sell-crop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.trade-form-grid,
+.trade-receipt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.trade-rate-preview {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  background: rgba(46, 125, 50, 0.08);
+  border: 1px solid rgba(46, 125, 50, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin: 4px 0 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.trade-rate-preview strong {
+  color: var(--primary-green);
+}
+
+.trade-receipt-heading {
+  display: grid;
+  gap: 5px;
+  border-bottom: 2px dashed var(--card-border);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.trade-receipt-heading span {
+  color: var(--primary-green);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.trade-receipt-heading strong {
+  font-size: 25px;
+  color: var(--text-main);
+}
+
+.trade-receipt-heading small,
+.receipt-note {
+  color: var(--text-muted);
+}
+
+.trade-receipt-grid {
+  grid-template-columns: 1fr 1.4fr;
+  padding: 4px 0 16px;
+}
+
+.trade-receipt-grid span {
+  color: var(--text-muted);
+}
+
+.trade-receipt-grid strong {
+  color: var(--text-main);
+  text-align: right;
+}
+
+.trade-total {
+  display: flex;
+  justify-content: space-between;
+  border-top: 2px solid var(--primary-green);
+  padding-top: 14px;
+  color: var(--text-main);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.trade-total strong {
+  color: var(--primary-green);
+  font-size: 23px;
+}
+
+.receipt-action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.receipt-action-row > * {
+  flex: 1;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #tradeReceiptModal,
+  #tradeReceiptModal * {
+    visibility: visible;
+  }
+
+  #tradeReceiptModal {
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+  }
+
+  .trade-receipt-modal-box {
+    max-width: 100%;
+    box-shadow: none;
+    border: 0;
+  }
+
+  .receipt-action-row,
+  .modal-close-btn {
+    display: none;
+  }
+}
