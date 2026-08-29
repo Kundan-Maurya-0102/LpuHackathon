@@ -42,10 +42,10 @@ def create_sale(body: CreateSaleRequest, current_user: dict = Depends(get_curren
         INSERT INTO sales (
             user_id, farmer_name, farmer_mobile, farmer_id_str,
             commodity, variety, quantity, unit,
-            price_per_unit, gross_amount, mandi_cess, loading_fee,
+            price_per_unit, gross_amount, total_amount, mandi_cess, loading_fee,
             net_amount, mandi_name, buyer_name, buyer_contact,
             notes, receipt_id, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Settled')
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Settled')
     """, (
         user_id,
         farmer_name,
@@ -57,6 +57,7 @@ def create_sale(body: CreateSaleRequest, current_user: dict = Depends(get_curren
         body.unit or "Quintal",
         body.price_per_unit,
         gross_amount,
+        net_amount,
         mandi_cess,
         loading_fee,
         net_amount,

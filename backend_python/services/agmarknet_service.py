@@ -25,7 +25,7 @@ class AgmarknetService:
 
         try:
             print(f"[AgmarknetService] 🌐 Fetching live market prices from data.gov.in...")
-            response = requests.get(self.resource_url, params=params, timeout=12)
+            response = requests.get(self.resource_url, params=params, timeout=(3.5, 7.0))
             
             if response.status_code != 200:
                 return {

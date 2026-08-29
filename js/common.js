@@ -464,14 +464,17 @@ function updateLiveTimestamp() {
 // --- Welcome Feature Guide Modal & Audio Narration ---
 
 let guideAudioPlaying = false;
+let guideLangMenuOpen = false;
 
 function openWelcomeGuideModal() {
+  guideLangMenuOpen = false;
   renderWelcomeGuideModal();
   showModal("welcomeGuideModal");
 }
 window.openWelcomeGuideModal = openWelcomeGuideModal;
 
 function closeWelcomeGuideModal() {
+  guideLangMenuOpen = false;
   if (guideAudioPlaying && window.speechSynthesis) {
     window.speechSynthesis.cancel();
     guideAudioPlaying = false;
@@ -480,7 +483,25 @@ function closeWelcomeGuideModal() {
 }
 window.closeWelcomeGuideModal = closeWelcomeGuideModal;
 
+function toggleGuideLangMenu(forceState) {
+  const menu = document.getElementById("guideLangDropdownMenu");
+  const btn = document.getElementById("guideLangToggleBtn");
+  if (forceState !== undefined) {
+    guideLangMenuOpen = forceState;
+  } else {
+    guideLangMenuOpen = !guideLangMenuOpen;
+  }
+  if (menu) {
+    menu.style.display = guideLangMenuOpen ? "flex" : "none";
+  }
+  if (btn) {
+    btn.classList.toggle("active", guideLangMenuOpen);
+  }
+}
+window.toggleGuideLangMenu = toggleGuideLangMenu;
+
 function changeGuideLanguage(langCode) {
+  guideLangMenuOpen = false; // Hover back / tuck away menu
   if (window.i18n) {
     window.i18n.setLanguage(langCode);
     SHARED_STATE.selectedLanguage = langCode;
@@ -498,7 +519,7 @@ function changeGuideLanguage(langCode) {
       ta: "தமிழ் (Tamil)",
       bn: "বাংলা (Bengali)"
     };
-    showToast(`🌐 Guide language switched to ${langNames[langCode] || langCode}`, "info");
+    showToast(`🌐 Language: ${langNames[langCode] || langCode}`, "info");
 
     // If audio was playing, re-speak in new language
     if (guideAudioPlaying) {
@@ -652,50 +673,57 @@ function renderWelcomeGuideModal() {
 
   const hasAgreed = localStorage.getItem("kisansetu_terms_agreed") === "true";
 
+  const currentLangObj = languages.find(l => l.code === lang) || languages[0];
+
   modal.innerHTML = `
     <div class="modal-card guide-modal-card">
-      
-      <!-- Modal Header -->
+      <!-- Header with Integrated Hover/Floating Language Selector -->
       <div class="guide-modal-header">
-        <div class="guide-header-left">
-          <div class="guide-header-badge">
-            <span>✨</span>
-            <span>Welcome / स्वागतम् / ਜੀ ਆਇਆਂ ਨੂੰ</span>
+        <div class="guide-header-top-row">
+          <div class="guide-header-left">
+            <span class="guide-mini-badge">✨ Feature Walkthrough</span>
+            <h2 class="guide-title">${t("guideModalTitle")}</h2>
+            <span class="guide-subtitle-inline">• <strong>${farmerName} जी</strong></span>
           </div>
-          <h2 class="guide-title">${t("guideModalTitle")}</h2>
-          <p class="guide-subtitle">
-            <strong>${farmerName} जी</strong> • ${t("guideModalSubtitle")}
-          </p>
-        </div>
-        <button class="guide-close-btn" onclick="closeWelcomeGuideModal()" title="Close Guide">✕</button>
-      </div>
 
-      <!-- Language Switcher Bar with Voice Narration Button -->
-      <div class="guide-toolbar-strip">
-        <div class="guide-lang-section">
-          <span class="guide-lang-label">${t("guideLangSelectLabel")}</span>
-          <div class="guide-lang-pills">
-            ${languages.map(l => `
-              <button type="button" class="guide-lang-pill ${l.code === lang ? 'active' : ''}" onclick="changeGuideLanguage('${l.code}')">
-                <span>${l.flag}</span>
-                <span>${l.name}</span>
+          <div class="guide-header-actions">
+            <!-- Floating Language Selector Dropdown (Tucks away when chosen) -->
+            <div class="guide-lang-dropdown-wrapper" id="guideLangDropdownWrap">
+              <button type="button" class="guide-lang-toggle-btn ${guideLangMenuOpen ? 'active' : ''}" id="guideLangToggleBtn" onclick="toggleGuideLangMenu()" title="Change Language / भाषा बदलें">
+                <span class="lang-globe">🌐</span>
+                <span class="current-lang-name">${currentLangObj.flag} ${currentLangObj.name}</span>
+                <span class="dropdown-arrow">▾</span>
               </button>
-            `).join("")}
-          </div>
-        </div>
+              
+              <div class="guide-lang-floating-menu" id="guideLangDropdownMenu" style="display: ${guideLangMenuOpen ? 'flex' : 'none'};">
+                <div class="guide-floating-menu-title">${t("guideLangSelectLabel")}</div>
+                <div class="guide-floating-pills-grid">
+                  ${languages.map(l => `
+                    <button type="button" class="guide-lang-pill ${l.code === lang ? 'active' : ''}" onclick="changeGuideLanguage('${l.code}')">
+                      <span>${l.flag}</span>
+                      <span>${l.name}</span>
+                    </button>
+                  `).join("")}
+                </div>
+              </div>
+            </div>
 
-        <div class="guide-audio-section">
-          <button type="button" class="guide-audio-btn ${guideAudioPlaying ? 'playing' : ''}" id="guideAudioBtn" onclick="toggleGuideAudio()">
-            <span class="audio-icon">${guideAudioPlaying ? '⏹️' : '🔊'}</span>
-            <span id="guideAudioBtnText">${guideAudioPlaying ? t("guideAudioStop") : t("guideAudioListen")}</span>
-            <span class="audio-wave-anim">
-              <span></span><span></span><span></span><span></span>
-            </span>
-          </button>
+            <!-- Audio Read Aloud Button -->
+            <button type="button" class="guide-audio-btn ${guideAudioPlaying ? 'playing' : ''}" id="guideAudioBtn" onclick="toggleGuideAudio()" title="Read instructions aloud">
+              <span class="audio-icon">${guideAudioPlaying ? '⏹️' : '🔊'}</span>
+              <span id="guideAudioBtnText">${guideAudioPlaying ? t("guideAudioStop") : t("guideAudioListen")}</span>
+              <span class="audio-wave-anim">
+                <span></span><span></span><span></span><span></span>
+              </span>
+            </button>
+
+            <!-- Close Button -->
+            <button class="guide-close-btn" onclick="closeWelcomeGuideModal()" title="Close Guide">✕</button>
+          </div>
         </div>
       </div>
 
-      <!-- Features Instruction Grid -->
+      <!-- Features Instruction Grid (Directly visible with full height) -->
       <div class="guide-modal-body">
         <div class="guide-section-label">
           <span>${t("guideFeaturesHeading")}</span>

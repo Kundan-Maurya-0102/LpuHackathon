@@ -26,11 +26,11 @@
     <div class="ticker-left">
       <div class="pulse-dot"></div>
       <div class="ticker-marquee">
-        <span>🌾 <strong>KisanSetu Login:</strong> Secure Instant SMS & OTP Verification for all Indian Farmers</span>
+        <span><strong>KisanSetu Login:</strong> Secure Instant SMS & OTP Verification for all Indian Farmers</span>
       </div>
     </div>
     <div class="ticker-right">
-      <span id="liveSyncTimestamp" class="sync-text">Live e-NAM Synced</span>
+      <span id="liveSyncTimestamp" class="sync-text"></span>
       <select id="headerLangSelect" class="header-lang-select" aria-label="Change Language">
         <option value="hi">🇮🇳 हिन्दी</option>
         <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
@@ -83,11 +83,14 @@
         <div>
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
             <span style="font-size: 28px;">🌾</span>
-            <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px;">e-NAM Partner</span>
+            <span
+              style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px;">e-NAM
+              Partner</span>
           </div>
           <h2 data-i18n="loginPageTitle">Farmer OTP Login Portal</h2>
-          <p data-i18n="loginPageSub">Enter your 10-digit mobile number to receive a secure 6-digit verification code and unlock customized farm profit calculations.</p>
-          
+          <p data-i18n="loginPageSub">Enter your 10-digit mobile number to receive a secure 6-digit verification code
+            and unlock customized farm profit calculations.</p>
+
           <div class="login-features-list">
             <div class="login-feat-item">
               <span>📈</span>
@@ -112,7 +115,8 @@
       <!-- Right Form Pane -->
       <div class="login-form-pane">
         <h3 data-i18n="loginTitle">Farmer Login / किसान प्रवेश</h3>
-        <p class="form-subtitle" data-i18n="loginSub">Access today's verified APMC rates & maximize your farm profits</p>
+        <p class="form-subtitle" data-i18n="loginSub">Access today's verified APMC rates & maximize your farm profits
+        </p>
 
         <!-- STEP 1: Phone Input -->
         <div id="loginStepPhone" class="auth-step-pane active">
@@ -124,8 +128,9 @@
               </label>
               <div class="phone-input-group">
                 <span class="phone-prefix-badge">🇮🇳 +91</span>
-                <input type="tel" id="loginPhoneInput" class="auth-input-control" placeholder="Enter 10-digit mobile number"
-                  data-i18n-placeholder="phonePlaceholder" maxlength="10" pattern="[0-9]{10}" required autocomplete="tel">
+                <input type="tel" id="loginPhoneInput" class="auth-input-control"
+                  placeholder="Enter 10-digit mobile number" data-i18n-placeholder="phonePlaceholder" maxlength="10"
+                  pattern="[0-9]{10}" required autocomplete="tel">
               </div>
             </div>
 
@@ -134,8 +139,8 @@
                 <span>👤</span>
                 <span data-i18n="nameLabel">Farmer Full Name (Optional)</span>
               </label>
-              <input type="text" id="loginFarmerNameInput" class="auth-input-control" placeholder="e.g. Gurpreet Singh / Ramesh Kumar"
-                data-i18n-placeholder="namePlaceholder">
+              <input type="text" id="loginFarmerNameInput" class="auth-input-control"
+                placeholder="e.g. Gurpreet Singh / Ramesh Kumar" data-i18n-placeholder="namePlaceholder">
             </div>
 
             <button type="submit" class="auth-btn-primary" id="sendLoginOtpBtn" style="margin-top: 10px;">
@@ -144,12 +149,14 @@
           </form>
 
           <div style="text-align: center; margin-top: 14px;">
-            <a href="index.html" class="auth-btn-guest" data-i18n="guestLoginBtn" onclick="localStorage.setItem('kisansetu_guest','true')">
+            <a href="index.html" class="auth-btn-guest" data-i18n="guestLoginBtn"
+              onclick="localStorage.setItem('kisansetu_guest','true')">
               🚶 Continue as Guest (No Login Required)
             </a>
           </div>
 
-          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--text-muted);">
+          <div
+            style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--text-muted);">
             <span>🔒</span>
             <span>256-Bit Encrypted • Official e-NAM APMC Partner</span>
           </div>
@@ -165,7 +172,8 @@
             <button type="button" class="btn-change-phone" id="changePhoneBtn">✏️ Change</button>
           </div>
 
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Enter the 6-digit verification code sent to your phone:</p>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Enter the 6-digit verification code
+            sent to your phone:</p>
 
           <form id="verifyOtpForm">
             <div class="otp-boxes-grid">
@@ -187,7 +195,8 @@
             <div id="otpLiveBadge" class="otp-live-badge" style="display: none;">
               <span>📲</span>
               <div>
-                <strong>SMS Dispatch Code:</strong> <span id="otpLiveCode" style="font-weight:900; letter-spacing:2px; color:#064e3b;">------</span>
+                <strong>SMS Dispatch Code:</strong> <span id="otpLiveCode"
+                  style="font-weight:900; letter-spacing:2px; color:#064e3b;">------</span>
               </div>
             </div>
 
@@ -196,7 +205,8 @@
             </button>
           </form>
 
-          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--text-muted);">
+          <div
+            style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--text-muted);">
             <span>🛡️</span>
             <span>Verified Kisan Identity Protection</span>
           </div>

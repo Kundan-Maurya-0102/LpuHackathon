@@ -21,7 +21,7 @@ async def _background_price_sync():
     await asyncio.sleep(2)  # Give server a moment to finish binding
     logger.info("Starting background APMC market rate sync...")
     try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         result = await loop.run_in_executor(
             None,
             lambda: agmarknet_service.fetch_and_store_prices(state="Punjab", limit=1500)
@@ -31,7 +31,19 @@ async def _background_price_sync():
         else:
             logger.warning("Price sync warning: %s", result.get("message", "Unknown error"))
     except Exception as exc:
-        logger.error("Price sync failed, using fallback data: %s", exc)
+        logger.error("Price sync failed, using fallback cached data: %s", exc)
+
+
+async def _keep_alive_heartbeat():
+    """24/7 background heartbeat task to prevent server sleep or idle timeouts."""
+    while True:
+        try:
+            await asyncio.sleep(300)  # Every 5 minutes
+            logger.info("💓 KisanSetu Server 24/7 Heartbeat: Active & Healthy")
+        except asyncio.CancelledError:
+            break
+        except Exception:
+            pass
 
 
 @asynccontextmanager
@@ -40,11 +52,14 @@ async def lifespan(app: FastAPI):
     init_database()
     logger.info("Server started on http://localhost:3000")
 
-    # Trigger non-blocking price sync
-    asyncio.create_task(_background_price_sync())
+    # Trigger non-blocking price sync and keep-alive heartbeat
+    sync_task = asyncio.create_task(_background_price_sync())
+    heartbeat_task = asyncio.create_task(_keep_alive_heartbeat())
 
     yield
 
+    sync_task.cancel()
+    heartbeat_task.cancel()
     logger.info("Shutting down KisanSetu API server.")
 
 
@@ -105,12 +120,11 @@ async def generic_exception_handler(request: Request, exc: Exception):
 app.include_router(auth.router)
 app.include_router(market.router)
 app.include_router(sales.router)
+app.include_router(guide.router)
 
-# ── Root & Health Check ──
-@app.get("/")
-@app.get("/health")
-@app.get("/api")
+# ── Health Check ──
 @app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {
         "success": True,
@@ -120,3 +134,10 @@ def health_check():
         "docs": "/docs",
         "realtime_api_configured": bool(config.DATA_GOV_API_KEY)
     }
+
+# ── Serve Frontend Static Files ──
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
+frontend_dir = Path(__file__).resolve().parent.parent
+app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")

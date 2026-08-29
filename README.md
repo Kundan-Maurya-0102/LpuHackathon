@@ -23,20 +23,16 @@ KisanSetu is a comprehensive, full-stack platform designed specifically for Indi
 
 ## 🚀 Quick Start
 
-### 1. Start the Python Backend
-```bash
-cd backend_python
-pip install -r requirements.txt
-python run.py
-```
-Backend runs on `http://localhost:3000` (API Docs available at `http://localhost:3000/docs`).
+### 1. Local 24/7 Server
+- **1-Click**: Double-click `start_server.bat` (or run `.\start_server.ps1`)
+- **Or Terminal**: `python run_server.py`
+- 🌐 **Local Website**: `http://localhost:3000`
+- 📖 **API Docs**: `http://localhost:3000/docs`
 
-### 2. Start the Frontend
-Open `index.html` via a local server (e.g. VS Code Live Server, or Python HTTP server):
-```bash
-python -m http.server 8000
-```
-Open `http://localhost:8000` in your browser.
+### 2. Host Online with ngrok (Public Mobile Access)
+- **1-Click**: Double-click `start_ngrok.bat` (or run `.\start_ngrok.ps1`)
+- **Or Terminal**: `python host_ngrok.py` (or `ngrok http 3000`)
+- 📱 It generates a public HTTPS link (e.g. `https://xxxx.ngrok-free.app`) to open the app on any smartphone or share with judges.
 
 ## 📚 Documentation
 For detailed technical documentation, please refer to the `docs/` directory:

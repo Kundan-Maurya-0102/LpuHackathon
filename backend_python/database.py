@@ -7,7 +7,10 @@ from .config import config
 
 def get_db_connection():
     config.DB_DIR.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(config.DB_PATH), check_same_thread=False)
+    conn = sqlite3.connect(str(config.DB_PATH), check_same_thread=False, timeout=60.0)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA synchronous=NORMAL;")
+    conn.execute("PRAGMA busy_timeout=60000;")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -136,6 +139,21 @@ def init_database():
         ("market_prices", "arrivals", "TEXT DEFAULT 'Moderate'"),
         ("market_prices", "unit",     "TEXT DEFAULT 'Quintal'"),
         ("market_prices", "source",   "TEXT DEFAULT 'Agmarknet / data.gov.in'"),
+        ("sales", "gross_amount",     "REAL DEFAULT 0"),
+        ("sales", "total_amount",     "REAL DEFAULT 0"),
+        ("sales", "farmer_name",      "TEXT DEFAULT 'Farmer'"),
+        ("sales", "farmer_mobile",    "TEXT DEFAULT ''"),
+        ("sales", "farmer_id_str",    "TEXT DEFAULT ''"),
+        ("sales", "mandi_cess",       "REAL DEFAULT 0"),
+        ("sales", "loading_fee",      "REAL DEFAULT 0"),
+        ("sales", "net_amount",       "REAL DEFAULT 0"),
+        ("sales", "buyer_name",       "TEXT DEFAULT ''"),
+        ("sales", "buyer_contact",    "TEXT DEFAULT ''"),
+        ("sales", "status",           "TEXT DEFAULT 'Settled'"),
+        ("sales", "notes",            "TEXT DEFAULT ''"),
+        ("users", "preferred_language", "TEXT DEFAULT 'hi'"),
+        ("users", "latitude",         "REAL DEFAULT 31.2550"),
+        ("users", "longitude",        "REAL DEFAULT 75.7050"),
     ]
     for table, column, col_def in migrations:
         try:
