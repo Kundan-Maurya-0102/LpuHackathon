@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = window.KISANSETU_API_BASE_URL || '/api';
 
 class ApiClient {
   async request(endpoint, options = {}) {

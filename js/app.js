@@ -233,6 +233,15 @@ function setupEventListeners() {
     });
   }
 
+  const sellCropBtn = document.getElementById("sellCropBtn");
+  if (sellCropBtn) sellCropBtn.addEventListener("click", openSellCropModal);
+  const sellCropForm = document.getElementById("sellCropForm");
+  if (sellCropForm) sellCropForm.addEventListener("submit", handleCropSale);
+  ["saleCropSelect", "saleMandiSelect", "saleQuantityInput"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", updateSaleRatePreview);
+    document.getElementById(id)?.addEventListener("input", updateSaleRatePreview);
+  });
+
   // Login button handler
   const loginBtn = document.getElementById("loginBtn");
   if (loginBtn) {
@@ -501,7 +510,7 @@ function getSaleDetails() {
   const quantity = parseFloat(document.getElementById("saleQuantityInput").value) || 0;
   const crop = AGRI_DATA.crops.find(item => item.id === cropId);
   const mandi = AGRI_DATA.mandis.find(item => item.id === mandiId);
-  const rate = mandi && mandi.prices[cropId] ? mandi.prices[cropId].modal : crop.allIndiaAvg;
+  const rate = mandi && mandi.prices[cropId] ? mandi.prices[cropId].modal : (crop?.allIndiaAvg || 0);
   return { crop, mandi, quantity, rate, buyer: document.getElementById("saleBuyerInput").value.trim() };
 }
 
@@ -512,13 +521,29 @@ function updateSaleRatePreview() {
   preview.innerHTML = `<span>Current modal rate</span><strong>₹${sale.rate.toLocaleString("en-IN")} / quintal</strong><span>Estimated trade value</span><strong>₹${(sale.rate * sale.quantity).toLocaleString("en-IN")}</strong>`;
 }
 
-function handleCropSale(event) {
+async function handleCropSale(event) {
   event.preventDefault();
   const sale = getSaleDetails();
-  if (!sale.buyer || sale.quantity <= 0) return;
+  if (!sale.crop || !sale.mandi || !sale.buyer || sale.quantity <= 0 || !sale.rate) {
+    showToast("Please complete all sale details", "error");
+    return;
+  }
+  try {
+    await apiSales.createSale({
+      commodity: sale.crop.name,
+      quantity: sale.quantity,
+      price: sale.rate,
+      buyer_name: sale.buyer
+    });
+  } catch (error) {
+    showToast("Could not save sale: " + error.message, "error");
+    return;
+  }
   const receipt = { ...sale, receiptId: `KS-${Date.now().toString().slice(-8)}`, date: new Date().toLocaleDateString("en-IN") };
   localStorage.setItem("kisansetu_last_trade", JSON.stringify(receipt));
-  document.getElementById("tradeReceiptContent").innerHTML = `<div class="trade-receipt-heading"><span>🌾 KisanSetu</span><strong>Trade Receipt</strong><small>${receipt.receiptId} · ${receipt.date}</small></div><div class="trade-receipt-grid"><span>Farmer</span><strong>${APP_STATE.user.name} (${APP_STATE.user.kisanId})</strong><span>Buyer / trader</span><strong>${receipt.buyer}</strong><span>Crop</span><strong>${receipt.crop.name}</strong><span>Mandi</span><strong>${receipt.mandi.name}</strong><span>Quantity</span><strong>${receipt.quantity} quintals</strong><span>Rate</span><strong>₹${receipt.rate.toLocaleString("en-IN")} / quintal</strong></div><div class="trade-total"><span>Total trade value</span><strong>₹${(receipt.rate * receipt.quantity).toLocaleString("en-IN")}</strong></div><p class="receipt-note">Rate source: current KisanSetu mandi modal rate. Keep this receipt for your records.</p>`;
+  const farmerName = APP_STATE.user.full_name || APP_STATE.user.name || "Farmer";
+  const farmerId = APP_STATE.user.farmer_id || APP_STATE.user.kisanId || "-";
+  document.getElementById("tradeReceiptContent").innerHTML = `<div class="trade-receipt-heading"><span>🌾 KisanSetu</span><strong>Trade Receipt</strong><small>${receipt.receiptId} · ${receipt.date}</small></div><div class="trade-receipt-grid"><span>Farmer</span><strong>${farmerName} (${farmerId})</strong><span>Buyer / trader</span><strong>${receipt.buyer}</strong><span>Crop</span><strong>${receipt.crop.name}</strong><span>Mandi</span><strong>${receipt.mandi.name}</strong><span>Quantity</span><strong>${receipt.quantity} quintals</strong><span>Rate</span><strong>₹${receipt.rate.toLocaleString("en-IN")} / quintal</strong></div><div class="trade-total"><span>Total trade value</span><strong>₹${(receipt.rate * receipt.quantity).toLocaleString("en-IN")}</strong></div><p class="receipt-note">Rate source: current KisanSetu mandi modal rate. Keep this receipt for your records.</p>`;
   hideModal("sellCropModal");
   showModal("tradeReceiptModal");
 }

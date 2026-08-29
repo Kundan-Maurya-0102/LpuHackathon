@@ -49,6 +49,23 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  // Forward browser API calls to the local Express backend for public ngrok access.
+  if (request.url.startsWith("/api/") && request.url !== "/api/health") {
+    const proxyRequest = http.request({
+      hostname: "127.0.0.1",
+      port: 3000,
+      path: request.url,
+      method: request.method,
+      headers: { ...request.headers, host: "127.0.0.1:3000" }
+    }, proxyResponse => {
+      response.writeHead(proxyResponse.statusCode || 502, proxyResponse.headers);
+      proxyResponse.pipe(response);
+    });
+    proxyRequest.on("error", error => send(response, 502, JSON.stringify({ error: "Backend unavailable", detail: error.message })));
+    request.pipe(proxyRequest);
+    return;
+  }
+
   if (request.url === "/api/health") {
     send(response, 200, JSON.stringify({ marketApi: Boolean(process.env.DATA_GOV_API_KEY), smsApi: Boolean(process.env.TWILIO_ACCOUNT_SID) }));
     return;
