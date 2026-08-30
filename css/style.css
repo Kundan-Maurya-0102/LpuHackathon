@@ -86,9 +86,17 @@ body {
 }
 
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); }
-  70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 8px rgba(52, 211, 153, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
 }
 
 .ticker-marquee {
@@ -101,8 +109,13 @@ body {
 }
 
 @keyframes ticker-slide {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .ticker-right {
@@ -164,7 +177,10 @@ body {
 .brand-icon-wrap {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, #1b7a5a 0%, #238c68 100%);
+  /* background: linear-gradient(135deg, #1b7a5a 0%, #238c68 100%); */
+  /* background-color: none; */
+  background-image: url("logo-removebg-preview.png");
+  background-size: cover;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -388,8 +404,15 @@ body {
 }
 
 @keyframes mic-pulse {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(180, 83, 9, 0.7); }
-  100% { transform: scale(1.15); box-shadow: 0 0 0 12px rgba(180, 83, 9, 0); }
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(180, 83, 9, 0.7);
+  }
+
+  100% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 12px rgba(180, 83, 9, 0);
+  }
 }
 
 .category-filter-bar {
@@ -412,7 +435,7 @@ body {
   cursor: pointer;
   white-space: nowrap;
   transition: var(--transition-fast);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
 }
 
 .category-pill:hover {
@@ -465,8 +488,15 @@ body {
 }
 
 @keyframes modal-pop {
-  0% { transform: scale(0.92) translateY(20px); opacity: 0; }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+  0% {
+    transform: scale(0.92) translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .modal-header {

@@ -58,7 +58,7 @@
   <header class="navbar">
     <div class="nav-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
       <div class="brand-icon-wrap">
-        <span>🚜</span>
+        <span><img src="logo-removebg-preview.png" alt="Kisan Setu" width="60" height="60"></span>
       </div>
       <div class="brand-text">
         <h1>KisanSetu</h1>
@@ -90,7 +90,7 @@
         <span id="themeIcon">🌙</span>
       </button>
       <button class="nav-btn nav-btn-user" id="userProfileBtn">
-        <span>👨‍🌾</span>
+        <span></span>
         <span id="userNameDisplay" data-i18n="navLogin">Farmer Login</span>
       </button>
     </div>
@@ -102,7 +102,8 @@
     <section class="hero-search-section">
       <div class="hero-header">
         <h2 data-i18n="selectCropPrompt">Select Your Harvested Crop & Discover Maximum Mandi Profit</h2>
-        <p data-i18n="voiceAssistantPrompt">Search or speak crop name to compare APMC mandi rates and vehicle transport costs.</p>
+        <p data-i18n="voiceAssistantPrompt">Search or speak crop name to compare APMC mandi rates and vehicle transport
+          costs.</p>
       </div>
 
       <div class="search-bar-wrap">
@@ -130,7 +131,8 @@
 
     <!-- Quick Navigation Action Cards -->
     <section style="margin: 32px 0;">
-      <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 14px;" data-i18n="quickNavTitle">
+      <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 14px;"
+        data-i18n="quickNavTitle">
         🚀 Quick Navigation & Farmer Services
       </h3>
 
@@ -163,7 +165,8 @@
       <div class="section-header-row">
         <div>
           <h3 data-i18n="selectCropPrompt">Select Your Harvested Crop</h3>
-          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="selectCropSub">Click any crop to explore all nearby mandis and calculate vehicle transport profits</p>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="selectCropSub">Click any crop to explore all
+            nearby mandis and calculate vehicle transport profits</p>
         </div>
       </div>
 
@@ -175,7 +178,8 @@
       <div class="section-header-row">
         <div>
           <h3 data-i18n="weatherTitle">⛅ Live Weather & Mandi Transport Advisory</h3>
-          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="weatherSub">Real-time weather forecast to plan harvesting and grain transport safely</p>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="weatherSub">Real-time weather forecast to
+            plan harvesting and grain transport safely</p>
         </div>
       </div>
 
@@ -187,15 +191,19 @@
           </div>
 
           <div class="weather-details-pills">
-            <div class="w-pill"><span class="lbl" data-i18n="humidityLabel">Humidity</span><strong id="weatherHumidity">62%</strong></div>
-            <div class="w-pill"><span class="lbl" data-i18n="windLabel">Wind Speed</span><strong id="weatherWind">12 km/h</strong></div>
-            <div class="w-pill"><span class="lbl" data-i18n="precipitationLabel">Precipitation</span><strong id="weatherPrecipitation" data-i18n="rainVal">0% Rain</strong></div>
+            <div class="w-pill"><span class="lbl" data-i18n="humidityLabel">Humidity</span><strong
+                id="weatherHumidity">62%</strong></div>
+            <div class="w-pill"><span class="lbl" data-i18n="windLabel">Wind Speed</span><strong id="weatherWind">12
+                km/h</strong></div>
+            <div class="w-pill"><span class="lbl" data-i18n="precipitationLabel">Precipitation</span><strong
+                id="weatherPrecipitation" data-i18n="rainVal">0% Rain</strong></div>
           </div>
         </div>
 
         <div class="weather-advisory-banner">
           <span class="advisory-icon">📢</span>
-          <span id="weatherAdvisoryText">Ideal conditions for harvesting and grain transport. No rain expected for the next 48 hours.</span>
+          <span id="weatherAdvisoryText">Ideal conditions for harvesting and grain transport. No rain expected for the
+            next 48 hours.</span>
         </div>
 
         <div class="forecast-5day-grid" id="weatherForecastGrid"></div>
@@ -213,7 +221,7 @@
       </div>
       <div class="modal-body">
         <div class="profile-header-banner">
-          <div class="prof-avatar">👨‍🌾</div>
+          <div class="prof-avatar"></div>
           <div class="prof-info">
             <h4 id="profNameDisplay">Gurpreet Singh</h4>
             <span class="prof-badge" id="profKisanId">Kisan ID: PB-2026-8941</span>
@@ -221,11 +229,16 @@
         </div>
 
         <div class="profile-details-grid">
-          <div class="prof-item"><span class="lbl">Location:</span><strong id="profAddressDisplay">📍 Khanna Kalan, Ludhiana, Punjab</strong></div>
-          <div class="prof-item"><span class="lbl">Mobile:</span><strong id="profPhoneDisplay">📞 +91 98765 43210</strong></div>
-          <div class="prof-item"><span class="lbl">Farm Land:</span><strong id="profLandDisplay">12 Acres (एकड़)</strong></div>
-          <div class="prof-item"><span class="lbl">Primary Mandi:</span><strong id="profMandiDisplay">Khanna APMC Grain Market</strong></div>
-          <div class="prof-item"><span class="lbl">Transport:</span><strong id="profVehicleDisplay">Tractor Trolley (40 Qtl)</strong></div>
+          <div class="prof-item"><span class="lbl">Location:</span><strong id="profAddressDisplay">📍 Khanna Kalan,
+              Ludhiana, Punjab</strong></div>
+          <div class="prof-item"><span class="lbl">Mobile:</span><strong id="profPhoneDisplay">📞 +91 98765
+              43210</strong></div>
+          <div class="prof-item"><span class="lbl">Farm Land:</span><strong id="profLandDisplay">12 Acres
+              (एकड़)</strong></div>
+          <div class="prof-item"><span class="lbl">Primary Mandi:</span><strong id="profMandiDisplay">Khanna APMC Grain
+              Market</strong></div>
+          <div class="prof-item"><span class="lbl">Transport:</span><strong id="profVehicleDisplay">Tractor Trolley (40
+              Qtl)</strong></div>
         </div>
 
         <div class="prof-crops-section">
